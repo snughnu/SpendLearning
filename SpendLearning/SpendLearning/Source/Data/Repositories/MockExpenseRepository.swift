@@ -55,4 +55,8 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
     func deleteExpense(_ expense: Expense) async {
         expenses.removeAll { $0.id == expense.id }
     }
+
+    func addExpense(_ expense: Expense) async {
+        expenses.append(expense)
+    }
 }

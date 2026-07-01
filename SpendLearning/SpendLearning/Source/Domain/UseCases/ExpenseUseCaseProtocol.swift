@@ -7,5 +7,6 @@
 
 protocol ExpenseUseCaseProtocol {
     func fetch(year: Int, month: Int) async -> [Expense]
+    func add(_ expense: Expense) async
     func delete(_ expense: Expense) async
 }
