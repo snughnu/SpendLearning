@@ -35,8 +35,7 @@
 				Source/Domain/Entities/CalendarDay.swift,
 				Source/Domain/Entities/Category.swift,
 				Source/Domain/Entities/Expense.swift,
-				Source/Domain/Repositories/ExpenseRepositoryProtocol.swift,
-				Source/Domain/UseCases/ExpensesUseCase.swift,
+				Source/Domain/UseCases/ExpenseUseCaseProtocol.swift,
 				Source/Presentation/View/Home/HomeViewModel.swift,
 			);
 			target = BCB415072FF52D0700C9CABD /* SpendLearningTests */;

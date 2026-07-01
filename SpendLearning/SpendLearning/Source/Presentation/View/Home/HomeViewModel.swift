@@ -23,10 +23,10 @@ final class HomeViewModel {
     @Published private(set) var calendarWeekCount: Int = 6
 
     // MARK: - Private
-    private let expenseUseCase: ExpenseUseCase
+    private let expenseUseCase: ExpenseUseCaseProtocol
 
     // MARK: - Init
-    init(expenseUseCase: ExpenseUseCase) {
+    init(expenseUseCase: ExpenseUseCaseProtocol) {
         let now = Date()
         let calendar = Calendar.current
         self.currentYear = calendar.component(.year, from: now)

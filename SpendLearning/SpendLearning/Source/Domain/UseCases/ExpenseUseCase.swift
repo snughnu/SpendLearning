@@ -1,5 +1,5 @@
 //
-//  ExpensesUseCase.swift
+//  ExpenseUseCase.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/1/26.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ExpenseUseCase {
+final class ExpenseUseCase: ExpenseUseCaseProtocol {
 
     private let repository: ExpenseRepositoryProtocol
 
