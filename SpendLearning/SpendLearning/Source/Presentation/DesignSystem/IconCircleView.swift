@@ -9,6 +9,7 @@ import UIKit
 
 final class IconCircleView: UIView {
     private let imageView = UIImageView()
+    private var iconSize: CGFloat = 0
 
     init(symbolName: String, size: CGFloat) {
         super.init(frame: .zero)
@@ -19,11 +20,20 @@ final class IconCircleView: UIView {
         super.init(coder: coder)
     }
 
-    private func setup(symbolName: String, size: CGFloat) {
+    func update(symbolName: String) {
+        let config = UIImage.SymbolConfiguration(pointSize: iconSize, weight: .medium)
+        imageView.image = UIImage(systemName: symbolName, withConfiguration: config)
+    }
+}
+
+// MARK: - Helper
+private extension IconCircleView {
+
+    func setup(symbolName: String, size: CGFloat) {
+        iconSize = size * 0.43
         backgroundColor = .DesignSystem.secondary
         layer.cornerRadius = size / 2
 
-        let iconSize = size * 0.43
         let config = UIImage.SymbolConfiguration(pointSize: iconSize, weight: .medium)
         imageView.image = UIImage(systemName: symbolName, withConfiguration: config)
         imageView.tintColor = .DesignSystem.primary
