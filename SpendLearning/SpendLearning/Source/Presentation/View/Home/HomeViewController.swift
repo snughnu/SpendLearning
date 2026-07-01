@@ -195,10 +195,15 @@ extension HomeViewController: UICollectionViewDelegate {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        guard collectionView === calendarCollectionView else { return }
-        let day = viewModel.calendarDays[indexPath.item]
-        guard let date = day.date else { return }
-        viewModel.didSelectDate(date)
+        if collectionView === calendarCollectionView {
+            let day = viewModel.calendarDays[indexPath.item]
+            guard let date = day.date else { return }
+            viewModel.didSelectDate(date)
+        }
+        if collectionView === expenseCollectionView {
+            let expense = viewModel.selectedDayExpenses[indexPath.item]
+            presentAddExpense(expense: expense)
+        }
     }
 }
 
@@ -358,6 +363,7 @@ private extension HomeViewController {
         expenseCollectionView.isScrollEnabled = false
         expenseCollectionView.setCollectionViewLayout(makeExpenseLayout(), animated: false)
         expenseCollectionView.dataSource = self
+        expenseCollectionView.delegate = self
     }
 
     func setupFAB() {
@@ -371,6 +377,9 @@ private extension HomeViewController {
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
         fabButton.setImage(UIImage(systemName: "plus", withConfiguration: config), for: .normal)
         fabButton.tintColor = .white
+        fabButton.addAction(UIAction { [weak self] _ in
+            self?.presentAddExpense()
+        }, for: .touchUpInside)
     }
 
     func setupMonthSelector() {
@@ -435,5 +444,12 @@ private extension HomeViewController {
         }
 
         present(pickerVC, animated: true)
+    }
+
+    func presentAddExpense(expense: Expense? = nil) {
+        let viewController = AddExpenseViewController()
+        let navi = UINavigationController(rootViewController: viewController)
+        navi.modalPresentationStyle = .fullScreen
+        present(navi, animated: true)
     }
 }
