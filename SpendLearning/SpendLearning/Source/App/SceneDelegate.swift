@@ -15,8 +15,41 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = HomeViewController()
+        window?.rootViewController = makeTabBarController()
         window?.makeKeyAndVisible()
+    }
+
+    private func makeTabBarController() -> UITabBarController {
+        let tabBar = UITabBarController()
+
+        let repository = MockExpenseRepository()
+        let expenseUseCase = ExpenseUseCase(repository: repository)
+        let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
+        let homeViewController = HomeViewController(viewModel: homeViewModel)
+        homeViewController.tabBarItem = UITabBarItem(
+            title: "홈",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
+        )
+
+        let statisticsViewController = StatisticsViewController()
+        statisticsViewController.tabBarItem = UITabBarItem(
+            title: "통계",
+            image: UIImage(systemName: "chart.bar"),
+            selectedImage: UIImage(systemName: "chart.bar.fill")
+        )
+
+        let settingsViewController = SettingsViewController()
+        settingsViewController.tabBarItem = UITabBarItem(
+            title: "설정",
+            image: UIImage(systemName: "slider.horizontal.3"),
+            selectedImage: UIImage(systemName: "slider.horizontal.3")
+        )
+
+        tabBar.viewControllers = [homeViewController, statisticsViewController, settingsViewController]
+        tabBar.tabBar.tintColor = .DesignSystem.accent
+
+        return tabBar
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
