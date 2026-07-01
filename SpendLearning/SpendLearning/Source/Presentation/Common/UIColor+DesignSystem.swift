@@ -19,10 +19,10 @@ extension UIColor {
         static let surface = UIColor.white
 
         /// Secondary - 연한 베이지 (아이콘 배경)
-        static let secondary = UIColor(red: 0.94, green: 0.92, blue: 0.88, alpha: 1.0)
+        static let secondary = UIColor(red: 0.949, green: 0.898, blue: 0.867, alpha: 1.0)
 
-        /// Accent - 포인트 컬러 (선택 상태, 토글)
-        static let accent = UIColor(red: 0.55, green: 0.42, blue: 0.28, alpha: 1.0)
+        /// Accent - 포인트 컬러
+        static let accent = UIColor(red: 0.898, green: 0.384, blue: 0.118, alpha: 1.0)
 
         /// Subtitle - 중간 회색
         static let subtitle = UIColor(red: 0.50, green: 0.48, blue: 0.46, alpha: 1.0)
