@@ -30,6 +30,11 @@ final class CategoryItemView: UIView {
     func setSelected(_ selected: Bool) {
         isSelected = selected
     }
+
+    func update(symbolName: String, title: String) {
+        iconView.update(symbolName: symbolName)
+        titleLabel.text = title
+    }
 }
 
 // MARK: - Helper
