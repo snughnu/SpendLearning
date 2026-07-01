@@ -16,12 +16,13 @@ jobs:
       contents: read
       pull-requests: write
       issues: write
+      id-token: write
     steps:
       - uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           model: "claude-sonnet-4-6"
-          system_prompt: |
+          custom_instructions: |
             당신은 iOS/Swift 전문 코드 리뷰어입니다. 한국어로 리뷰를 작성하세요.
 
             ## 리뷰 기준
