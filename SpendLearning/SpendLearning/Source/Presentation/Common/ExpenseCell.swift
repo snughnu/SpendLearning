@@ -8,7 +8,6 @@
 import UIKit
 
 final class ExpenseCell: UICollectionViewCell {
-    static let identifier = "ExpenseCell"
 
     private let iconView = IconCircleView(symbolName: "ellipsis", size: 38)
     private let categoryLabel = UILabel()

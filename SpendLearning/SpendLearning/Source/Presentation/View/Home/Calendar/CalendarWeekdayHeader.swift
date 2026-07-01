@@ -8,7 +8,6 @@
 import UIKit
 
 final class CalendarWeekdayHeader: UICollectionReusableView {
-    static let identifier = "CalendarWeekdayHeader"
 
     override init(frame: CGRect) {
         super.init(frame: frame)

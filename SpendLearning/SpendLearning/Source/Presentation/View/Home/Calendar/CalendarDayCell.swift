@@ -8,7 +8,6 @@
 import UIKit
 
 final class CalendarDayCell: UICollectionViewCell {
-    static let identifier = "CalendarDayCell"
 
     private let circleView = UIView()
     private let dayLabel = UILabel()

@@ -22,16 +22,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeTabBarController() -> UITabBarController {
         let tabBar = UITabBarController()
 
-        let homeVC = UINavigationController(rootViewController: HomeViewController())
-        homeVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        let repository = MockExpenseRepository()
+        let fetchExpensesUseCase = FetchExpensesUseCase(repository: repository)
+        let homeViewModel = HomeViewModel(fetchExpensesUseCase: fetchExpensesUseCase)
+        let homeViewController = HomeViewController(viewModel: homeViewModel)
+        homeViewController.tabBarItem = UITabBarItem(
+            title: "홈",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
+        )
 
-        let statisticsVC = UINavigationController(rootViewController: StatisticsViewController())
-        statisticsVC.tabBarItem = UITabBarItem(title: "통계", image: UIImage(systemName: "chart.bar"), selectedImage: UIImage(systemName: "chart.bar.fill"))
+        let statisticsViewController = StatisticsViewController()
+        statisticsViewController.tabBarItem = UITabBarItem(
+            title: "통계",
+            image: UIImage(systemName: "chart.bar"),
+            selectedImage: UIImage(systemName: "chart.bar.fill")
+        )
 
-        let settingsVC = UINavigationController(rootViewController: SettingsViewController())
-        settingsVC.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "slider.horizontal.3"), selectedImage: UIImage(systemName: "slider.horizontal.3"))
+        let settingsViewController = SettingsViewController()
+        settingsViewController.tabBarItem = UITabBarItem(
+            title: "설정",
+            image: UIImage(systemName: "slider.horizontal.3"),
+            selectedImage: UIImage(systemName: "slider.horizontal.3")
+        )
 
-        tabBar.viewControllers = [homeVC, statisticsVC, settingsVC]
+        tabBar.viewControllers = [homeViewController, statisticsViewController, settingsViewController]
         tabBar.tabBar.tintColor = .DesignSystem.accent
 
         return tabBar
