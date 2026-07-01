@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ExpenseCell: UITableViewCell {
+final class ExpenseCell: UICollectionViewCell {
     static let identifier = "ExpenseCell"
 
     private let iconView = IconCircleView(symbolName: "ellipsis", size: 38)
@@ -15,13 +15,13 @@ final class ExpenseCell: UITableViewCell {
     private let memoLabel = UILabel()
     private let amountLabel = UILabel()
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setup()
     }
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func prepareForReuse() {
@@ -32,11 +32,10 @@ final class ExpenseCell: UITableViewCell {
         memoLabel.isHidden = false
     }
 
-    func configure(symbolName: String, category: String, memo: String?, amount: Int) {
-        iconView.update(symbolName: symbolName)
-        categoryLabel.text = category
-        memoLabel.text = memo
-        memoLabel.isHidden = memo == nil
+    func configure(category: Category, memo: String?, amount: Int) {
+        iconView.update(symbolName: category.symbolName)
+        categoryLabel.text = category.displayName
+        memoLabel.text = memo ?? " "
         amountLabel.text = "\(amount.formatted())원"
     }
 }
@@ -46,7 +45,6 @@ private extension ExpenseCell {
 
     func setup() {
         backgroundColor = .clear
-        selectionStyle = .none
 
         let textStack = UIStackView(arrangedSubviews: [categoryLabel, memoLabel])
         textStack.axis = .vertical
@@ -66,18 +64,26 @@ private extension ExpenseCell {
         amountLabel.font = .systemFont(ofSize: 14.5, weight: .bold)
         amountLabel.textColor = .DesignSystem.primary
 
+        let separator = UIView()
+        separator.backgroundColor = .DesignSystem.separator
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(separator)
+
         NSLayoutConstraint.activate([
-            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 2),
+            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
             textStack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
             textStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -2),
+            amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             amountLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             amountLabel.leadingAnchor.constraint(greaterThanOrEqualTo: textStack.trailingAnchor, constant: 8),
 
-            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 58),
+            separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            separator.heightAnchor.constraint(equalToConstant: 1),
         ])
     }
 }
