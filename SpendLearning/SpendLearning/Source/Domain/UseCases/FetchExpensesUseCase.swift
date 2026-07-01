@@ -15,7 +15,7 @@ final class FetchExpensesUseCase {
         self.repository = repository
     }
 
-    func execute(year: Int, month: Int) -> [Expense] {
-        return repository.fetchExpenses(year: year, month: month)
+    func execute(year: Int, month: Int) async -> [Expense] {
+        return await repository.fetchExpenses(year: year, month: month)
     }
 }

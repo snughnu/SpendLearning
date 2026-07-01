@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ExpenseRepositoryProtocol {
-    func fetchExpenses(year: Int, month: Int) -> [Expense]
+    func fetchExpenses(year: Int, month: Int) async -> [Expense]
 }

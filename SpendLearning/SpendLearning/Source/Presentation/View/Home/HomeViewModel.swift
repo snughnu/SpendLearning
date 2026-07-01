@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 final class HomeViewModel {
 
     // MARK: - Output
@@ -72,15 +73,19 @@ final class HomeViewModel {
             updateCalendar()
         } else {
             selectedDate = today
-            let expenses = fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
-            updateSelectedDay(from: expenses)
+            Task {
+                let expenses = await fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
+                updateSelectedDay(from: expenses)
+            }
         }
     }
 
     func didSelectDate(_ date: Date) {
         selectedDate = date
-        let expenses = fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
-        updateSelectedDay(from: expenses)
+        Task {
+            let expenses = await fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
+            updateSelectedDay(from: expenses)
+        }
     }
 }
 
@@ -88,11 +93,13 @@ final class HomeViewModel {
 private extension HomeViewModel {
 
     func updateCalendar() {
-        let expenses = fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
-        calendarDays = makeCalendarDays(year: currentYear, month: currentMonth, expenses: expenses)
-        totalAmount = expenses.reduce(0) { $0 + $1.amount }
-        aiComment = "이번 달 카페 지출만 벌써 9번째, 이쯤 되면 취미 아니야?"
-        updateSelectedDay(from: expenses)
+        Task {
+            let expenses = await fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
+            calendarDays = makeCalendarDays(year: currentYear, month: currentMonth, expenses: expenses)
+            totalAmount = expenses.reduce(0) { $0 + $1.amount }
+            aiComment = "이번 달 카페 지출만 벌써 9번째, 이쯤 되면 취미 아니야?"
+            updateSelectedDay(from: expenses)
+        }
     }
 
     func updateSelectedDay(from expenses: [Expense]) {

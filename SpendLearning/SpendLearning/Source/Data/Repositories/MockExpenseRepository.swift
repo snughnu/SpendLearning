@@ -9,7 +9,7 @@ import Foundation
 
 final class MockExpenseRepository: ExpenseRepositoryProtocol {
 
-    func fetchExpenses(year: Int, month: Int) -> [Expense] {
+    func fetchExpenses(year: Int, month: Int) async -> [Expense] {
         let calendar = Calendar.current
         var components = DateComponents()
         components.year = year
