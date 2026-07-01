@@ -273,7 +273,7 @@ private extension HomeViewController {
         aiCommentLabel.textColor = .DesignSystem.primary
         aiCommentLabel.numberOfLines = 0
 
-        totalTitleLabel.text = "이번 달 총 지출"
+        totalTitleLabel.text = "총 지출"
         totalTitleLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         totalTitleLabel.textColor = .DesignSystem.subtitle
 
