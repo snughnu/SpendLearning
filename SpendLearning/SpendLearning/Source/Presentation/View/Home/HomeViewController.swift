@@ -205,6 +205,25 @@ extension HomeViewController: UICollectionViewDelegate {
             presentAddExpense(expense: expense)
         }
     }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard collectionView === expenseCollectionView else { return nil }
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let delete = UIAction(
+                title: "삭제",
+                image: UIImage(systemName: "trash"),
+                attributes: .destructive
+            ) { [weak self] _ in
+                self?.viewModel.didDeleteExpense(at: indexPath.item)
+            }
+            return UIMenu(children: [delete])
+        }
+    }
 }
 
 // MARK: - Helper

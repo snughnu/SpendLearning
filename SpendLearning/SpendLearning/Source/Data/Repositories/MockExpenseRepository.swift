@@ -9,8 +9,10 @@ import Foundation
 
 final class MockExpenseRepository: ExpenseRepositoryProtocol {
 
-    func fetchExpenses(year: Int, month: Int) async -> [Expense] {
+    private var expenses: [Expense] = {
         let calendar = Calendar.current
+        let year = calendar.component(.year, from: Date())
+        let month = calendar.component(.month, from: Date())
         var components = DateComponents()
         components.year = year
         components.month = month
@@ -38,5 +40,19 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
             Expense(date: date(28), category: .transport, memo: "지하철", amount: 4500),
             Expense(date: date(30), category: .food, memo: "외식", amount: 32000),
         ]
+    }()
+
+    func fetchExpenses(year: Int, month: Int) async -> [Expense] {
+        let calendar = Calendar.current
+        return expenses.filter {
+            guard let date = $0.date else { return false }
+            let y = calendar.component(.year, from: date)
+            let m = calendar.component(.month, from: date)
+            return y == year && m == month
+        }
+    }
+
+    func deleteExpense(_ expense: Expense) async {
+        expenses.removeAll { $0.id == expense.id }
     }
 }

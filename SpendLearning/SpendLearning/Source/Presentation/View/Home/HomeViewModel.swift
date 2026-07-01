@@ -23,16 +23,16 @@ final class HomeViewModel {
     @Published private(set) var calendarWeekCount: Int = 6
 
     // MARK: - Private
-    private let fetchExpensesUseCase: FetchExpensesUseCase
+    private let expenseUseCase: ExpenseUseCase
 
     // MARK: - Init
-    init(fetchExpensesUseCase: FetchExpensesUseCase) {
+    init(expenseUseCase: ExpenseUseCase) {
         let now = Date()
         let calendar = Calendar.current
         self.currentYear = calendar.component(.year, from: now)
         self.currentMonth = calendar.component(.month, from: now)
         self.selectedDate = calendar.startOfDay(for: now)
-        self.fetchExpensesUseCase = fetchExpensesUseCase
+        self.expenseUseCase = expenseUseCase
         updateCalendar()
     }
 
@@ -74,7 +74,7 @@ final class HomeViewModel {
         } else {
             selectedDate = today
             Task {
-                let expenses = await fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
+                let expenses = await expenseUseCase.fetch(year: currentYear, month: currentMonth)
                 updateSelectedDay(from: expenses)
             }
         }
@@ -83,8 +83,16 @@ final class HomeViewModel {
     func didSelectDate(_ date: Date) {
         selectedDate = date
         Task {
-            let expenses = await fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
+            let expenses = await expenseUseCase.fetch(year: currentYear, month: currentMonth)
             updateSelectedDay(from: expenses)
+        }
+    }
+
+    func didDeleteExpense(at index: Int) {
+        let expense = selectedDayExpenses[index]
+        Task {
+            await expenseUseCase.delete(expense)
+            updateCalendar()
         }
     }
 }
@@ -94,7 +102,7 @@ private extension HomeViewModel {
 
     func updateCalendar() {
         Task {
-            let expenses = await fetchExpensesUseCase.execute(year: currentYear, month: currentMonth)
+            let expenses = await expenseUseCase.fetch(year: currentYear, month: currentMonth)
             calendarDays = makeCalendarDays(year: currentYear, month: currentMonth, expenses: expenses)
             totalAmount = expenses.reduce(0) { $0 + $1.amount }
             aiComment = "이번 달 카페 지출만 벌써 9번째, 이쯤 되면 취미 아니야?"

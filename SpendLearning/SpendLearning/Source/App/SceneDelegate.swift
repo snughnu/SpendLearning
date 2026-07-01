@@ -23,8 +23,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBar = UITabBarController()
 
         let repository = MockExpenseRepository()
-        let fetchExpensesUseCase = FetchExpensesUseCase(repository: repository)
-        let homeViewModel = HomeViewModel(fetchExpensesUseCase: fetchExpensesUseCase)
+        let expenseUseCase = ExpenseUseCase(repository: repository)
+        let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
         let homeViewController = HomeViewController(viewModel: homeViewModel)
         homeViewController.tabBarItem = UITabBarItem(
             title: "홈",

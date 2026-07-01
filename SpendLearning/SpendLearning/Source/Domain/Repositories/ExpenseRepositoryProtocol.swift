@@ -9,4 +9,5 @@ import Foundation
 
 protocol ExpenseRepositoryProtocol {
     func fetchExpenses(year: Int, month: Int) async -> [Expense]
+    func deleteExpense(_ expense: Expense) async
 }
