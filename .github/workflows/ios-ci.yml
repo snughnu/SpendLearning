@@ -71,4 +71,3 @@ jobs:
           -destination "platform=iOS Simulator,id=${{ steps.find-simulator.outputs.simulator_id }}" \
           CODE_SIGNING_ALLOWED=NO \
           CODE_SIGNING_REQUIRED=NO \
-          || echo "테스트 없음 또는 실패 - 계속 진행..."
