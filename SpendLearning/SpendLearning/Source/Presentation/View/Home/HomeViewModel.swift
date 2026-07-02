@@ -22,8 +22,7 @@ final class HomeViewModel {
     @Published private(set) var aiComment: String = ""
     @Published private(set) var calendarWeekCount: Int = 6
 
-    // MARK: - Private
-    private let expenseUseCase: ExpenseUseCaseProtocol
+    let expenseUseCase: ExpenseUseCaseProtocol
 
     // MARK: - Init
     init(expenseUseCase: ExpenseUseCaseProtocol) {
@@ -95,10 +94,6 @@ final class HomeViewModel {
             updateCalendar()
         }
     }
-}
-
-// MARK: - Helper
-private extension HomeViewModel {
 
     func updateCalendar() {
         Task {
@@ -109,6 +104,10 @@ private extension HomeViewModel {
             updateSelectedDay(from: expenses)
         }
     }
+}
+
+// MARK: - Helper
+private extension HomeViewModel {
 
     func updateSelectedDay(from expenses: [Expense]) {
         let calendar = Calendar.current

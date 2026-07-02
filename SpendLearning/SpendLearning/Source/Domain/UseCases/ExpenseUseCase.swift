@@ -19,6 +19,10 @@ final class ExpenseUseCase: ExpenseUseCaseProtocol {
         await repository.fetchExpenses(year: year, month: month)
     }
 
+    func add(_ expense: Expense) async {
+        await repository.addExpense(expense)
+    }
+
     func delete(_ expense: Expense) async {
         await repository.deleteExpense(expense)
     }
