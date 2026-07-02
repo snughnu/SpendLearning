@@ -27,7 +27,7 @@ struct ExpenseUseCaseTests {
     @Test("fetch 호출 시 Repository에서 반환한 결과를 그대로 반환한다")
     func fetchReturnsRepositoryResult() async {
         let spy = SpyExpenseRepository()
-        let expense = Expense(date: Date(), category: .food, memo: nil, amount: 5000)
+        let expense = Expense(date: Date(), category: Category(name: "식비", emoji: "🍚"), memo: nil, amount: 5000)
         spy.stubbedExpenses = [expense]
         let sut = ExpenseUseCase(repository: spy)
 
@@ -40,7 +40,7 @@ struct ExpenseUseCaseTests {
     @Test("delete 호출 시 Repository의 deleteExpense가 올바른 Expense로 호출된다")
     func deleteCallsRepositoryWithCorrectExpense() async {
         let spy = SpyExpenseRepository()
-        let expense = Expense(date: Date(), category: .food, memo: nil, amount: 5000)
+        let expense = Expense(date: Date(), category: Category(name: "식비", emoji: "🍚"), memo: nil, amount: 5000)
         let sut = ExpenseUseCase(repository: spy)
 
         await sut.delete(expense)

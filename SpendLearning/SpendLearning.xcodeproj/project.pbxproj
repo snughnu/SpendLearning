@@ -43,6 +43,7 @@
 				Source/Domain/UseCases/ExpenseUseCaseProtocol.swift,
 				Source/Presentation/View/Home/HomeViewModel.swift,
 				Source/Presentation/View/NewExpense/NewExpenseViewModel.swift,
+				Source/Presentation/View/Settings/SettingsViewModel.swift,
 			);
 			target = BCB415072FF52D0700C9CABD /* SpendLearningTests */;
 		};

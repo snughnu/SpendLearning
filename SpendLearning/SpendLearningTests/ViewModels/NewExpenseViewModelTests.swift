@@ -19,6 +19,17 @@ final class SpyExpenseUseCase: ExpenseUseCaseProtocol {
     func delete(_ expense: Expense) async { deleteCallCount += 1; deletedExpense = expense }
 }
 
+final class StubCategoryUseCaseForNewExpense: CategoryUseCaseProtocol {
+    var stubbedCategories: [Category] = []
+
+    func fetchCategories() async -> [Category] { stubbedCategories }
+    func addCategory(name: String, emoji: String) async {}
+    func updateCategory(_ category: Category, name: String, emoji: String) async {}
+    func deleteCategory(_ category: Category) async {}
+    func resetToDefault() async {}
+    func reorderCategories(_ categories: [Category]) async {}
+}
+
 @Suite("NewExpenseViewModel")
 @MainActor
 struct NewExpenseViewModelTests {
@@ -26,8 +37,12 @@ struct NewExpenseViewModelTests {
     @Test("추가 모드에서 저장 시 add만 호출된다")
     func saveInAddMode() async {
         let spy = SpyExpenseUseCase()
-        let sut = NewExpenseViewModel(expenseUseCase: spy, date: Date())
-        sut.didSelectCategory(.food)
+        let sut = NewExpenseViewModel(
+            expenseUseCase: spy,
+            categoryUseCase: StubCategoryUseCaseForNewExpense(),
+            date: Date()
+        )
+        sut.didSelectCategory(Category(name: "식비", emoji: "🍚"))
 
         await sut.didSaveExpense()
 
@@ -38,9 +53,15 @@ struct NewExpenseViewModelTests {
     @Test("수정 모드에서 저장 시 delete 후 add가 호출된다")
     func saveInEditMode() async {
         let spy = SpyExpenseUseCase()
-        let editing = Expense(date: Date(), category: .food, memo: nil, amount: 5000)
-        let sut = NewExpenseViewModel(expenseUseCase: spy, date: Date(), editingExpense: editing)
-        sut.didSelectCategory(.cafe)
+        let food = Category(name: "식비", emoji: "🍚")
+        let editing = Expense(date: Date(), category: food, memo: nil, amount: 5000)
+        let sut = NewExpenseViewModel(
+            expenseUseCase: spy,
+            categoryUseCase: StubCategoryUseCaseForNewExpense(),
+            date: Date(),
+            editingExpense: editing
+        )
+        sut.didSelectCategory(Category(name: "카페", emoji: "☕️"))
 
         await sut.didSaveExpense()
 
@@ -51,8 +72,14 @@ struct NewExpenseViewModelTests {
 
     @Test("수정 모드에서 initialAmount와 initialMemo가 기존 값으로 반환된다")
     func initialValuesInEditMode() {
-        let editing = Expense(date: Date(), category: .food, memo: "점심", amount: 12000)
-        let sut = NewExpenseViewModel(expenseUseCase: SpyExpenseUseCase(), date: Date(), editingExpense: editing)
+        let food = Category(name: "식비", emoji: "🍚")
+        let editing = Expense(date: Date(), category: food, memo: "점심", amount: 12000)
+        let sut = NewExpenseViewModel(
+            expenseUseCase: SpyExpenseUseCase(),
+            categoryUseCase: StubCategoryUseCaseForNewExpense(),
+            date: Date(),
+            editingExpense: editing
+        )
 
         #expect(sut.initialAmount == 12000)
         #expect(sut.initialMemo == "점심")
