@@ -479,7 +479,8 @@ private extension HomeViewController {
     func presentAddExpense(expense: Expense? = nil) {
         let newExpenseViewModel = NewExpenseViewModel(
             expenseUseCase: viewModel.expenseUseCase,
-            date: viewModel.selectedDate
+            date: viewModel.selectedDate,
+            editingExpense: expense
         )
         let categorySelectVC = CategorySelectViewController(viewModel: newExpenseViewModel)
         let navi = UINavigationController(rootViewController: categorySelectVC)

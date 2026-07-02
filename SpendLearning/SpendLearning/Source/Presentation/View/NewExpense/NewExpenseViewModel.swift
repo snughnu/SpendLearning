@@ -13,17 +13,29 @@ final class NewExpenseViewModel {
 
     // MARK: - Output
     @Published private(set) var selectedCategory: Category?
+    var initialAmount: Int { editingExpense?.amount ?? 0 }
+    var initialMemo: String { editingExpense?.memo ?? "" }
 
     // MARK: - Private
     private let expenseUseCase: ExpenseUseCaseProtocol
     private let date: Date
     private var amount: Int = 0
     private var memo: String = ""
+    private let editingExpense: Expense?
 
     // MARK: - Init
-    init(expenseUseCase: ExpenseUseCaseProtocol, date: Date) {
+    init(
+        expenseUseCase: ExpenseUseCaseProtocol,
+        date: Date, editingExpense: Expense? = nil
+    ) {
         self.expenseUseCase = expenseUseCase
         self.date = date
+        self.editingExpense = editingExpense
+
+        if let expense = editingExpense {
+            self.amount = expense.amount
+            self.memo = expense.memo ?? ""
+        }
     }
 
     // MARK: - Input
@@ -41,6 +53,9 @@ final class NewExpenseViewModel {
 
     func didSaveExpense() async {
         guard let category = selectedCategory else { return }
+        if let editing = editingExpense {
+            await expenseUseCase.delete(editing)
+        }
         let expense = Expense(
             date: date,
             category: category,

@@ -100,7 +100,8 @@ private extension ExpenseInputViewController {
     }
 
     func setupSubviews() {
-        amountLabel.text = "0원"
+        let initialAmount = viewModel.initialAmount
+        amountLabel.text = initialAmount == 0 ? "0원" : "\(initialAmount.formatted())원"
         amountLabel.font = .systemFont(ofSize: 40, weight: .bold)
         amountLabel.textColor = .DesignSystem.primary
         amountLabel.textAlignment = .center
@@ -110,6 +111,7 @@ private extension ExpenseInputViewController {
         )
 
         memoTextField.placeholder = "메모를 남겨보세요"
+        memoTextField.text = viewModel.initialMemo
         memoTextField.font = .systemFont(ofSize: 15)
         memoTextField.backgroundColor = .white
         memoTextField.layer.cornerRadius = 12
@@ -117,6 +119,7 @@ private extension ExpenseInputViewController {
         memoTextField.leftViewMode = .always
         memoTextField.delegate = self
 
+        amountTextField.text = initialAmount == 0 ? "" : "\(initialAmount)"
         amountTextField.addTarget(self, action: #selector(amountDidChange), for: .editingChanged)
 
         [amountLabel, memoTextField, amountTextField].forEach {
