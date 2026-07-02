@@ -278,9 +278,19 @@ private extension CategoryManageViewController {
     }
 
     func didTapDelete(at index: Int) {
-        Task {
-            await viewModel.deleteCategory(at: index)
-        }
+        let category = viewModel.categories[index]
+        let alert = UIAlertController(
+            title: "\"\(category.name)\" 삭제",
+            message: "이 카테고리 지출은 '기타'로 변경됩니다.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+            Task {
+                await self?.viewModel.deleteCategory(at: index)
+            }
+        })
+        present(alert, animated: true)
     }
 
     func didTapReset() {

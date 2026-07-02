@@ -48,19 +48,36 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
     }
 
     func deleteCategory(_ category: Category) async {
+        let targetName = category.name
         let targetID = category.id
-        let predicate = #Predicate<CategoryModel> { $0.id == targetID }
-        let descriptor = FetchDescriptor<CategoryModel>(predicate: predicate)
-        guard let model = try? modelContext.fetch(descriptor).first else { return }
+
+        let expensePredicate = #Predicate<ExpenseModel> { $0.categoryName == targetName }
+        let expenseDescriptor = FetchDescriptor<ExpenseModel>(predicate: expensePredicate)
+        let expenses = (try? modelContext.fetch(expenseDescriptor)) ?? []
+        expenses.forEach { $0.categoryName = "기타" }
+
+        let categoryPredicate = #Predicate<CategoryModel> { $0.id == targetID }
+        let categoryDescriptor = FetchDescriptor<CategoryModel>(predicate: categoryPredicate)
+        guard let model = try? modelContext.fetch(categoryDescriptor).first else { return }
         modelContext.delete(model)
+
         try? modelContext.save()
     }
 
     func resetToDefault() async {
-        let descriptor = FetchDescriptor<CategoryModel>()
-        let all = (try? modelContext.fetch(descriptor)) ?? []
-        all.forEach { modelContext.delete($0) }
+        let defaultNames = Set(defaultCategories().map { $0.name })
+
+        let allExpenses = (try? modelContext.fetch(FetchDescriptor<ExpenseModel>())) ?? []
+        allExpenses.forEach {
+            if !defaultNames.contains($0.categoryName) {
+                $0.categoryName = "기타"
+            }
+        }
+
+        let allCategories = (try? modelContext.fetch(FetchDescriptor<CategoryModel>())) ?? []
+        allCategories.forEach { modelContext.delete($0) }
         defaultCategories().forEach { modelContext.insert($0) }
+
         try? modelContext.save()
     }
 
