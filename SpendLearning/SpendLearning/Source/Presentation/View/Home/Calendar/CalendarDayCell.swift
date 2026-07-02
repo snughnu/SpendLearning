@@ -99,8 +99,8 @@ private extension CalendarDayCell {
             dayLabel.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
 
             amountLabel.topAnchor.constraint(equalTo: circleView.bottomAnchor, constant: 2),
-            amountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 2),
-            amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -2),
+            amountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
         ])
     }
 }
