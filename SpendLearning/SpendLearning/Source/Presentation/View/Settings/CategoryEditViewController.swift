@@ -45,6 +45,7 @@ final class CategoryEditViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .DesignSystem.background
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         setup()
         prefill()
         updateSaveButton()
@@ -184,6 +185,10 @@ private extension CategoryEditViewController {
 
     @objc func nameFieldDidChange() {
         updateSaveButton()
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     func didTapSave() {
