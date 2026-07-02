@@ -17,15 +17,20 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
     }
 
     func fetchExpenses(year: Int, month: Int) async -> [Expense] {
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = 1
         let calendar = Calendar.current
-        let descriptor = FetchDescriptor<ExpenseModel>()
-        let models = (try? modelContext.fetch(descriptor)) ?? []
-        return models
-            .filter {
-                calendar.component(.year, from: $0.date) == year
-                && calendar.component(.month, from: $0.date) == month
-            }
-            .map { toExpense($0) }
+        guard let startDate = calendar.date(from: components),
+              let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)
+        else { return [] }
+
+        let predicate = #Predicate<ExpenseModel> { model in
+            model.date >= startDate && model.date < endDate
+        }
+        let descriptor = FetchDescriptor<ExpenseModel>(predicate: predicate)
+        return (try? modelContext.fetch(descriptor))?.map { toExpense($0) } ?? []
     }
 
     func addExpense(_ expense: Expense) async {
@@ -35,12 +40,12 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
     }
 
     func deleteExpense(_ expense: Expense) async {
-        let descriptor = FetchDescriptor<ExpenseModel>()
-        let models = (try? modelContext.fetch(descriptor)) ?? []
-        if let model = models.first(where: { $0.id == expense.id }) {
-            modelContext.delete(model)
-            try? modelContext.save()
-        }
+        let targetID = expense.id
+        let predicate = #Predicate<ExpenseModel> { $0.id == targetID }
+        let descriptor = FetchDescriptor<ExpenseModel>(predicate: predicate)
+        guard let model = try? modelContext.fetch(descriptor).first else { return }
+        modelContext.delete(model)
+        try? modelContext.save()
     }
 }
 
