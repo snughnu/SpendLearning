@@ -110,8 +110,7 @@ private extension HomeViewModel {
     func updateSelectedDay(from expenses: [Expense]) {
         let calendar = Calendar.current
         let filtered = expenses.filter {
-            guard let date = $0.date else { return false }
-            return calendar.isDate(date, inSameDayAs: selectedDate)
+            calendar.isDate($0.date, inSameDayAs: selectedDate)
         }
         selectedDayExpenses = filtered
         selectedDayTotal = filtered.reduce(0) { $0 + $1.amount }
@@ -138,8 +137,7 @@ private extension HomeViewModel {
             guard let date = calendar.date(from: components) else { continue }
             let isToday = calendar.isDate(date, inSameDayAs: today)
             let dayExpenses = expenses.filter {
-                guard let expenseDate = $0.date else { return false }
-                return calendar.isDate(expenseDate, inSameDayAs: date)
+                calendar.isDate($0.date, inSameDayAs: date)
             }
             let amount = dayExpenses.isEmpty ? nil : dayExpenses.reduce(0) { $0 + $1.amount }
             days.append(CalendarDay(date: date, amount: amount, isToday: isToday))

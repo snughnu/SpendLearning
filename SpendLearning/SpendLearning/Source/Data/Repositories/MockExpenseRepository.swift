@@ -17,9 +17,9 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
         components.year = year
         components.month = month
 
-        func date(_ day: Int) -> Date? {
+        func date(_ day: Int) -> Date {
             components.day = day
-            return calendar.date(from: components)
+            return calendar.date(from: components)!
         }
 
         return [
@@ -45,9 +45,8 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
     func fetchExpenses(year: Int, month: Int) async -> [Expense] {
         let calendar = Calendar.current
         return expenses.filter {
-            guard let date = $0.date else { return false }
-            let y = calendar.component(.year, from: date)
-            let m = calendar.component(.month, from: date)
+            let y = calendar.component(.year, from: $0.date)
+            let m = calendar.component(.month, from: $0.date)
             return y == year && m == month
         }
     }

@@ -12,14 +12,14 @@ import SwiftData
 final class ExpenseModel {
 
     var id: UUID
-    var date: Date?
+    var date: Date
     var categoryRawValue: String
     var memo: String?
     var amount: Int
 
     init(
         id: UUID = UUID(),
-        date: Date?,
+        date: Date,
         categoryRawValue: String,
         memo: String?,
         amount: Int

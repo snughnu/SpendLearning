@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -20,9 +21,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func makeTabBarController() -> UITabBarController {
-        let tabBar = UITabBarController()
-
-        let repository = MockExpenseRepository()
+        let container = try! ModelContainer(for: ExpenseModel.self)
+        let modelContext = ModelContext(container)
+        let repository = SwiftDataExpenseRepository(modelContext: modelContext)
         let expenseUseCase = ExpenseUseCase(repository: repository)
         let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
         let homeViewController = HomeViewController(viewModel: homeViewModel)
@@ -46,6 +47,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "slider.horizontal.3")
         )
 
+        let tabBar = UITabBarController()
         tabBar.viewControllers = [homeViewController, aiViewController, settingsViewController]
         tabBar.tabBar.tintColor = .DesignSystem.accent
 
