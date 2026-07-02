@@ -10,7 +10,7 @@ import UIKit
 final class SettingsRowView: UIView {
 
     // MARK: - UI
-    private let iconView = EmojiCircleView(emoji: "≡", size: 46)
+    private let iconView = IconCircleView(symbolName: "list.bullet", size: 46)
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let chevronImageView = UIImageView()

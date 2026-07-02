@@ -12,7 +12,6 @@ final class SettingsViewController: UIViewController {
 
     // MARK: - UI
     private let titleLabel = UILabel()
-    private let subtitleLabel = UILabel()
     private let categorySectionLabel = UILabel()
     private let categoryRowView = SettingsRowView()
 
@@ -67,7 +66,7 @@ private extension SettingsViewController {
     }
 
     func setupSubviews() {
-        [titleLabel, subtitleLabel, categorySectionLabel, categoryRowView].forEach {
+        [titleLabel, categorySectionLabel, categoryRowView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -88,10 +87,7 @@ private extension SettingsViewController {
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
 
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-            subtitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-
-            categorySectionLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 28),
+            categorySectionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 28),
             categorySectionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
 
             categoryRowView.topAnchor.constraint(equalTo: categorySectionLabel.bottomAnchor, constant: 8),
@@ -115,6 +111,7 @@ private extension SettingsViewController {
 
     func pushCategoryManage() {
         let manageVC = CategoryManageViewController(viewModel: viewModel)
-        navigationController?.pushViewController(manageVC, animated: true)
+        manageVC.modalPresentationStyle = .fullScreen
+        present(manageVC, animated: true)
     }
 }

@@ -11,9 +11,9 @@ import Combine
 final class CategoryManageViewController: UIViewController {
 
     // MARK: - UI
-    private let categoryHeaderView = UIView()
-    private let categoryTitleLabel = UILabel()
-    private let resetButton = UIButton()
+    private let navigationBar = CustomNavigationBar(
+        title: "카테고리 관리", leftButtonTitle: "뒤로", rightButtonTitle: "초기화"
+    )
     private let categoryCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()
@@ -114,45 +114,30 @@ extension CategoryManageViewController: UICollectionViewDataSource, UICollection
 private extension CategoryManageViewController {
 
     func setup() {
+        setupNavigationBar()
         setupSubviews()
-        setupLabels()
-        setupButtons()
+        setupAddButton()
         setupConstraints()
         setupCategoryCollectionView()
     }
 
+    func setupNavigationBar() {
+        navigationBar.onLeftAction = { [weak self] in
+            self?.dismiss(animated: true)
+        }
+        navigationBar.onRightAction = { [weak self] in
+            self?.didTapReset()
+        }
+    }
+
     func setupSubviews() {
-        [categoryHeaderView, categoryCollectionView, addButton].forEach {
+        [navigationBar, categoryCollectionView, addButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-
-        [categoryTitleLabel, resetButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            categoryHeaderView.addSubview($0)
-        }
     }
 
-    func setupLabels() {
-        categoryTitleLabel.text = "카테고리"
-        categoryTitleLabel.font = .systemFont(ofSize: 13, weight: .semibold)
-        categoryTitleLabel.textColor = .DesignSystem.subtitle
-    }
-
-    func setupButtons() {
-        var resetConfig = UIButton.Configuration.plain()
-        resetConfig.title = "초기화"
-        resetConfig.baseForegroundColor = .DesignSystem.subtitle
-        resetConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
-            var a = attrs
-            a.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-            return a
-        }
-        resetButton.configuration = resetConfig
-        resetButton.addAction(UIAction { [weak self] _ in
-            self?.didTapReset()
-        }, for: .touchUpInside)
-
+    func setupAddButton() {
         var addConfig = UIButton.Configuration.plain()
         addConfig.title = "+ 카테고리 추가"
         addConfig.baseForegroundColor = .DesignSystem.accent
@@ -171,18 +156,11 @@ private extension CategoryManageViewController {
         collectionHeightConstraint = categoryCollectionView.heightAnchor.constraint(equalToConstant: 0)
 
         NSLayoutConstraint.activate([
-            categoryHeaderView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            categoryHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            categoryHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            categoryHeaderView.heightAnchor.constraint(equalToConstant: 28),
+            navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            categoryTitleLabel.leadingAnchor.constraint(equalTo: categoryHeaderView.leadingAnchor),
-            categoryTitleLabel.centerYAnchor.constraint(equalTo: categoryHeaderView.centerYAnchor),
-
-            resetButton.trailingAnchor.constraint(equalTo: categoryHeaderView.trailingAnchor),
-            resetButton.centerYAnchor.constraint(equalTo: categoryHeaderView.centerYAnchor),
-
-            categoryCollectionView.topAnchor.constraint(equalTo: categoryHeaderView.bottomAnchor, constant: 8),
+            categoryCollectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
             categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             collectionHeightConstraint,
