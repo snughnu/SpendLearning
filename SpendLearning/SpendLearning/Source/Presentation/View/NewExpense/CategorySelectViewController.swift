@@ -10,6 +10,7 @@ import UIKit
 final class CategorySelectViewController: UIViewController {
 
     // MARK: - UI
+    private let navigationBar = CustomNavigationBar(title: "카테고리", leftButtonTitle: "취소")
     private let categoryCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()
@@ -78,7 +79,9 @@ extension CategorySelectViewController: UICollectionViewDataSource, UICollection
         let category = Category.allCases[indexPath.item]
         viewModel.didSelectCategory(category)
         let inputVC = ExpenseInputViewController(viewModel: viewModel)
-        navigationController?.pushViewController(inputVC, animated: true)
+        inputVC.modalPresentationStyle = .fullScreen
+        inputVC.modalTransitionStyle = .crossDissolve
+        present(inputVC, animated: true)
     }
 }
 
@@ -93,26 +96,27 @@ private extension CategorySelectViewController {
     }
 
     func setupNavigationBar() {
-        title = "카테고리"
-
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "취소",
-            style: .plain,
-            target: self,
-            action: #selector(didTapCancel)
-        )
+        navigationBar.onLeftAction = { [weak self] in
+            self?.dismiss(animated: true)
+        }
     }
 
     func setupSubviews() {
-        categoryCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(categoryCollectionView)
+        [navigationBar, categoryCollectionView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
     }
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            categoryCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            categoryCollectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
+            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             categoryCollectionView.heightAnchor.constraint(equalToConstant: CGFloat(Category.allCases.count) * 64),
         ])
     }
@@ -126,9 +130,5 @@ private extension CategorySelectViewController {
         categoryCollectionView.layer.cornerRadius = 16
         categoryCollectionView.dataSource = self
         categoryCollectionView.delegate = self
-    }
-
-    @objc func didTapCancel() {
-        dismiss(animated: true)
     }
 }

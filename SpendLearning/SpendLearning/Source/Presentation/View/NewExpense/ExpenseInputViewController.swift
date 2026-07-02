@@ -11,6 +11,11 @@ import Combine
 final class ExpenseInputViewController: UIViewController {
 
     // MARK: - UI
+    private lazy var navigationBar = CustomNavigationBar(
+        title: viewModel.selectedCategory?.displayName ?? "",
+        leftButtonTitle: "뒤로",
+        rightButtonTitle: "저장"
+    )
     private let amountLabel = UILabel()
     private let memoTextField = UITextField()
     private let amountTextField: UITextField = {
@@ -38,7 +43,6 @@ final class ExpenseInputViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .DesignSystem.background
         setup()
-
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -53,8 +57,12 @@ private extension ExpenseInputViewController {
     @objc func didTapSave() {
         Task {
             await viewModel.didSaveExpense()
-            dismiss(animated: true)
+            presentingViewController?.presentingViewController?.dismiss(animated: true)
         }
+    }
+
+    @objc func didTapBack() {
+        dismiss(animated: true)
     }
 
     @objc func didTapAmountLabel() {
@@ -87,16 +95,12 @@ private extension ExpenseInputViewController {
     }
 
     func setupNavigationBar() {
-        title = viewModel.selectedCategory?.displayName
-
-        let saveButton = UIBarButtonItem(
-            title: "저장",
-            style: .prominent,
-            target: self,
-            action: #selector(didTapSave)
-        )
-        saveButton.isEnabled = true
-        navigationItem.rightBarButtonItem = saveButton
+        navigationBar.onLeftAction = { [weak self] in
+            self?.didTapBack()
+        }
+        navigationBar.onRightAction = { [weak self] in
+            self?.didTapSave()
+        }
     }
 
     func setupSubviews() {
@@ -122,7 +126,7 @@ private extension ExpenseInputViewController {
         amountTextField.text = initialAmount == 0 ? "" : "\(initialAmount)"
         amountTextField.addTarget(self, action: #selector(amountDidChange), for: .editingChanged)
 
-        [amountLabel, memoTextField, amountTextField].forEach {
+        [navigationBar, amountLabel, memoTextField, amountTextField].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -130,13 +134,17 @@ private extension ExpenseInputViewController {
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            amountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 70),
+            navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            amountLabel.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 40),
             amountLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             amountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
 
             memoTextField.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 24),
-            memoTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            memoTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            memoTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            memoTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             memoTextField.heightAnchor.constraint(equalToConstant: 48),
         ])
     }

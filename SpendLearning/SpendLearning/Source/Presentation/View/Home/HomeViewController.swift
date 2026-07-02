@@ -483,8 +483,7 @@ private extension HomeViewController {
             editingExpense: expense
         )
         let categorySelectVC = CategorySelectViewController(viewModel: newExpenseViewModel)
-        let navi = UINavigationController(rootViewController: categorySelectVC)
-        navi.modalPresentationStyle = .fullScreen
-        present(navi, animated: true)
+        categorySelectVC.modalPresentationStyle = .fullScreen
+        present(categorySelectVC, animated: true)
     }
 }
