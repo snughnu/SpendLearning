@@ -10,7 +10,7 @@ import UIKit
 final class CategoryListCell: UICollectionViewCell {
 
     // MARK: - UI
-    private let iconView = IconCircleView(symbolName: "ellipsis.circle", size: 46)
+    private let iconView = EmojiCircleView(emoji: "📦", size: 46)
     private let titleLabel = UILabel()
     private let separator = UIView()
 
@@ -26,7 +26,7 @@ final class CategoryListCell: UICollectionViewCell {
 
     // MARK: - Configure
     func configure(category: Category) {
-        iconView.update(symbolName: category.symbolName)
+        iconView.update(emoji: category.emoji)
         titleLabel.text = category.displayName
     }
 
