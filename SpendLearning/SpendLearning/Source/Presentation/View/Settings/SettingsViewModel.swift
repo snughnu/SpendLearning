@@ -47,4 +47,9 @@ final class SettingsViewModel {
         await categoryUseCase.resetToDefault()
         categories = await categoryUseCase.fetchCategories()
     }
+
+    func reorderCategories(_ categories: [Category]) async {
+        await categoryUseCase.reorderCategories(categories)
+        self.categories = await categoryUseCase.fetchCategories()
+    }
 }

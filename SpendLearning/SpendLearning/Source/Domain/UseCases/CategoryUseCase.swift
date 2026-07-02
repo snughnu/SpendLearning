@@ -34,4 +34,8 @@ final class CategoryUseCase: CategoryUseCaseProtocol {
     func resetToDefault() async {
         await repository.resetToDefault()
     }
+
+    func reorderCategories(_ categories: [Category]) async {
+        await repository.reorderCategories(categories)
+    }
 }

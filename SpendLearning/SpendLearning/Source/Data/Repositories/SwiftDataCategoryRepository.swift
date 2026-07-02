@@ -26,7 +26,8 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
             try? modelContext.save()
             return defaultCategories().map { toCategory($0) }
         }
-        return models.map { toCategory($0) }
+        let categories = models.map { toCategory($0) }
+        return categories.filter { $0.isDeletable } + categories.filter { !$0.isDeletable }
     }
 
     func addCategory(name: String, emoji: String) async {
@@ -60,6 +61,17 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
         let all = (try? modelContext.fetch(descriptor)) ?? []
         all.forEach { modelContext.delete($0) }
         defaultCategories().forEach { modelContext.insert($0) }
+        try? modelContext.save()
+    }
+
+    func reorderCategories(_ categories: [Category]) async {
+        for (index, category) in categories.enumerated() {
+            let targetID = category.id
+            let predicate = #Predicate<CategoryModel> { $0.id == targetID }
+            let descriptor = FetchDescriptor<CategoryModel>(predicate: predicate)
+            guard let model = try? modelContext.fetch(descriptor).first else { continue }
+            model.order = index
+        }
         try? modelContext.save()
     }
 }

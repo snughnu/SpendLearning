@@ -13,4 +13,5 @@ protocol CategoryUseCaseProtocol {
     func updateCategory(_ category: Category, name: String, emoji: String) async
     func deleteCategory(_ category: Category) async
     func resetToDefault() async
+    func reorderCategories(_ categories: [Category]) async
 }

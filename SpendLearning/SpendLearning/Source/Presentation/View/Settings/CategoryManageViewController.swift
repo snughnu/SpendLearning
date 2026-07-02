@@ -108,7 +108,69 @@ extension CategoryManageViewController: UICollectionViewDataSource, UICollection
         didSelectItemAt indexPath: IndexPath
     ) {
         let category = viewModel.categories[indexPath.item]
+        guard category.isDeletable else { return }
         presentEditSheet(category: category)
+    }
+}
+
+// MARK: - Drag & Drop
+extension CategoryManageViewController: UICollectionViewDragDelegate, UICollectionViewDropDelegate {
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        itemsForBeginning session: UIDragSession,
+        at indexPath: IndexPath
+    ) -> [UIDragItem] {
+        let category = viewModel.categories[indexPath.item]
+        guard category.isDeletable else { return [] }
+        let provider = NSItemProvider(object: category.id.uuidString as NSString)
+        let dragItem = UIDragItem(itemProvider: provider)
+        dragItem.previewProvider = {
+            guard let cell = collectionView.cellForItem(at: indexPath) else { return nil }
+            let parameters = UIDragPreviewParameters()
+            parameters.visiblePath = UIBezierPath(
+                roundedRect: cell.bounds.insetBy(dx: 8, dy: 8),
+                cornerRadius: 5
+            )
+            return UIDragPreview(view: cell, parameters: parameters)
+        }
+        return [dragItem]
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        dropSessionDidUpdate session: UIDropSession,
+        withDestinationIndexPath destinationIndexPath: IndexPath?
+    ) -> UICollectionViewDropProposal {
+        guard collectionView.hasActiveDrag else {
+            return UICollectionViewDropProposal(operation: .forbidden)
+        }
+        if let dest = destinationIndexPath,
+           !viewModel.categories[dest.item].isDeletable {
+            return UICollectionViewDropProposal(operation: .forbidden)
+        }
+        return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        performDropWith coordinator: UICollectionViewDropCoordinator
+    ) {
+        guard let destinationIndexPath = coordinator.destinationIndexPath,
+              let sourceIndexPath = coordinator.items.first?.sourceIndexPath
+        else { return }
+
+        var reordered = viewModel.categories
+        let moved = reordered.remove(at: sourceIndexPath.item)
+        reordered.insert(moved, at: destinationIndexPath.item)
+
+        collectionView.performBatchUpdates {
+            collectionView.moveItem(at: sourceIndexPath, to: destinationIndexPath)
+        }
+
+        Task {
+            await viewModel.reorderCategories(reordered)
+        }
     }
 }
 
@@ -204,6 +266,9 @@ private extension CategoryManageViewController {
         categoryCollectionView.isScrollEnabled = false
         categoryCollectionView.dataSource = self
         categoryCollectionView.delegate = self
+        categoryCollectionView.dragDelegate = self
+        categoryCollectionView.dropDelegate = self
+        categoryCollectionView.dragInteractionEnabled = true
     }
 
     func loadCategories() {
