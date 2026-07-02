@@ -32,11 +32,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let statisticsViewController = StatisticsViewController()
-        statisticsViewController.tabBarItem = UITabBarItem(
-            title: "통계",
-            image: UIImage(systemName: "chart.bar"),
-            selectedImage: UIImage(systemName: "chart.bar.fill")
+        let aiViewController = AIViewController()
+        aiViewController.tabBarItem = UITabBarItem(
+            title: "AI",
+            image: UIImage(systemName: "brain"),
+            selectedImage: UIImage(systemName: "brain.fill")
         )
 
         let settingsViewController = SettingsViewController()
@@ -46,7 +46,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "slider.horizontal.3")
         )
 
-        tabBar.viewControllers = [homeViewController, statisticsViewController, settingsViewController]
+        tabBar.viewControllers = [homeViewController, aiViewController, settingsViewController]
         tabBar.tabBar.tintColor = .DesignSystem.accent
 
         return tabBar
