@@ -14,6 +14,8 @@ final class CategoryManageViewController: UIViewController {
     private let navigationBar = CustomNavigationBar(
         title: "카테고리 관리", leftButtonTitle: "뒤로", rightButtonTitle: "초기화"
     )
+    private let scrollView = UIScrollView()
+    private let scrollContentView = UIView()
     private let categoryCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewFlowLayout()
@@ -131,7 +133,17 @@ private extension CategoryManageViewController {
     }
 
     func setupSubviews() {
-        [navigationBar, categoryCollectionView, addButton].forEach {
+        scrollView.showsVerticalScrollIndicator = false
+
+        scrollContentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(scrollContentView)
+
+        [categoryCollectionView, addButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            scrollContentView.addSubview($0)
+        }
+
+        [navigationBar, scrollView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -160,13 +172,25 @@ private extension CategoryManageViewController {
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            categoryCollectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
-            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            scrollView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            scrollContentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            scrollContentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            scrollContentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            scrollContentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            scrollContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+
+            categoryCollectionView.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 24),
+            categoryCollectionView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
+            categoryCollectionView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -20),
             collectionHeightConstraint,
 
             addButton.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor, constant: 4),
-            addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            addButton.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
+            addButton.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -20),
         ])
     }
 
