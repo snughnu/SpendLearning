@@ -154,8 +154,8 @@ private extension CategoryEditViewController {
 
     func isValidEmoji(_ text: String) -> Bool {
         guard text.count == 1 else { return false }
-        let char = text.unicodeScalars.first!
-        return char.properties.isEmoji && char.properties.isEmojiPresentation
+        guard let scalar = text.unicodeScalars.first else { return false }
+        return scalar.properties.isEmoji
     }
 
     func updateSaveButton() {
