@@ -14,14 +14,10 @@ final class CategoryManageViewController: UIViewController {
     private let navigationBar = CustomNavigationBar(
         title: "카테고리 관리", leftButtonTitle: "뒤로", rightButtonTitle: "편집"
     )
-    private let scrollView = UIScrollView()
-    private let scrollContentView = UIView()
     private let categoryTableView = UITableView()
     private let addButton = UIButton()
     private let resetButton = UIButton()
-
-    // MARK: - Constraints
-    private var tableHeightConstraint: NSLayoutConstraint!
+    private let tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
 
     // MARK: - Properties
     private let viewModel: SettingsViewModel
@@ -54,10 +50,8 @@ private extension CategoryManageViewController {
     func bind() {
         viewModel.$categories
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] categories in
-                guard let self else { return }
-                self.tableHeightConstraint.constant = CGFloat(categories.count) * 64
-                self.categoryTableView.reloadData()
+            .sink { [weak self] _ in
+                self?.categoryTableView.reloadData()
             }
             .store(in: &cancellables)
     }
@@ -124,7 +118,8 @@ extension CategoryManageViewController: UITableViewDataSource, UITableViewDelega
 
     func tableView(
         _ tableView: UITableView,
-        targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath
+        targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath,
+        toProposedIndexPath proposedDestinationIndexPath: IndexPath
     ) -> IndexPath {
         let dest = viewModel.categories[proposedDestinationIndexPath.row]
         if !dest.isDeletable {
@@ -155,6 +150,22 @@ extension CategoryManageViewController: UITableViewDataSource, UITableViewDelega
         guard editingStyle == .delete else { return }
         didTapDelete(at: indexPath.row)
     }
+
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        guard viewModel.categories[indexPath.row].isDeletable else {
+            return UISwipeActionsConfiguration(actions: [])
+        }
+        let action = UIContextualAction(style: .destructive, title: nil) {
+            [weak self] _, _, completion in
+            self?.didTapDelete(at: indexPath.row)
+            completion(true)
+        }
+        action.image = UIImage(systemName: "trash")
+        return UISwipeActionsConfiguration(actions: [action])
+    }
 }
 
 // MARK: - Helper
@@ -162,8 +173,8 @@ private extension CategoryManageViewController {
 
     func setup() {
         setupNavigationBar()
+        setupFooterButtons()
         setupSubviews()
-        setupBottomButtons()
         setupConstraints()
         setupCategoryTableView()
     }
@@ -177,24 +188,7 @@ private extension CategoryManageViewController {
         }
     }
 
-    func setupSubviews() {
-        scrollView.showsVerticalScrollIndicator = false
-
-        scrollContentView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(scrollContentView)
-
-        [categoryTableView, addButton, resetButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            scrollContentView.addSubview($0)
-        }
-
-        [navigationBar, scrollView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview($0)
-        }
-    }
-
-    func setupBottomButtons() {
+    func setupFooterButtons() {
         var addConfig = UIButton.Configuration.plain()
         addConfig.title = "+ 카테고리 추가"
         addConfig.baseForegroundColor = .DesignSystem.accent
@@ -204,7 +198,6 @@ private extension CategoryManageViewController {
             return a
         }
         addButton.configuration = addConfig
-        addButton.isHidden = true
         addButton.addAction(UIAction { [weak self] _ in
             self?.presentEditSheet(category: nil)
         }, for: .touchUpInside)
@@ -218,50 +211,57 @@ private extension CategoryManageViewController {
             return a
         }
         resetButton.configuration = resetConfig
-        resetButton.isHidden = true
         resetButton.addAction(UIAction { [weak self] _ in
             self?.didTapReset()
         }, for: .touchUpInside)
+
+        addButton.isHidden = true
+        resetButton.isHidden = true
+
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 52))
+        footerView.isHidden = true
+
+        [addButton, resetButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            tableFooterView.addSubview($0)
+        }
+
+        NSLayoutConstraint.activate([
+            addButton.leadingAnchor.constraint(equalTo: tableFooterView.leadingAnchor, constant: 4),
+            addButton.centerYAnchor.constraint(equalTo: tableFooterView.centerYAnchor),
+
+            resetButton.trailingAnchor.constraint(equalTo: tableFooterView.trailingAnchor, constant: -4),
+            resetButton.centerYAnchor.constraint(equalTo: tableFooterView.centerYAnchor),
+        ])
+
+        categoryTableView.tableFooterView = tableFooterView
+    }
+
+    func setupSubviews() {
+        [navigationBar, categoryTableView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
     }
 
     func setupConstraints() {
-        tableHeightConstraint = categoryTableView.heightAnchor.constraint(equalToConstant: 0)
-
         NSLayoutConstraint.activate([
             navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            scrollView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-            scrollContentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            scrollContentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            scrollContentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            scrollContentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            scrollContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-
-            categoryTableView.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 24),
-            categoryTableView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
-            categoryTableView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -20),
-            tableHeightConstraint,
-
-            addButton.topAnchor.constraint(equalTo: categoryTableView.bottomAnchor, constant: 4),
-            addButton.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
-            addButton.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -20),
-
-            resetButton.centerYAnchor.constraint(equalTo: addButton.centerYAnchor),
-            resetButton.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -20),
-            resetButton.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -20),
+            categoryTableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
+            categoryTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            categoryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            categoryTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
 
     func setupCategoryTableView() {
         categoryTableView.backgroundColor = .DesignSystem.surface
         categoryTableView.layer.cornerRadius = 16
-        categoryTableView.isScrollEnabled = false
+        categoryTableView.isScrollEnabled = true
+        categoryTableView.showsVerticalScrollIndicator = false
         categoryTableView.separatorStyle = .none
         categoryTableView.dataSource = self
         categoryTableView.delegate = self
@@ -281,10 +281,10 @@ private extension CategoryManageViewController {
         isEditingMode.toggle()
         navigationBar.updateRightButton(title: isEditingMode ? "완료" : "편집")
         categoryTableView.setEditing(isEditingMode, animated: true)
-        UIView.animate(withDuration: 0.2) {
-            self.addButton.isHidden = !self.isEditingMode
-            self.resetButton.isHidden = !self.isEditingMode
-        }
+        addButton.isHidden = !isEditingMode
+        resetButton.isHidden = !isEditingMode
+        tableFooterView.frame.size.height = isEditingMode ? 52 : 0
+        categoryTableView.tableFooterView = tableFooterView
     }
 
     func didTapDelete(at index: Int) {

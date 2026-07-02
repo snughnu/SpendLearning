@@ -11,12 +11,7 @@ final class CategorySelectViewController: UIViewController {
 
     // MARK: - UI
     private let navigationBar = CustomNavigationBar(title: "카테고리", leftButtonTitle: "취소")
-    private let scrollView = UIScrollView()
-    private let scrollContentView = UIView()
     private let categoryTableView = UITableView()
-
-    // MARK: - Constraints
-    private var tableHeightConstraint: NSLayoutConstraint!
 
     // MARK: - Properties
     private let viewModel: NewExpenseViewModel
@@ -86,51 +81,30 @@ private extension CategorySelectViewController {
     }
 
     func setupSubviews() {
-        scrollView.showsVerticalScrollIndicator = false
-
-        scrollContentView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(scrollContentView)
-
-        categoryTableView.translatesAutoresizingMaskIntoConstraints = false
-        scrollContentView.addSubview(categoryTableView)
-
-        [navigationBar, scrollView].forEach {
+        [navigationBar, categoryTableView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
     }
 
     func setupConstraints() {
-        tableHeightConstraint = categoryTableView.heightAnchor.constraint(equalToConstant: 0)
-
         NSLayoutConstraint.activate([
             navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            scrollView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-            scrollContentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            scrollContentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            scrollContentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            scrollContentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            scrollContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-
-            categoryTableView.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 24),
-            categoryTableView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
-            categoryTableView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -20),
-            categoryTableView.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -24),
-            tableHeightConstraint,
+            categoryTableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
+            categoryTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            categoryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            categoryTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
 
     func setupCategoryTableView() {
         categoryTableView.backgroundColor = .DesignSystem.surface
         categoryTableView.layer.cornerRadius = 16
-        categoryTableView.isScrollEnabled = false
+        categoryTableView.isScrollEnabled = true
+        categoryTableView.showsVerticalScrollIndicator = false
         categoryTableView.separatorStyle = .none
         categoryTableView.dataSource = self
         categoryTableView.delegate = self
@@ -143,7 +117,6 @@ private extension CategorySelectViewController {
     func loadCategories() {
         Task {
             await viewModel.loadCategories()
-            tableHeightConstraint.constant = CGFloat(viewModel.categories.count) * 64
             categoryTableView.reloadData()
         }
     }
