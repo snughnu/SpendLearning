@@ -218,9 +218,6 @@ private extension CategoryManageViewController {
         addButton.isHidden = true
         resetButton.isHidden = true
 
-        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 52))
-        footerView.isHidden = true
-
         [addButton, resetButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             tableFooterView.addSubview($0)
