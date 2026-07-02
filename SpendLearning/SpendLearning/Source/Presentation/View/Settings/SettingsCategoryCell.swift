@@ -30,11 +30,11 @@ final class SettingsCategoryCell: UICollectionViewCell {
     }
 
     // MARK: - Configure
-    func configure(category: Category) {
+    func configure(category: Category, showActions: Bool = true) {
         iconView.update(emoji: category.emoji)
         titleLabel.text = category.displayName
-        deleteButton.isHidden = !category.isDeletable
-        dragHandleImageView.isHidden = !category.isDeletable
+        deleteButton.isHidden = !showActions || !category.isDeletable
+        dragHandleImageView.isHidden = !showActions || !category.isDeletable
     }
 
     override func prepareForReuse() {
@@ -42,6 +42,7 @@ final class SettingsCategoryCell: UICollectionViewCell {
         titleLabel.text = nil
         onDelete = nil
         deleteButton.isHidden = false
+        dragHandleImageView.isHidden = false
     }
 }
 
@@ -49,7 +50,7 @@ final class SettingsCategoryCell: UICollectionViewCell {
 private extension SettingsCategoryCell {
 
     func setup() {
-        titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+        titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         titleLabel.textColor = .DesignSystem.primary
 
         let handleConfig = UIImage.SymbolConfiguration(pointSize: 10, weight: .medium)

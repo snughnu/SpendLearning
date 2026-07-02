@@ -17,9 +17,9 @@ final class CategorySelectViewController: UIViewController {
     )
 
     // MARK: - Cell Registration
-    private let categoryCellRegistration = UICollectionView.CellRegistration<CategoryListCell, Category> {
+    private let categoryCellRegistration = UICollectionView.CellRegistration<SettingsCategoryCell, Category> {
         cell, _, category in
-        cell.configure(category: category)
+        cell.configure(category: category, showActions: false)
     }
 
     // MARK: - Properties
