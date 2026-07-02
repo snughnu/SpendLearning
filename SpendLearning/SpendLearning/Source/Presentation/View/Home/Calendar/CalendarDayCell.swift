@@ -79,7 +79,9 @@ private extension CalendarDayCell {
         dayLabel.textAlignment = .center
         dayLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        amountLabel.font = .systemFont(ofSize: 10, weight: .bold)
+        amountLabel.font = .systemFont(ofSize: 9, weight: .bold)
+        amountLabel.adjustsFontSizeToFitWidth = true
+        amountLabel.minimumScaleFactor = 0.5
         amountLabel.textAlignment = .center
         amountLabel.translatesAutoresizingMaskIntoConstraints = false
 
@@ -97,7 +99,8 @@ private extension CalendarDayCell {
             dayLabel.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
 
             amountLabel.topAnchor.constraint(equalTo: circleView.bottomAnchor, constant: 2),
-            amountLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            amountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            amountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
         ])
     }
 }

@@ -123,6 +123,9 @@ private extension ExpenseInputViewController {
         memoTextField.layer.cornerRadius = 12
         memoTextField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         memoTextField.leftViewMode = .always
+        memoTextField.keyboardType = .default
+        memoTextField.autocapitalizationType = .none
+        memoTextField.autocorrectionType = .no
         memoTextField.delegate = self
 
         amountTextField.text = initialAmount == 0 ? "" : "\(initialAmount)"

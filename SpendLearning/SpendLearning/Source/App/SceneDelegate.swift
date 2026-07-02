@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -20,9 +21,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func makeTabBarController() -> UITabBarController {
-        let tabBar = UITabBarController()
-
-        let repository = MockExpenseRepository()
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: ExpenseModel.self)
+        } catch {
+            container = try! ModelContainer(for: ExpenseModel.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        }
+        let modelContext = ModelContext(container)
+        let repository = SwiftDataExpenseRepository(modelContext: modelContext)
         let expenseUseCase = ExpenseUseCase(repository: repository)
         let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
         let homeViewController = HomeViewController(viewModel: homeViewModel)
@@ -32,11 +38,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let statisticsViewController = StatisticsViewController()
-        statisticsViewController.tabBarItem = UITabBarItem(
-            title: "통계",
-            image: UIImage(systemName: "chart.bar"),
-            selectedImage: UIImage(systemName: "chart.bar.fill")
+        let aiViewController = AIViewController()
+        aiViewController.tabBarItem = UITabBarItem(
+            title: "AI",
+            image: UIImage(systemName: "brain"),
+            selectedImage: UIImage(systemName: "brain.fill")
         )
 
         let settingsViewController = SettingsViewController()
@@ -46,7 +52,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "slider.horizontal.3")
         )
 
-        tabBar.viewControllers = [homeViewController, statisticsViewController, settingsViewController]
+        let tabBar = UITabBarController()
+        tabBar.viewControllers = [homeViewController, aiViewController, settingsViewController]
         tabBar.tabBar.tintColor = .DesignSystem.accent
 
         return tabBar

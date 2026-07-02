@@ -12,8 +12,6 @@ final class HomeViewController: UIViewController {
 
     // MARK: - UI
     private let monthSelectorView = MonthSelectorView()
-    private let aiCommentContainerView = UIView()
-    private let aiCommentLabel = UILabel()
     private let totalTitleLabel = UILabel()
     private let totalAmountLabel = UILabel()
     private let todayButton = UIButton()
@@ -92,12 +90,6 @@ private extension HomeViewController {
             .combineLatest(viewModel.$currentMonth)
             .sink { [weak self] year, month in
                 self?.monthSelectorView.configure(year: year, month: month)
-            }
-            .store(in: &cancellables)
-
-        viewModel.$aiComment
-            .sink { [weak self] comment in
-                self?.aiCommentLabel.text = comment
             }
             .store(in: &cancellables)
 
@@ -253,14 +245,11 @@ private extension HomeViewController {
     }
 
     func setupSubviews() {
-        [monthSelectorView, aiCommentContainerView, totalTitleLabel,
+        [monthSelectorView, totalTitleLabel,
          totalAmountLabel, todayButton, scrollView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-
-        aiCommentLabel.translatesAutoresizingMaskIntoConstraints = false
-        aiCommentContainerView.addSubview(aiCommentLabel)
 
         scrollContentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(scrollContentView)
@@ -277,13 +266,6 @@ private extension HomeViewController {
     }
 
     func setupLabels() {
-        aiCommentContainerView.backgroundColor = .DesignSystem.secondary
-        aiCommentContainerView.layer.cornerRadius = 16
-
-        aiCommentLabel.font = .systemFont(ofSize: 13.5, weight: .semibold)
-        aiCommentLabel.textColor = .DesignSystem.primary
-        aiCommentLabel.numberOfLines = 0
-
         totalTitleLabel.text = "총 지출"
         totalTitleLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         totalTitleLabel.textColor = .DesignSystem.subtitle
@@ -325,16 +307,7 @@ private extension HomeViewController {
             monthSelectorView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             monthSelectorView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
 
-            aiCommentContainerView.topAnchor.constraint(equalTo: monthSelectorView.bottomAnchor, constant: 16),
-            aiCommentContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            aiCommentContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-
-            aiCommentLabel.topAnchor.constraint(equalTo: aiCommentContainerView.topAnchor, constant: 13),
-            aiCommentLabel.bottomAnchor.constraint(equalTo: aiCommentContainerView.bottomAnchor, constant: -13),
-            aiCommentLabel.leadingAnchor.constraint(equalTo: aiCommentContainerView.leadingAnchor, constant: 15),
-            aiCommentLabel.trailingAnchor.constraint(equalTo: aiCommentContainerView.trailingAnchor, constant: -15),
-
-            totalTitleLabel.topAnchor.constraint(equalTo: aiCommentContainerView.bottomAnchor, constant: 16),
+            totalTitleLabel.topAnchor.constraint(equalTo: monthSelectorView.bottomAnchor, constant: 16),
             totalTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
 
             totalAmountLabel.topAnchor.constraint(equalTo: totalTitleLabel.bottomAnchor, constant: 2),

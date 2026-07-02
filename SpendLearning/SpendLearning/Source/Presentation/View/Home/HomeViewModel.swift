@@ -19,7 +19,6 @@ final class HomeViewModel {
     @Published private(set) var selectedDayExpenses: [Expense] = []
     @Published private(set) var selectedDayTotal: Int = 0
     @Published private(set) var totalAmount: Int = 0
-    @Published private(set) var aiComment: String = ""
     @Published private(set) var calendarWeekCount: Int = 6
 
     let expenseUseCase: ExpenseUseCaseProtocol
@@ -100,7 +99,6 @@ final class HomeViewModel {
             let expenses = await expenseUseCase.fetch(year: currentYear, month: currentMonth)
             calendarDays = makeCalendarDays(year: currentYear, month: currentMonth, expenses: expenses)
             totalAmount = expenses.reduce(0) { $0 + $1.amount }
-            aiComment = "이번 달 카페 지출만 벌써 9번째, 이쯤 되면 취미 아니야?"
             updateSelectedDay(from: expenses)
         }
     }
@@ -112,8 +110,7 @@ private extension HomeViewModel {
     func updateSelectedDay(from expenses: [Expense]) {
         let calendar = Calendar.current
         let filtered = expenses.filter {
-            guard let date = $0.date else { return false }
-            return calendar.isDate(date, inSameDayAs: selectedDate)
+            calendar.isDate($0.date, inSameDayAs: selectedDate)
         }
         selectedDayExpenses = filtered
         selectedDayTotal = filtered.reduce(0) { $0 + $1.amount }
@@ -140,8 +137,7 @@ private extension HomeViewModel {
             guard let date = calendar.date(from: components) else { continue }
             let isToday = calendar.isDate(date, inSameDayAs: today)
             let dayExpenses = expenses.filter {
-                guard let expenseDate = $0.date else { return false }
-                return calendar.isDate(expenseDate, inSameDayAs: date)
+                calendar.isDate($0.date, inSameDayAs: date)
             }
             let amount = dayExpenses.isEmpty ? nil : dayExpenses.reduce(0) { $0 + $1.amount }
             days.append(CalendarDay(date: date, amount: amount, isToday: isToday))
