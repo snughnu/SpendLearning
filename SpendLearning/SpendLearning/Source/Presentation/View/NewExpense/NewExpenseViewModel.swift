@@ -1,5 +1,5 @@
 //
-//  AddExpenseViewModel.swift
+//  NewExpenseViewModel.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/2/26.
@@ -9,11 +9,10 @@ import Foundation
 import Combine
 
 @MainActor
-final class AddExpenseViewModel {
+final class NewExpenseViewModel {
 
     // MARK: - Output
     @Published private(set) var selectedCategory: Category?
-    @Published private(set) var isSaveEnabled: Bool = false
 
     // MARK: - Private
     private let expenseUseCase: ExpenseUseCaseProtocol
@@ -28,14 +27,12 @@ final class AddExpenseViewModel {
     }
 
     // MARK: - Input
-    func didInputAmount(_ amount: Int) {
-        self.amount = amount
-        updateSaveEnabled()
-    }
-
     func didSelectCategory(_ category: Category) {
         selectedCategory = category
-        updateSaveEnabled()
+    }
+
+    func didInputAmount(_ amount: Int) {
+        self.amount = amount
     }
 
     func didInputMemo(_ memo: String) {
@@ -43,7 +40,7 @@ final class AddExpenseViewModel {
     }
 
     func didSaveExpense() async {
-        guard isSaveEnabled, let category = selectedCategory else { return }
+        guard let category = selectedCategory else { return }
         let expense = Expense(
             date: date,
             category: category,
@@ -51,13 +48,5 @@ final class AddExpenseViewModel {
             amount: amount
         )
         await expenseUseCase.add(expense)
-    }
-}
-
-// MARK: - Helper
-private extension AddExpenseViewModel {
-
-    func updateSaveEnabled() {
-        isSaveEnabled = amount > 0 && selectedCategory != nil
     }
 }

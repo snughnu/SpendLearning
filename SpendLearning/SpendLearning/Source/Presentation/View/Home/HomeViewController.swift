@@ -19,10 +19,16 @@ final class HomeViewController: UIViewController {
     private let todayButton = UIButton()
     private let scrollView = UIScrollView()
     private let scrollContentView = UIView()
-    private let calendarCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    private let calendarCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewLayout()
+    )
     private let expenseDateLabel = UILabel()
     private let expenseTotalLabel = UILabel()
-    private let expenseCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    private let expenseCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewLayout()
+    )
     private let fabButton = UIButton()
 
     // MARK: - Constraints
@@ -70,6 +76,11 @@ final class HomeViewController: UIViewController {
         super.viewDidLoad()
         setup()
         bind()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.updateCalendar()
     }
 }
 
@@ -466,8 +477,12 @@ private extension HomeViewController {
     }
 
     func presentAddExpense(expense: Expense? = nil) {
-        let viewController = AddExpenseViewController()
-        let navi = UINavigationController(rootViewController: viewController)
+        let newExpenseViewModel = NewExpenseViewModel(
+            expenseUseCase: viewModel.expenseUseCase,
+            date: viewModel.selectedDate
+        )
+        let categorySelectVC = CategorySelectViewController(viewModel: newExpenseViewModel)
+        let navi = UINavigationController(rootViewController: categorySelectVC)
         navi.modalPresentationStyle = .fullScreen
         present(navi, animated: true)
     }
