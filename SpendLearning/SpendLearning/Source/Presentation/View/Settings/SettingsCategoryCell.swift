@@ -52,14 +52,18 @@ private extension SettingsCategoryCell {
         titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         titleLabel.textColor = .DesignSystem.primary
 
-        let handleConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let handleConfig = UIImage.SymbolConfiguration(pointSize: 10, weight: .medium)
         dragHandleImageView.image = UIImage(systemName: "line.3.horizontal", withConfiguration: handleConfig)
         dragHandleImageView.tintColor = .DesignSystem.subtitle
         dragHandleImageView.contentMode = .scaleAspectFit
 
         var config = UIButton.Configuration.plain()
-        config.image = UIImage(systemName: "minus.circle.fill")
-        config.baseForegroundColor = .systemRed
+        config.image = UIImage(
+            systemName: "trash",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 10, weight: .regular)
+        )
+        config.baseForegroundColor = .DesignSystem.subtitle
+        config.contentInsets = .zero
         deleteButton.configuration = config
         deleteButton.addAction(UIAction { [weak self] _ in
             self?.onDelete?()
