@@ -7,11 +7,19 @@
 
 import UIKit
 
+private final class EmojiTextField: UITextField {
+    override var textInputContextIdentifier: String? { "" }
+    override var textInputMode: UITextInputMode? {
+        UITextInputMode.activeInputModes.first { $0.primaryLanguage == "emoji" }
+    }
+}
+
 final class CategoryEditViewController: UIViewController {
 
     // MARK: - UI
     private let titleLabel = UILabel()
-    private let emojiField = UITextField()
+    private let emojiField = EmojiTextField()
+    private let emojiGuideLabel = UILabel()
     private let nameField = UITextField()
     private let saveButton = UIButton()
 
@@ -39,11 +47,12 @@ final class CategoryEditViewController: UIViewController {
         view.backgroundColor = .DesignSystem.background
         setup()
         prefill()
+        updateSaveButton()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        nameField.becomeFirstResponder()
+        emojiField.becomeFirstResponder()
     }
 }
 
@@ -59,7 +68,7 @@ private extension CategoryEditViewController {
     }
 
     func setupSubviews() {
-        [titleLabel, emojiField, nameField, saveButton].forEach {
+        [titleLabel, emojiField, emojiGuideLabel, nameField, saveButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -70,15 +79,20 @@ private extension CategoryEditViewController {
         titleLabel.font = .systemFont(ofSize: 17, weight: .bold)
         titleLabel.textColor = .DesignSystem.primary
         titleLabel.textAlignment = .center
+
+        emojiGuideLabel.text = "이모지 1개를 입력해주세요"
+        emojiGuideLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        emojiGuideLabel.textColor = .DesignSystem.subtitle
+        emojiGuideLabel.textAlignment = .center
     }
 
     func setupFields() {
-        emojiField.placeholder = "이모지"
-        emojiField.font = .systemFont(ofSize: 32)
+        emojiField.font = .systemFont(ofSize: 36)
         emojiField.textAlignment = .center
         emojiField.backgroundColor = .DesignSystem.surface
         emojiField.layer.cornerRadius = 12
         emojiField.autocorrectionType = .no
+        emojiField.addTarget(self, action: #selector(emojiFieldDidChange), for: .editingChanged)
 
         nameField.placeholder = "카테고리 이름"
         nameField.font = .systemFont(ofSize: 16, weight: .semibold)
@@ -87,6 +101,7 @@ private extension CategoryEditViewController {
         nameField.layer.cornerRadius = 12
         nameField.autocorrectionType = .no
         nameField.autocapitalizationType = .none
+        nameField.addTarget(self, action: #selector(nameFieldDidChange), for: .editingChanged)
 
         let namePadding = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         nameField.leftView = namePadding
@@ -97,6 +112,7 @@ private extension CategoryEditViewController {
         saveButton.backgroundColor = .DesignSystem.primary
         saveButton.setTitle("저장", for: .normal)
         saveButton.setTitleColor(.white, for: .normal)
+        saveButton.setTitleColor(.white.withAlphaComponent(0.4), for: .disabled)
         saveButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         saveButton.layer.cornerRadius = 14
         saveButton.addAction(UIAction { [weak self] _ in
@@ -114,7 +130,10 @@ private extension CategoryEditViewController {
             emojiField.widthAnchor.constraint(equalToConstant: 72),
             emojiField.heightAnchor.constraint(equalToConstant: 72),
 
-            nameField.topAnchor.constraint(equalTo: emojiField.bottomAnchor, constant: 30),
+            emojiGuideLabel.topAnchor.constraint(equalTo: emojiField.bottomAnchor, constant: 8),
+            emojiGuideLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+            nameField.topAnchor.constraint(equalTo: emojiGuideLabel.bottomAnchor, constant: 20),
             nameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             nameField.heightAnchor.constraint(equalToConstant: 52),
@@ -132,11 +151,46 @@ private extension CategoryEditViewController {
         nameField.text = category.name
     }
 
-    func didTapSave() {
-        let emoji = emojiField.text?.trimmingCharacters(in: .whitespaces) ?? ""
+    func isValidEmoji(_ text: String) -> Bool {
+        guard text.count == 1 else { return false }
+        let char = text.unicodeScalars.first!
+        return char.properties.isEmoji && char.properties.isEmojiPresentation
+    }
+
+    func updateSaveButton() {
+        let emoji = emojiField.text ?? ""
         let name = nameField.text?.trimmingCharacters(in: .whitespaces) ?? ""
-        guard !name.isEmpty else { return }
-        onSave(name, emoji.isEmpty ? "📦" : emoji)
+        let valid = isValidEmoji(emoji) && !name.isEmpty
+        saveButton.isEnabled = valid
+        saveButton.alpha = valid ? 1.0 : 0.4
+    }
+
+    @objc func emojiFieldDidChange() {
+        let text = emojiField.text ?? ""
+        if text.count > 1 {
+            emojiField.text = String(text.prefix(1))
+        }
+        let emoji = emojiField.text ?? ""
+        if !emoji.isEmpty && !isValidEmoji(emoji) {
+            emojiGuideLabel.text = "이모지만 입력 가능해요"
+            emojiGuideLabel.textColor = .systemRed
+            emojiField.text = ""
+        } else {
+            emojiGuideLabel.text = "이모지 1개를 입력해주세요"
+            emojiGuideLabel.textColor = .DesignSystem.subtitle
+        }
+        updateSaveButton()
+    }
+
+    @objc func nameFieldDidChange() {
+        updateSaveButton()
+    }
+
+    func didTapSave() {
+        let emoji = emojiField.text ?? ""
+        let name = nameField.text?.trimmingCharacters(in: .whitespaces) ?? ""
+        guard isValidEmoji(emoji), !name.isEmpty else { return }
+        onSave(name, emoji)
         dismiss(animated: true)
     }
 }
