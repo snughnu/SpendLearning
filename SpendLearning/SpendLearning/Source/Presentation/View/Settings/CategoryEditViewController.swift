@@ -20,7 +20,10 @@ final class CategoryEditViewController: UIViewController {
     private let onSave: (String, String) -> Void
 
     // MARK: - Init
-    init(category: Category?, onSave: @escaping (String, String) -> Void) {
+    init(
+        category: Category?,
+        onSave: @escaping (String, String) -> Void
+    ) {
         self.category = category
         self.onSave = onSave
         super.init(nibName: nil, bundle: nil)
@@ -91,12 +94,11 @@ private extension CategoryEditViewController {
     }
 
     func setupSaveButton() {
-        var config = UIButton.Configuration.filled()
-        config.title = "저장"
-        config.baseBackgroundColor = .DesignSystem.accent
-        config.baseForegroundColor = .white
-        config.cornerStyle = .medium
-        saveButton.configuration = config
+        saveButton.backgroundColor = .DesignSystem.primary
+        saveButton.setTitle("저장", for: .normal)
+        saveButton.setTitleColor(.white, for: .normal)
+        saveButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        saveButton.layer.cornerRadius = 14
         saveButton.addAction(UIAction { [weak self] _ in
             self?.didTapSave()
         }, for: .touchUpInside)
@@ -112,12 +114,12 @@ private extension CategoryEditViewController {
             emojiField.widthAnchor.constraint(equalToConstant: 72),
             emojiField.heightAnchor.constraint(equalToConstant: 72),
 
-            nameField.topAnchor.constraint(equalTo: emojiField.bottomAnchor, constant: 16),
+            nameField.topAnchor.constraint(equalTo: emojiField.bottomAnchor, constant: 30),
             nameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             nameField.heightAnchor.constraint(equalToConstant: 52),
 
-            saveButton.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 24),
+            saveButton.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 100),
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             saveButton.heightAnchor.constraint(equalToConstant: 52),
