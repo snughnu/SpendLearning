@@ -57,8 +57,8 @@ private extension CategoryListCell {
             titleLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 16),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 16),
             separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             separator.heightAnchor.constraint(equalToConstant: 0.5),
         ])

@@ -56,11 +56,10 @@ extension CategorySelectViewController: UICollectionViewDataSource, UICollection
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let category = Category.allCases[indexPath.item]
-        return collectionView.dequeueConfiguredReusableCell(
+        collectionView.dequeueConfiguredReusableCell(
             using: categoryCellRegistration,
             for: indexPath,
-            item: category
+            item: Category.allCases[indexPath.item]
         )
     }
 
@@ -69,7 +68,7 @@ extension CategorySelectViewController: UICollectionViewDataSource, UICollection
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 64)
+        CGSize(width: collectionView.bounds.width, height: 64)
     }
 
     func collectionView(
