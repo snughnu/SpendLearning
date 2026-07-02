@@ -114,7 +114,7 @@ private extension CategorySelectViewController {
             categoryCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            categoryCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            categoryCollectionView.heightAnchor.constraint(equalToConstant: CGFloat(Category.allCases.count) * 64),
         ])
     }
 
