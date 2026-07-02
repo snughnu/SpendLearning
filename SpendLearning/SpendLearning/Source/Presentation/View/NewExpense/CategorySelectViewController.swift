@@ -80,7 +80,6 @@ extension CategorySelectViewController: UICollectionViewDataSource, UICollection
         viewModel.didSelectCategory(category)
         let inputVC = ExpenseInputViewController(viewModel: viewModel)
         inputVC.modalPresentationStyle = .fullScreen
-        inputVC.modalTransitionStyle = .crossDissolve
         present(inputVC, animated: true)
     }
 }

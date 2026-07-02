@@ -110,6 +110,8 @@ private extension ExpenseInputViewController {
         amountLabel.textColor = .DesignSystem.primary
         amountLabel.textAlignment = .center
         amountLabel.isUserInteractionEnabled = true
+        amountLabel.adjustsFontSizeToFitWidth = true
+        amountLabel.minimumScaleFactor = 0.5
         amountLabel.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(didTapAmountLabel))
         )
@@ -138,11 +140,11 @@ private extension ExpenseInputViewController {
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            amountLabel.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 40),
+            amountLabel.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 70),
             amountLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             amountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
 
-            memoTextField.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 24),
+            memoTextField.topAnchor.constraint(equalTo: amountLabel.bottomAnchor, constant: 60),
             memoTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             memoTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             memoTextField.heightAnchor.constraint(equalToConstant: 48),

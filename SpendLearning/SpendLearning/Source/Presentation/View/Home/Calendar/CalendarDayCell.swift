@@ -75,11 +75,11 @@ private extension CalendarDayCell {
         circleView.layer.cornerRadius = circleViewSize / 2
         circleView.translatesAutoresizingMaskIntoConstraints = false
 
-        dayLabel.font = .systemFont(ofSize: 12.5, weight: .bold)
+        dayLabel.font = .systemFont(ofSize: 14, weight: .bold)
         dayLabel.textAlignment = .center
         dayLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        amountLabel.font = .systemFont(ofSize: 8.5, weight: .bold)
+        amountLabel.font = .systemFont(ofSize: 10, weight: .bold)
         amountLabel.textAlignment = .center
         amountLabel.translatesAutoresizingMaskIntoConstraints = false
 
