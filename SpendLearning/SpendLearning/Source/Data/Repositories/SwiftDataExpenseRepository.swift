@@ -19,7 +19,7 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
     func fetchExpenses(year: Int, month: Int) async -> [Expense] {
         let calendar = Calendar.current
         let descriptor = FetchDescriptor<ExpenseModel>()
-        let models = try! modelContext.fetch(descriptor)
+        let models = (try? modelContext.fetch(descriptor)) ?? []
         return models
             .filter {
                 calendar.component(.year, from: $0.date) == year

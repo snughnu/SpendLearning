@@ -21,7 +21,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func makeTabBarController() -> UITabBarController {
-        let container = try! ModelContainer(for: ExpenseModel.self)
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: ExpenseModel.self)
+        } catch {
+            container = try! ModelContainer(for: ExpenseModel.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        }
         let modelContext = ModelContext(container)
         let repository = SwiftDataExpenseRepository(modelContext: modelContext)
         let expenseUseCase = ExpenseUseCase(repository: repository)
