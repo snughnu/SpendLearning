@@ -23,15 +23,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeTabBarController() -> UITabBarController {
         let container: ModelContainer
         do {
-            container = try ModelContainer(for: ExpenseModel.self)
+            container = try ModelContainer(for: ExpenseModel.self, CategoryModel.self)
         } catch {
-            container = try! ModelContainer(for: ExpenseModel.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+            container = try! ModelContainer(
+                for: ExpenseModel.self, CategoryModel.self,
+                configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            )
         }
         let modelContext = ModelContext(container)
-        let repository = SwiftDataExpenseRepository(modelContext: modelContext)
-        let expenseUseCase = ExpenseUseCase(repository: repository)
+
+        let categoryRepository = SwiftDataCategoryRepository(modelContext: modelContext)
+        let categoryUseCase = CategoryUseCase(repository: categoryRepository)
+
+        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
+        let expenseUseCase = ExpenseUseCase(repository: expenseRepository)
+
         let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
-        let homeViewController = HomeViewController(viewModel: homeViewModel)
+        let homeViewController = HomeViewController(viewModel: homeViewModel, categoryUseCase: categoryUseCase)
         homeViewController.tabBarItem = UITabBarItem(
             title: "홈",
             image: UIImage(systemName: "house"),
@@ -45,7 +53,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "brain.fill")
         )
 
-        let settingsViewController = SettingsViewController()
+        let settingsViewController = SettingsViewController(categoryUseCase: categoryUseCase)
         settingsViewController.tabBarItem = UITabBarItem(
             title: "설정",
             image: UIImage(systemName: "slider.horizontal.3"),

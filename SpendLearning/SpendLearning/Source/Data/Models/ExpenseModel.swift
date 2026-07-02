@@ -13,20 +13,20 @@ final class ExpenseModel {
 
     var id: UUID
     var date: Date
-    var categoryRawValue: String
+    var categoryName: String
     var memo: String?
     var amount: Int
 
     init(
         id: UUID = UUID(),
         date: Date,
-        categoryRawValue: String,
+        categoryName: String,
         memo: String?,
         amount: Int
     ) {
         self.id = id
         self.date = date
-        self.categoryRawValue = categoryRawValue
+        self.categoryName = categoryName
         self.memo = memo
         self.amount = amount
     }

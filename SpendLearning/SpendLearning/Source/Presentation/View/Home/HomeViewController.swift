@@ -52,6 +52,7 @@ final class HomeViewController: UIViewController {
 
     // MARK: - Properties
     private let viewModel: HomeViewModel
+    private let categoryUseCase: CategoryUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     private let expenseDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -61,8 +62,12 @@ final class HomeViewController: UIViewController {
     }()
 
     // MARK: - Init
-    init(viewModel: HomeViewModel) {
+    init(
+        viewModel: HomeViewModel,
+        categoryUseCase: CategoryUseCaseProtocol
+    ) {
         self.viewModel = viewModel
+        self.categoryUseCase = categoryUseCase
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -452,6 +457,7 @@ private extension HomeViewController {
     func presentAddExpense(expense: Expense? = nil) {
         let newExpenseViewModel = NewExpenseViewModel(
             expenseUseCase: viewModel.expenseUseCase,
+            categoryUseCase: categoryUseCase,
             date: viewModel.selectedDate,
             editingExpense: expense
         )

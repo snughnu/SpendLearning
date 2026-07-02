@@ -40,6 +40,7 @@ final class CategorySelectViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .DesignSystem.background
         setup()
+        loadCategories()
     }
 }
 
@@ -50,7 +51,7 @@ extension CategorySelectViewController: UICollectionViewDataSource, UICollection
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        Category.allCases.count
+        viewModel.categories.count
     }
 
     func collectionView(
@@ -60,7 +61,7 @@ extension CategorySelectViewController: UICollectionViewDataSource, UICollection
         collectionView.dequeueConfiguredReusableCell(
             using: categoryCellRegistration,
             for: indexPath,
-            item: Category.allCases[indexPath.item]
+            item: viewModel.categories[indexPath.item]
         )
     }
 
@@ -76,7 +77,7 @@ extension CategorySelectViewController: UICollectionViewDataSource, UICollection
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        let category = Category.allCases[indexPath.item]
+        let category = viewModel.categories[indexPath.item]
         viewModel.didSelectCategory(category)
         let inputVC = ExpenseInputViewController(viewModel: viewModel)
         inputVC.modalPresentationStyle = .fullScreen
@@ -116,7 +117,7 @@ private extension CategorySelectViewController {
             categoryCollectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
             categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            categoryCollectionView.heightAnchor.constraint(equalToConstant: CGFloat(Category.allCases.count) * 64),
+            categoryCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
         ])
     }
 
@@ -129,5 +130,12 @@ private extension CategorySelectViewController {
         categoryCollectionView.layer.cornerRadius = 16
         categoryCollectionView.dataSource = self
         categoryCollectionView.delegate = self
+    }
+
+    func loadCategories() {
+        Task {
+            await viewModel.loadCategories()
+            categoryCollectionView.reloadData()
+        }
     }
 }

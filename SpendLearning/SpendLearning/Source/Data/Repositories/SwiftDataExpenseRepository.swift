@@ -11,9 +11,11 @@ import SwiftData
 final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
 
     private let modelContext: ModelContext
+    private let categoryRepository: CategoryRepositoryProtocol
 
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, categoryRepository: CategoryRepositoryProtocol) {
         self.modelContext = modelContext
+        self.categoryRepository = categoryRepository
     }
 
     func fetchExpenses(year: Int, month: Int) async -> [Expense] {
@@ -30,7 +32,9 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
             model.date >= startDate && model.date < endDate
         }
         let descriptor = FetchDescriptor<ExpenseModel>(predicate: predicate)
-        return (try? modelContext.fetch(descriptor))?.map { toExpense($0) } ?? []
+        let models = (try? modelContext.fetch(descriptor)) ?? []
+        let categories = await categoryRepository.fetchCategories()
+        return models.map { toExpense($0, categories: categories) }
     }
 
     func addExpense(_ expense: Expense) async {
@@ -52,8 +56,8 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
 // MARK: - Mapping
 private extension SwiftDataExpenseRepository {
 
-    func toExpense(_ model: ExpenseModel) -> Expense {
-        let category = Category(rawValue: model.categoryRawValue) ?? .etc
+    func toExpense(_ model: ExpenseModel, categories: [Category]) -> Expense {
+        let category = categories.first { $0.name == model.categoryName } ?? Category(name: "기타", emoji: "📦", isDeletable: false)
         return Expense(
             id: model.id,
             date: model.date,
@@ -67,7 +71,7 @@ private extension SwiftDataExpenseRepository {
         ExpenseModel(
             id: expense.id,
             date: expense.date,
-            categoryRawValue: expense.category.rawValue,
+            categoryName: expense.category.name,
             memo: expense.memo,
             amount: expense.amount
         )

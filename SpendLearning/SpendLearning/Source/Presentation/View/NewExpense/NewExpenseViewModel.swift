@@ -13,11 +13,13 @@ final class NewExpenseViewModel {
 
     // MARK: - Output
     @Published private(set) var selectedCategory: Category?
+    @Published private(set) var categories: [Category] = []
     var initialAmount: Int { editingExpense?.amount ?? 0 }
     var initialMemo: String { editingExpense?.memo ?? "" }
 
     // MARK: - Private
     private let expenseUseCase: ExpenseUseCaseProtocol
+    private let categoryUseCase: CategoryUseCaseProtocol
     private let date: Date
     private var amount: Int = 0
     private var memo: String = ""
@@ -26,19 +28,27 @@ final class NewExpenseViewModel {
     // MARK: - Init
     init(
         expenseUseCase: ExpenseUseCaseProtocol,
-        date: Date, editingExpense: Expense? = nil
+        categoryUseCase: CategoryUseCaseProtocol,
+        date: Date,
+        editingExpense: Expense? = nil
     ) {
         self.expenseUseCase = expenseUseCase
+        self.categoryUseCase = categoryUseCase
         self.date = date
         self.editingExpense = editingExpense
 
         if let expense = editingExpense {
             self.amount = expense.amount
             self.memo = expense.memo ?? ""
+            self.selectedCategory = expense.category
         }
     }
 
     // MARK: - Input
+    func loadCategories() async {
+        categories = await categoryUseCase.fetchCategories()
+    }
+
     func didSelectCategory(_ category: Category) {
         selectedCategory = category
     }
