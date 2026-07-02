@@ -13,6 +13,7 @@ final class ExpenseCell: UICollectionViewCell {
     private let categoryLabel = UILabel()
     private let memoLabel = UILabel()
     private let amountLabel = UILabel()
+    private let separator = UIView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,6 +30,7 @@ final class ExpenseCell: UICollectionViewCell {
         memoLabel.text = nil
         amountLabel.text = nil
         memoLabel.isHidden = false
+        separator.isHidden = false
     }
 
     func configure(category: Category, memo: String?, amount: Int) {
@@ -49,7 +51,9 @@ private extension ExpenseCell {
         textStack.axis = .vertical
         textStack.spacing = 2
 
-        [iconView, textStack, amountLabel].forEach {
+        separator.backgroundColor = .DesignSystem.separator
+
+        [iconView, textStack, amountLabel, separator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -62,11 +66,6 @@ private extension ExpenseCell {
 
         amountLabel.font = .systemFont(ofSize: 14.5, weight: .bold)
         amountLabel.textColor = .DesignSystem.primary
-
-        let separator = UIView()
-        separator.backgroundColor = .DesignSystem.separator
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(separator)
 
         NSLayoutConstraint.activate([
             iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
