@@ -21,6 +21,11 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
             sortBy: [SortDescriptor(\.order)]
         )
         let models = (try? modelContext.fetch(descriptor)) ?? []
+        if models.isEmpty {
+            defaultCategories().forEach { modelContext.insert($0) }
+            try? modelContext.save()
+            return defaultCategories().map { toCategory($0) }
+        }
         return models.map { toCategory($0) }
     }
 

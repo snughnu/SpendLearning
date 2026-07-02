@@ -54,14 +54,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
 
         let settingsViewController = SettingsViewController(categoryUseCase: categoryUseCase)
-        settingsViewController.tabBarItem = UITabBarItem(
+        let settingsNavController = UINavigationController(rootViewController: settingsViewController)
+        settingsNavController.navigationBar.isHidden = true
+        settingsNavController.tabBarItem = UITabBarItem(
             title: "설정",
             image: UIImage(systemName: "slider.horizontal.3"),
             selectedImage: UIImage(systemName: "slider.horizontal.3")
         )
 
         let tabBar = UITabBarController()
-        tabBar.viewControllers = [homeViewController, aiViewController, settingsViewController]
+        tabBar.viewControllers = [homeViewController, aiViewController, settingsNavController]
         tabBar.tabBar.tintColor = .DesignSystem.accent
 
         return tabBar
