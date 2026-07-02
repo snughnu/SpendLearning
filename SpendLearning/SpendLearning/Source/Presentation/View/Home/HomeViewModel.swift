@@ -19,7 +19,6 @@ final class HomeViewModel {
     @Published private(set) var selectedDayExpenses: [Expense] = []
     @Published private(set) var selectedDayTotal: Int = 0
     @Published private(set) var totalAmount: Int = 0
-    @Published private(set) var aiComment: String = ""
     @Published private(set) var calendarWeekCount: Int = 6
 
     let expenseUseCase: ExpenseUseCaseProtocol
@@ -100,7 +99,6 @@ final class HomeViewModel {
             let expenses = await expenseUseCase.fetch(year: currentYear, month: currentMonth)
             calendarDays = makeCalendarDays(year: currentYear, month: currentMonth, expenses: expenses)
             totalAmount = expenses.reduce(0) { $0 + $1.amount }
-            aiComment = "이번 달 카페 지출만 벌써 9번째, 이쯤 되면 취미 아니야?"
             updateSelectedDay(from: expenses)
         }
     }
