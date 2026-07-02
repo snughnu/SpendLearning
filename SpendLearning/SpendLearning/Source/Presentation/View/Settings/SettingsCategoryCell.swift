@@ -7,21 +7,18 @@
 
 import UIKit
 
-final class SettingsCategoryCell: UICollectionViewCell {
+final class SettingsCategoryCell: UITableViewCell {
+
+    static let reuseIdentifier = "SettingsCategoryCell"
 
     // MARK: - UI
     private let iconView = EmojiCircleView(emoji: "📦", size: 46)
     private let titleLabel = UILabel()
-    private let deleteButton = UIButton()
-    private let dragHandleImageView = UIImageView()
     private let separator = UIView()
 
-    // MARK: - Action
-    var onDelete: (() -> Void)?
-
     // MARK: - Init
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         setup()
     }
 
@@ -30,19 +27,14 @@ final class SettingsCategoryCell: UICollectionViewCell {
     }
 
     // MARK: - Configure
-    func configure(category: Category, showActions: Bool = true) {
+    func configure(category: Category) {
         iconView.update(emoji: category.emoji)
         titleLabel.text = category.displayName
-        deleteButton.isHidden = !showActions || !category.isDeletable
-        dragHandleImageView.isHidden = !showActions || !category.isDeletable
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         titleLabel.text = nil
-        onDelete = nil
-        deleteButton.isHidden = false
-        dragHandleImageView.isHidden = false
     }
 }
 
@@ -50,50 +42,26 @@ final class SettingsCategoryCell: UICollectionViewCell {
 private extension SettingsCategoryCell {
 
     func setup() {
+        backgroundColor = .clear
+        selectionStyle = .none
+
         titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         titleLabel.textColor = .DesignSystem.primary
 
-        let handleConfig = UIImage.SymbolConfiguration(pointSize: 10, weight: .medium)
-        dragHandleImageView.image = UIImage(systemName: "line.3.horizontal", withConfiguration: handleConfig)
-        dragHandleImageView.tintColor = .DesignSystem.subtitle
-        dragHandleImageView.contentMode = .scaleAspectFit
-
-        var config = UIButton.Configuration.plain()
-        config.image = UIImage(
-            systemName: "trash",
-            withConfiguration: UIImage.SymbolConfiguration(pointSize: 10, weight: .regular)
-        )
-        config.baseForegroundColor = .DesignSystem.subtitle
-        config.contentInsets = .zero
-        deleteButton.configuration = config
-        deleteButton.addAction(UIAction { [weak self] _ in
-            self?.onDelete?()
-        }, for: .touchUpInside)
-
         separator.backgroundColor = .DesignSystem.separator
 
-        [iconView, titleLabel, dragHandleImageView, deleteButton, separator].forEach {
+        [iconView, titleLabel, separator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
 
         NSLayoutConstraint.activate([
-            dragHandleImageView.trailingAnchor.constraint(equalTo: deleteButton.leadingAnchor, constant: -12),
-            dragHandleImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            dragHandleImageView.widthAnchor.constraint(equalToConstant: 20),
-            dragHandleImageView.heightAnchor.constraint(equalToConstant: 20),
-
-            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            deleteButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            deleteButton.widthAnchor.constraint(equalToConstant: 28),
-            deleteButton.heightAnchor.constraint(equalToConstant: 28),
-
             iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
             titleLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 16),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: deleteButton.leadingAnchor, constant: -8),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
             separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),

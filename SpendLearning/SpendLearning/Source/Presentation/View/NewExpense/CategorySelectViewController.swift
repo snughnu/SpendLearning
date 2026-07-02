@@ -11,16 +11,7 @@ final class CategorySelectViewController: UIViewController {
 
     // MARK: - UI
     private let navigationBar = CustomNavigationBar(title: "카테고리", leftButtonTitle: "취소")
-    private let categoryCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: UICollectionViewFlowLayout()
-    )
-
-    // MARK: - Cell Registration
-    private let categoryCellRegistration = UICollectionView.CellRegistration<SettingsCategoryCell, Category> {
-        cell, _, category in
-        cell.configure(category: category, showActions: false)
-    }
+    private let categoryTableView = UITableView()
 
     // MARK: - Properties
     private let viewModel: NewExpenseViewModel
@@ -44,40 +35,28 @@ final class CategorySelectViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionView
-extension CategorySelectViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - UITableView
+extension CategorySelectViewController: UITableViewDataSource, UITableViewDelegate {
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.categories.count
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        collectionView.dequeueConfiguredReusableCell(
-            using: categoryCellRegistration,
-            for: indexPath,
-            item: viewModel.categories[indexPath.item]
-        )
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: SettingsCategoryCell.reuseIdentifier,
+            for: indexPath
+        ) as! SettingsCategoryCell
+        cell.configure(category: viewModel.categories[indexPath.row])
+        return cell
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        CGSize(width: collectionView.bounds.width, height: 64)
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        64
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        let category = viewModel.categories[indexPath.item]
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let category = viewModel.categories[indexPath.row]
         viewModel.didSelectCategory(category)
         let inputVC = ExpenseInputViewController(viewModel: viewModel)
         inputVC.modalPresentationStyle = .fullScreen
@@ -92,7 +71,7 @@ private extension CategorySelectViewController {
         setupNavigationBar()
         setupSubviews()
         setupConstraints()
-        setupCategoryCollectionView()
+        setupCategoryTableView()
     }
 
     func setupNavigationBar() {
@@ -102,7 +81,7 @@ private extension CategorySelectViewController {
     }
 
     func setupSubviews() {
-        [navigationBar, categoryCollectionView].forEach {
+        [navigationBar, categoryTableView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -114,28 +93,30 @@ private extension CategorySelectViewController {
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            categoryCollectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
-            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            categoryCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
+            categoryTableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
+            categoryTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            categoryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            categoryTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
         ])
     }
 
-    func setupCategoryCollectionView() {
-        guard let layout = categoryCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
-
-        categoryCollectionView.backgroundColor = .white
-        categoryCollectionView.layer.cornerRadius = 16
-        categoryCollectionView.dataSource = self
-        categoryCollectionView.delegate = self
+    func setupCategoryTableView() {
+        categoryTableView.backgroundColor = .DesignSystem.surface
+        categoryTableView.layer.cornerRadius = 16
+        categoryTableView.isScrollEnabled = true
+        categoryTableView.separatorStyle = .none
+        categoryTableView.dataSource = self
+        categoryTableView.delegate = self
+        categoryTableView.register(
+            SettingsCategoryCell.self,
+            forCellReuseIdentifier: SettingsCategoryCell.reuseIdentifier
+        )
     }
 
     func loadCategories() {
         Task {
             await viewModel.loadCategories()
-            categoryCollectionView.reloadData()
+            categoryTableView.reloadData()
         }
     }
 }

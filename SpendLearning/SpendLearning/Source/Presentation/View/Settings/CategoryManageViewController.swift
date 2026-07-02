@@ -12,28 +12,21 @@ final class CategoryManageViewController: UIViewController {
 
     // MARK: - UI
     private let navigationBar = CustomNavigationBar(
-        title: "카테고리 관리", leftButtonTitle: "뒤로", rightButtonTitle: "초기화"
+        title: "카테고리 관리", leftButtonTitle: "뒤로", rightButtonTitle: "편집"
     )
     private let scrollView = UIScrollView()
     private let scrollContentView = UIView()
-    private let categoryCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: UICollectionViewFlowLayout()
-    )
+    private let categoryTableView = UITableView()
     private let addButton = UIButton()
+    private let resetButton = UIButton()
 
     // MARK: - Constraints
-    private var collectionHeightConstraint: NSLayoutConstraint!
-
-    // MARK: - Cell Registration
-    private let categoryCellRegistration = UICollectionView.CellRegistration<SettingsCategoryCell, Category> {
-        cell, _, category in
-        cell.configure(category: category)
-    }
+    private var tableHeightConstraint: NSLayoutConstraint!
 
     // MARK: - Properties
     private let viewModel: SettingsViewModel
     private var cancellables = Set<AnyCancellable>()
+    private var isEditingMode = false
 
     // MARK: - Init
     init(viewModel: SettingsViewModel) {
@@ -63,114 +56,104 @@ private extension CategoryManageViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] categories in
                 guard let self else { return }
-                self.collectionHeightConstraint.constant = CGFloat(categories.count) * 64
-                self.categoryCollectionView.reloadData()
+                self.tableHeightConstraint.constant = CGFloat(categories.count) * 64
+                self.categoryTableView.reloadData()
             }
             .store(in: &cancellables)
     }
 }
 
-// MARK: - UICollectionView
-extension CategoryManageViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - UITableView
+extension CategoryManageViewController: UITableViewDataSource, UITableViewDelegate {
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
     ) -> Int {
         viewModel.categories.count
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueConfiguredReusableCell(
-            using: categoryCellRegistration,
-            for: indexPath,
-            item: viewModel.categories[indexPath.item]
-        )
-        cell.onDelete = { [weak self] in
-            self?.didTapDelete(at: indexPath.item)
-        }
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: SettingsCategoryCell.reuseIdentifier,
+            for: indexPath
+        ) as! SettingsCategoryCell
+        cell.configure(category: viewModel.categories[indexPath.row])
         return cell
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        CGSize(width: collectionView.bounds.width, height: 64)
+    func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath
+    ) -> CGFloat {
+        64
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
     ) {
-        let category = viewModel.categories[indexPath.item]
+        guard isEditingMode else { return }
+        let category = viewModel.categories[indexPath.row]
         guard category.isDeletable else { return }
         presentEditSheet(category: category)
     }
-}
 
-// MARK: - Drag & Drop
-extension CategoryManageViewController: UICollectionViewDragDelegate, UICollectionViewDropDelegate {
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        itemsForBeginning session: UIDragSession,
-        at indexPath: IndexPath
-    ) -> [UIDragItem] {
-        let category = viewModel.categories[indexPath.item]
-        guard category.isDeletable else { return [] }
-        let provider = NSItemProvider(object: category.id.uuidString as NSString)
-        let dragItem = UIDragItem(itemProvider: provider)
-        dragItem.previewProvider = {
-            guard let cell = collectionView.cellForItem(at: indexPath) else { return nil }
-            let parameters = UIDragPreviewParameters()
-            parameters.visiblePath = UIBezierPath(
-                roundedRect: cell.bounds.insetBy(dx: 8, dy: 8),
-                cornerRadius: 5
-            )
-            return UIDragPreview(view: cell, parameters: parameters)
-        }
-        return [dragItem]
+    func tableView(
+        _ tableView: UITableView,
+        canMoveRowAt indexPath: IndexPath
+    ) -> Bool {
+        viewModel.categories[indexPath.row].isDeletable
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        dropSessionDidUpdate session: UIDropSession,
-        withDestinationIndexPath destinationIndexPath: IndexPath?
-    ) -> UICollectionViewDropProposal {
-        guard collectionView.hasActiveDrag else {
-            return UICollectionViewDropProposal(operation: .forbidden)
-        }
-        if let dest = destinationIndexPath,
-           !viewModel.categories[dest.item].isDeletable {
-            return UICollectionViewDropProposal(operation: .forbidden)
-        }
-        return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        performDropWith coordinator: UICollectionViewDropCoordinator
+    func tableView(
+        _ tableView: UITableView,
+        moveRowAt sourceIndexPath: IndexPath,
+        to destinationIndexPath: IndexPath
     ) {
-        guard let destinationIndexPath = coordinator.destinationIndexPath,
-              let sourceIndexPath = coordinator.items.first?.sourceIndexPath
-        else { return }
-
         var reordered = viewModel.categories
-        let moved = reordered.remove(at: sourceIndexPath.item)
-        reordered.insert(moved, at: destinationIndexPath.item)
-
-        collectionView.performBatchUpdates {
-            collectionView.moveItem(at: sourceIndexPath, to: destinationIndexPath)
-        }
-
+        let moved = reordered.remove(at: sourceIndexPath.row)
+        reordered.insert(moved, at: destinationIndexPath.row)
         Task {
             await viewModel.reorderCategories(reordered)
         }
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath
+    ) -> IndexPath {
+        let dest = viewModel.categories[proposedDestinationIndexPath.row]
+        if !dest.isDeletable {
+            return sourceIndexPath
+        }
+        return proposedDestinationIndexPath
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        editingStyleForRowAt indexPath: IndexPath
+    ) -> UITableViewCell.EditingStyle {
+        viewModel.categories[indexPath.row].isDeletable ? .delete : .none
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        shouldIndentWhileEditingRowAt indexPath: IndexPath
+    ) -> Bool {
+        false
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
+        guard editingStyle == .delete else { return }
+        didTapDelete(at: indexPath.row)
     }
 }
 
@@ -180,9 +163,9 @@ private extension CategoryManageViewController {
     func setup() {
         setupNavigationBar()
         setupSubviews()
-        setupAddButton()
+        setupBottomButtons()
         setupConstraints()
-        setupCategoryCollectionView()
+        setupCategoryTableView()
     }
 
     func setupNavigationBar() {
@@ -190,7 +173,7 @@ private extension CategoryManageViewController {
             self?.dismiss(animated: true)
         }
         navigationBar.onRightAction = { [weak self] in
-            self?.didTapReset()
+            self?.toggleEditingMode()
         }
     }
 
@@ -200,7 +183,7 @@ private extension CategoryManageViewController {
         scrollContentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(scrollContentView)
 
-        [categoryCollectionView, addButton].forEach {
+        [categoryTableView, addButton, resetButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             scrollContentView.addSubview($0)
         }
@@ -211,7 +194,7 @@ private extension CategoryManageViewController {
         }
     }
 
-    func setupAddButton() {
+    func setupBottomButtons() {
         var addConfig = UIButton.Configuration.plain()
         addConfig.title = "+ 카테고리 추가"
         addConfig.baseForegroundColor = .DesignSystem.accent
@@ -221,13 +204,28 @@ private extension CategoryManageViewController {
             return a
         }
         addButton.configuration = addConfig
+        addButton.isHidden = true
         addButton.addAction(UIAction { [weak self] _ in
             self?.presentEditSheet(category: nil)
+        }, for: .touchUpInside)
+
+        var resetConfig = UIButton.Configuration.plain()
+        resetConfig.title = "카테고리 초기화"
+        resetConfig.baseForegroundColor = .systemRed
+        resetConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+            var a = attrs
+            a.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+            return a
+        }
+        resetButton.configuration = resetConfig
+        resetButton.isHidden = true
+        resetButton.addAction(UIAction { [weak self] _ in
+            self?.didTapReset()
         }, for: .touchUpInside)
     }
 
     func setupConstraints() {
-        collectionHeightConstraint = categoryCollectionView.heightAnchor.constraint(equalToConstant: 0)
+        tableHeightConstraint = categoryTableView.heightAnchor.constraint(equalToConstant: 0)
 
         NSLayoutConstraint.activate([
             navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -245,35 +243,47 @@ private extension CategoryManageViewController {
             scrollContentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             scrollContentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 
-            categoryCollectionView.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 24),
-            categoryCollectionView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
-            categoryCollectionView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -20),
-            collectionHeightConstraint,
+            categoryTableView.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: 24),
+            categoryTableView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
+            categoryTableView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -20),
+            tableHeightConstraint,
 
-            addButton.topAnchor.constraint(equalTo: categoryCollectionView.bottomAnchor, constant: 4),
+            addButton.topAnchor.constraint(equalTo: categoryTableView.bottomAnchor, constant: 4),
             addButton.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 20),
             addButton.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -20),
+
+            resetButton.centerYAnchor.constraint(equalTo: addButton.centerYAnchor),
+            resetButton.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -20),
+            resetButton.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -20),
         ])
     }
 
-    func setupCategoryCollectionView() {
-        guard let layout = categoryCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
-
-        categoryCollectionView.backgroundColor = .DesignSystem.surface
-        categoryCollectionView.layer.cornerRadius = 16
-        categoryCollectionView.isScrollEnabled = false
-        categoryCollectionView.dataSource = self
-        categoryCollectionView.delegate = self
-        categoryCollectionView.dragDelegate = self
-        categoryCollectionView.dropDelegate = self
-        categoryCollectionView.dragInteractionEnabled = true
+    func setupCategoryTableView() {
+        categoryTableView.backgroundColor = .DesignSystem.surface
+        categoryTableView.layer.cornerRadius = 16
+        categoryTableView.isScrollEnabled = false
+        categoryTableView.separatorStyle = .none
+        categoryTableView.dataSource = self
+        categoryTableView.delegate = self
+        categoryTableView.register(
+            SettingsCategoryCell.self,
+            forCellReuseIdentifier: SettingsCategoryCell.reuseIdentifier
+        )
     }
 
     func loadCategories() {
         Task {
             await viewModel.loadCategories()
+        }
+    }
+
+    func toggleEditingMode() {
+        isEditingMode.toggle()
+        navigationBar.updateRightButton(title: isEditingMode ? "완료" : "편집")
+        categoryTableView.setEditing(isEditingMode, animated: true)
+        UIView.animate(withDuration: 0.2) {
+            self.addButton.isHidden = !self.isEditingMode
+            self.resetButton.isHidden = !self.isEditingMode
         }
     }
 
