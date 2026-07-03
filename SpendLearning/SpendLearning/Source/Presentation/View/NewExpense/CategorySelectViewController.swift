@@ -6,24 +6,17 @@
 //
 
 import UIKit
+import Combine
 
 final class CategorySelectViewController: UIViewController {
 
     // MARK: - UI
     private let navigationBar = CustomNavigationBar(title: "카테고리", leftButtonTitle: "취소")
-    private let categoryCollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: UICollectionViewFlowLayout()
-    )
-
-    // MARK: - Cell Registration
-    private let categoryCellRegistration = UICollectionView.CellRegistration<CategoryListCell, Category> {
-        cell, _, category in
-        cell.configure(category: category)
-    }
+    private let categoryTableView = UITableView()
 
     // MARK: - Properties
     private let viewModel: NewExpenseViewModel
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(viewModel: NewExpenseViewModel) {
@@ -40,43 +33,32 @@ final class CategorySelectViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .DesignSystem.background
         setup()
+        loadCategories()
     }
 }
 
-// MARK: - UICollectionView
-extension CategorySelectViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - UITableView
+extension CategorySelectViewController: UITableViewDataSource, UITableViewDelegate {
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        Category.allCases.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.categories.count
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        collectionView.dequeueConfiguredReusableCell(
-            using: categoryCellRegistration,
-            for: indexPath,
-            item: Category.allCases[indexPath.item]
-        )
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: SettingsCategoryCell.reuseIdentifier,
+            for: indexPath
+        ) as! SettingsCategoryCell
+        cell.configure(category: viewModel.categories[indexPath.row], isEditing: false)
+        return cell
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        CGSize(width: collectionView.bounds.width, height: 64)
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        64
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        let category = Category.allCases[indexPath.item]
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let category = viewModel.categories[indexPath.row]
         viewModel.didSelectCategory(category)
         let inputVC = ExpenseInputViewController(viewModel: viewModel)
         inputVC.modalPresentationStyle = .fullScreen
@@ -91,7 +73,8 @@ private extension CategorySelectViewController {
         setupNavigationBar()
         setupSubviews()
         setupConstraints()
-        setupCategoryCollectionView()
+        setupCategoryTableView()
+        bindError()
     }
 
     func setupNavigationBar() {
@@ -101,7 +84,7 @@ private extension CategorySelectViewController {
     }
 
     func setupSubviews() {
-        [navigationBar, categoryCollectionView].forEach {
+        [navigationBar, categoryTableView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -113,21 +96,54 @@ private extension CategorySelectViewController {
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            categoryCollectionView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
-            categoryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            categoryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            categoryCollectionView.heightAnchor.constraint(equalToConstant: CGFloat(Category.allCases.count) * 64),
+            categoryTableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 24),
+            categoryTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            categoryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            categoryTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
 
-    func setupCategoryCollectionView() {
-        guard let layout = categoryCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
+    func setupCategoryTableView() {
+        categoryTableView.backgroundColor = .DesignSystem.surface
+        categoryTableView.layer.cornerRadius = 16
+        categoryTableView.isScrollEnabled = true
+        categoryTableView.showsVerticalScrollIndicator = false
+        categoryTableView.separatorStyle = .none
+        categoryTableView.dataSource = self
+        categoryTableView.delegate = self
+        categoryTableView.register(
+            SettingsCategoryCell.self,
+            forCellReuseIdentifier: SettingsCategoryCell.reuseIdentifier
+        )
+    }
 
-        categoryCollectionView.backgroundColor = .white
-        categoryCollectionView.layer.cornerRadius = 16
-        categoryCollectionView.dataSource = self
-        categoryCollectionView.delegate = self
+    func loadCategories() {
+        Task {
+            await viewModel.loadCategories()
+            categoryTableView.reloadData()
+        }
+    }
+
+    func bindError() {
+        viewModel.$fetchError
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                self?.showFetchErrorAlert()
+            }
+            .store(in: &cancellables)
+    }
+
+    func showFetchErrorAlert() {
+        let alert = UIAlertController(
+            title: "불러오기 실패",
+            message: "카테고리를 불러오지 못했습니다.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "다시 시도", style: .default) { [weak self] _ in
+            self?.loadCategories()
+        })
+        present(alert, animated: true)
     }
 }

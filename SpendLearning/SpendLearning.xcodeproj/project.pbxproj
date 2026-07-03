@@ -35,11 +35,15 @@
 				Source/Domain/Entities/CalendarDay.swift,
 				Source/Domain/Entities/Category.swift,
 				Source/Domain/Entities/Expense.swift,
+				Source/Domain/Repositories/CategoryRepositoryProtocol.swift,
 				Source/Domain/Repositories/ExpenseRepositoryProtocol.swift,
+				Source/Domain/UseCases/CategoryUseCase.swift,
+				Source/Domain/UseCases/CategoryUseCaseProtocol.swift,
 				Source/Domain/UseCases/ExpenseUseCase.swift,
 				Source/Domain/UseCases/ExpenseUseCaseProtocol.swift,
 				Source/Presentation/View/Home/HomeViewModel.swift,
 				Source/Presentation/View/NewExpense/NewExpenseViewModel.swift,
+				Source/Presentation/View/Settings/SettingsViewModel.swift,
 			);
 			target = BCB415072FF52D0700C9CABD /* SpendLearningTests */;
 		};

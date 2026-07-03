@@ -9,7 +9,7 @@ import UIKit
 
 final class ExpenseCell: UICollectionViewCell {
 
-    private let iconView = IconCircleView(symbolName: "ellipsis", size: 38)
+    private let iconView = EmojiCircleView(emoji: "📦", size: 38)
     private let categoryLabel = UILabel()
     private let memoLabel = UILabel()
     private let amountLabel = UILabel()
@@ -34,7 +34,7 @@ final class ExpenseCell: UICollectionViewCell {
     }
 
     func configure(category: Category, memo: String?, amount: Int) {
-        iconView.update(symbolName: category.symbolName)
+        iconView.update(emoji: category.emoji)
         categoryLabel.text = category.displayName
         memoLabel.text = memo ?? " "
         amountLabel.text = "\(amount.formatted())원"
