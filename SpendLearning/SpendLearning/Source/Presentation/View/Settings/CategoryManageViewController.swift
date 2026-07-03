@@ -332,8 +332,13 @@ private extension CategoryManageViewController {
     }
 
     func presentEditSheet(category: Category?) {
+        let existingNames = viewModel.categories
+            .filter { $0.id != category?.id }
+            .map { $0.name }
+
         let editVC = CategoryEditViewController(
             category: category,
+            existingNames: existingNames,
             onSave: { [weak self] name, emoji in
                 Task {
                     if let category {

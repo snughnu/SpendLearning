@@ -21,18 +21,22 @@ final class CategoryEditViewController: UIViewController {
     private let emojiField = EmojiTextField()
     private let emojiGuideLabel = UILabel()
     private let nameField = UITextField()
+    private let nameGuideLabel = UILabel()
     private let saveButton = UIButton()
 
     // MARK: - Properties
     private let category: Category?
+    private let existingNames: [String]
     private let onSave: (String, String) -> Void
 
     // MARK: - Init
     init(
         category: Category?,
+        existingNames: [String],
         onSave: @escaping (String, String) -> Void
     ) {
         self.category = category
+        self.existingNames = existingNames
         self.onSave = onSave
         super.init(nibName: nil, bundle: nil)
     }
@@ -69,7 +73,7 @@ private extension CategoryEditViewController {
     }
 
     func setupSubviews() {
-        [titleLabel, emojiField, emojiGuideLabel, nameField, saveButton].forEach {
+        [titleLabel, emojiField, emojiGuideLabel, nameField, nameGuideLabel, saveButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -85,6 +89,10 @@ private extension CategoryEditViewController {
         emojiGuideLabel.font = .systemFont(ofSize: 12, weight: .regular)
         emojiGuideLabel.textColor = .DesignSystem.subtitle
         emojiGuideLabel.textAlignment = .center
+
+        nameGuideLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        nameGuideLabel.textColor = .DesignSystem.accent
+        nameGuideLabel.textAlignment = .left
     }
 
     func setupFields() {
@@ -139,6 +147,10 @@ private extension CategoryEditViewController {
             nameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             nameField.heightAnchor.constraint(equalToConstant: 52),
 
+            nameGuideLabel.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 8),
+            nameGuideLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            nameGuideLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
             saveButton.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 100),
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -161,7 +173,8 @@ private extension CategoryEditViewController {
     func updateSaveButton() {
         let emoji = emojiField.text ?? ""
         let name = nameField.text?.trimmingCharacters(in: .whitespaces) ?? ""
-        let valid = isValidEmoji(emoji) && !name.isEmpty
+        let isDuplicate = existingNames.contains(name)
+        let valid = isValidEmoji(emoji) && !name.isEmpty && !isDuplicate
         saveButton.isEnabled = valid
         saveButton.alpha = valid ? 1.0 : 0.4
     }
@@ -184,6 +197,8 @@ private extension CategoryEditViewController {
     }
 
     @objc func nameFieldDidChange() {
+        let name = nameField.text?.trimmingCharacters(in: .whitespaces) ?? ""
+        nameGuideLabel.text = existingNames.contains(name) ? "이미 존재하는 카테고리 이름이에요" : nil
         updateSaveButton()
     }
 
@@ -194,7 +209,7 @@ private extension CategoryEditViewController {
     func didTapSave() {
         let emoji = emojiField.text ?? ""
         let name = nameField.text?.trimmingCharacters(in: .whitespaces) ?? ""
-        guard isValidEmoji(emoji), !name.isEmpty else { return }
+        guard isValidEmoji(emoji), !name.isEmpty, !existingNames.contains(name) else { return }
         onSave(name, emoji)
         dismiss(animated: true)
     }
