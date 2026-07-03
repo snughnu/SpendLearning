@@ -39,6 +39,7 @@ final class SettingsCategoryCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        iconView.update(emoji: "")  // 추가
         titleLabel.text = nil
         editButton.isHidden = true
         onEdit = nil
