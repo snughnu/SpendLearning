@@ -14,7 +14,11 @@ final class SettingsCategoryCell: UITableViewCell {
     // MARK: - UI
     private let iconView = EmojiCircleView(emoji: "📦", size: 46)
     private let titleLabel = UILabel()
+    private let editButton = UIButton()
     private let separator = UIView()
+
+    // MARK: - Action
+    var onEdit: (() -> Void)?
 
     // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -27,14 +31,17 @@ final class SettingsCategoryCell: UITableViewCell {
     }
 
     // MARK: - Configure
-    func configure(category: Category) {
+    func configure(category: Category, isEditing: Bool) {
         iconView.update(emoji: category.emoji)
         titleLabel.text = category.displayName
+        editButton.isHidden = !isEditing || !category.isDeletable
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         titleLabel.text = nil
+        editButton.isHidden = true
+        onEdit = nil
     }
 }
 
@@ -48,9 +55,16 @@ private extension SettingsCategoryCell {
         titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         titleLabel.textColor = .DesignSystem.primary
 
+        editButton.setImage(UIImage(systemName: "pencil.line"), for: .normal)
+        editButton.tintColor = .DesignSystem.subtitle
+        editButton.isHidden = true
+        editButton.addAction(UIAction { [weak self] _ in
+            self?.onEdit?()
+        }, for: .touchUpInside)
+
         separator.backgroundColor = .DesignSystem.separator
 
-        [iconView, titleLabel, separator].forEach {
+        [iconView, titleLabel, editButton, separator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -59,9 +73,14 @@ private extension SettingsCategoryCell {
             iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
+            editButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            editButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            editButton.widthAnchor.constraint(equalToConstant: 24),
+            editButton.heightAnchor.constraint(equalToConstant: 24),
+
             titleLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 16),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            titleLabel.trailingAnchor.constraint(equalTo: editButton.leadingAnchor, constant: -8),
 
             separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),

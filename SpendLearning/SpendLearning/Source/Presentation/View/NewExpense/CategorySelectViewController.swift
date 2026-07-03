@@ -49,7 +49,7 @@ extension CategorySelectViewController: UITableViewDataSource, UITableViewDelega
             withIdentifier: SettingsCategoryCell.reuseIdentifier,
             for: indexPath
         ) as! SettingsCategoryCell
-        cell.configure(category: viewModel.categories[indexPath.row])
+        cell.configure(category: viewModel.categories[indexPath.row], isEditing: false)
         return cell
     }
 

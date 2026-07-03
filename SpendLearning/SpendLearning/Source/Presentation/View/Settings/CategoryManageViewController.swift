@@ -91,7 +91,11 @@ extension CategoryManageViewController: UITableViewDataSource {
             withIdentifier: SettingsCategoryCell.reuseIdentifier,
             for: indexPath
         ) as! SettingsCategoryCell
-        cell.configure(category: viewModel.categories[indexPath.row])
+        let category = viewModel.categories[indexPath.row]
+        cell.configure(category: category, isEditing: isEditingMode)
+        cell.onEdit = { [weak self] in
+            self?.presentEditSheet(category: category)
+        }
         return cell
     }
 
@@ -135,13 +139,13 @@ extension CategoryManageViewController: UITableViewDelegate {
         64
     }
 
-    func tableView(
-        _ tableView: UITableView,
-        didSelectRowAt indexPath: IndexPath
-    ) {
-        guard isEditingMode else { return }
-        presentEditSheet(category: viewModel.categories[indexPath.row])
-    }
+//    func tableView(
+//        _ tableView: UITableView,
+//        didSelectRowAt indexPath: IndexPath
+//    ) {
+//        guard isEditingMode else { return }
+//        presentEditSheet(category: viewModel.categories[indexPath.row])
+//    }
 
     func tableView(
         _ tableView: UITableView,
@@ -292,6 +296,7 @@ private extension CategoryManageViewController {
         isEditingMode.toggle()
         navigationBar.updateRightButton(title: isEditingMode ? "완료" : "편집")
         categoryTableView.setEditing(isEditingMode, animated: true)
+        categoryTableView.reloadData()
         addButton.isHidden = !isEditingMode
         resetButton.isHidden = !isEditingMode
         tableFooterView.frame.size.height = isEditingMode ? 52 : 0
