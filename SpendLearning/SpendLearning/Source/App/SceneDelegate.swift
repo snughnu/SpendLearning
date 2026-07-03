@@ -48,7 +48,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let aiViewController = AIViewController()
         aiViewController.tabBarItem = UITabBarItem(
-            title: "AI",
+            title: "예측",
             image: UIImage(systemName: "brain"),
             selectedImage: UIImage(systemName: "brain.fill")
         )
