@@ -22,9 +22,10 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
         )
         let models = (try? modelContext.fetch(descriptor)) ?? []
         if models.isEmpty {
-            defaultCategories().forEach { modelContext.insert($0) }
+            let defaults = defaultCategories()
+            defaults.forEach { modelContext.insert($0) }
             try? modelContext.save()
-            return defaultCategories().map { toCategory($0) }
+            return defaults.map { toCategory($0) }
         }
         let categories = models.map { toCategory($0) }
         return categories.filter { $0.isDeletable } + categories.filter { !$0.isDeletable }
