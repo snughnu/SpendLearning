@@ -82,11 +82,10 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
     }
 
     func reorderCategories(_ categories: [Category]) async throws {
+        let allModels = try modelContext.fetch(FetchDescriptor<CategoryModel>())
+        let modelByID = Dictionary(uniqueKeysWithValues: allModels.map { ($0.id, $0) })
         for (index, category) in categories.enumerated() {
-            let targetID = category.id
-            let predicate = #Predicate<CategoryModel> { $0.id == targetID }
-            guard let model = try modelContext.fetch(FetchDescriptor<CategoryModel>(predicate: predicate)).first else { continue }
-            model.order = index
+            modelByID[category.id]?.order = index
         }
         try modelContext.save()
     }
