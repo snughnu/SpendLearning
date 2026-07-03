@@ -27,8 +27,7 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
             try modelContext.save()
             return defaults.map { toCategory($0) }
         }
-        let categories = models.map { toCategory($0) }
-        return categories.filter { $0.isDeletable } + categories.filter { !$0.isDeletable }
+        return models.map { toCategory($0) }
     }
 
     func addCategory(name: String, emoji: String) async throws {

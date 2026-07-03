@@ -73,8 +73,8 @@ private extension CategoryManageViewController {
     }
 }
 
-// MARK: - UITableView
-extension CategoryManageViewController: UITableViewDataSource, UITableViewDelegate {
+// MARK: - UITableViewDataSource
+extension CategoryManageViewController: UITableViewDataSource {
 
     func tableView(
         _ tableView: UITableView,
@@ -97,26 +97,9 @@ extension CategoryManageViewController: UITableViewDataSource, UITableViewDelega
 
     func tableView(
         _ tableView: UITableView,
-        heightForRowAt indexPath: IndexPath
-    ) -> CGFloat {
-        64
-    }
-
-    func tableView(
-        _ tableView: UITableView,
-        didSelectRowAt indexPath: IndexPath
-    ) {
-        guard isEditingMode else { return }
-        let category = viewModel.categories[indexPath.row]
-        guard category.isDeletable else { return }
-        presentEditSheet(category: category)
-    }
-
-    func tableView(
-        _ tableView: UITableView,
         canMoveRowAt indexPath: IndexPath
     ) -> Bool {
-        viewModel.categories[indexPath.row].isDeletable
+        true
     }
 
     func tableView(
@@ -134,14 +117,38 @@ extension CategoryManageViewController: UITableViewDataSource, UITableViewDelega
 
     func tableView(
         _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
+        guard editingStyle == .delete else { return }
+        didTapDelete(at: indexPath.row)
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension CategoryManageViewController: UITableViewDelegate {
+
+    func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath
+    ) -> CGFloat {
+        64
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        guard isEditingMode else { return }
+        presentEditSheet(category: viewModel.categories[indexPath.row])
+    }
+
+    func tableView(
+        _ tableView: UITableView,
         targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath,
         toProposedIndexPath proposedDestinationIndexPath: IndexPath
     ) -> IndexPath {
-        let dest = viewModel.categories[proposedDestinationIndexPath.row]
-        if !dest.isDeletable {
-            return sourceIndexPath
-        }
-        return proposedDestinationIndexPath
+        proposedDestinationIndexPath
     }
 
     func tableView(
@@ -156,15 +163,6 @@ extension CategoryManageViewController: UITableViewDataSource, UITableViewDelega
         shouldIndentWhileEditingRowAt indexPath: IndexPath
     ) -> Bool {
         false
-    }
-
-    func tableView(
-        _ tableView: UITableView,
-        commit editingStyle: UITableViewCell.EditingStyle,
-        forRowAt indexPath: IndexPath
-    ) {
-        guard editingStyle == .delete else { return }
-        didTapDelete(at: indexPath.row)
     }
 
     func tableView(
