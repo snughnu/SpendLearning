@@ -63,20 +63,32 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
     }
 
     func resetToDefault() async throws {
-        let defaults = defaultCategories()
-        let defaultIDs = Set(defaults.map { $0.id })
+        // 기존 DB에서 isDefault인 카테고리 ID 수집
+        let existingDefaultPredicate = #Predicate<CategoryModel> { $0.isDefault }
+        let existingDefaults = try modelContext.fetch(FetchDescriptor<CategoryModel>(predicate: existingDefaultPredicate))
+        let existingDefaultIDs = Set(existingDefaults.map { $0.id })
 
-        let allExpenses = try modelContext.fetch(FetchDescriptor<ExpenseModel>())
+        // 커스텀 카테고리에 속한 지출만 기타로 변경
         let fallbackID = try fetchFallbackCategoryID()
+        let allExpenses = try modelContext.fetch(FetchDescriptor<ExpenseModel>())
         allExpenses.forEach {
-            if !defaultIDs.contains($0.categoryID) {
+            if !existingDefaultIDs.contains($0.categoryID) {
                 $0.categoryID = fallbackID
             }
         }
 
-        let allCategories = try modelContext.fetch(FetchDescriptor<CategoryModel>())
-        allCategories.forEach { modelContext.delete($0) }
-        defaults.forEach { modelContext.insert($0) }
+        // 커스텀 카테고리만 삭제
+        let customPredicate = #Predicate<CategoryModel> { !$0.isDefault }
+        let customCategories = try modelContext.fetch(FetchDescriptor<CategoryModel>(predicate: customPredicate))
+        customCategories.forEach { modelContext.delete($0) }
+
+        // 기본 카테고리 order 복구
+        let defaultOrderByName = Dictionary(uniqueKeysWithValues: defaultCategories().map { ($0.name, $0.order) })
+        existingDefaults.forEach {
+            if let order = defaultOrderByName[$0.name] {
+                $0.order = order
+            }
+        }
 
         try modelContext.save()
     }
