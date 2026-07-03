@@ -49,13 +49,14 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
     }
 
     func deleteCategory(_ category: Category) async {
-        let targetName = category.name
         let targetID = category.id
 
-        let expensePredicate = #Predicate<ExpenseModel> { $0.categoryName == targetName }
+        let expensePredicate = #Predicate<ExpenseModel> { $0.categoryID == targetID }
         let expenseDescriptor = FetchDescriptor<ExpenseModel>(predicate: expensePredicate)
         let expenses = (try? modelContext.fetch(expenseDescriptor)) ?? []
-        expenses.forEach { $0.categoryName = "기타" }
+
+        let fallbackID = fetchFallbackCategoryID()
+        expenses.forEach { $0.categoryID = fallbackID }
 
         let categoryPredicate = #Predicate<CategoryModel> { $0.id == targetID }
         let categoryDescriptor = FetchDescriptor<CategoryModel>(predicate: categoryPredicate)
@@ -66,18 +67,20 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
     }
 
     func resetToDefault() async {
-        let defaultNames = Set(defaultCategories().map { $0.name })
+        let defaults = defaultCategories()
+        let defaultIDs = Set(defaults.map { $0.id })
 
         let allExpenses = (try? modelContext.fetch(FetchDescriptor<ExpenseModel>())) ?? []
+        let fallbackID = fetchFallbackCategoryID()
         allExpenses.forEach {
-            if !defaultNames.contains($0.categoryName) {
-                $0.categoryName = "기타"
+            if !defaultIDs.contains($0.categoryID) {
+                $0.categoryID = fallbackID
             }
         }
 
         let allCategories = (try? modelContext.fetch(FetchDescriptor<CategoryModel>())) ?? []
         allCategories.forEach { modelContext.delete($0) }
-        defaultCategories().forEach { modelContext.insert($0) }
+        defaults.forEach { modelContext.insert($0) }
 
         try? modelContext.save()
     }
@@ -104,6 +107,12 @@ private extension SwiftDataCategoryRepository {
             emoji: model.emoji,
             isDeletable: model.isDeletable
         )
+    }
+
+    func fetchFallbackCategoryID() -> UUID {
+        let predicate = #Predicate<CategoryModel> { !$0.isDeletable }
+        let descriptor = FetchDescriptor<CategoryModel>(predicate: predicate)
+        return (try? modelContext.fetch(descriptor).first?.id) ?? UUID()
     }
 
     func defaultCategories() -> [CategoryModel] {

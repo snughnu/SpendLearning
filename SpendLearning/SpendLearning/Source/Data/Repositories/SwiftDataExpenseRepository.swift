@@ -57,7 +57,8 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
 private extension SwiftDataExpenseRepository {
 
     func toExpense(_ model: ExpenseModel, categories: [Category]) -> Expense {
-        let category = categories.first { $0.name == model.categoryName } ?? Category(name: "기타", emoji: "📦", isDeletable: false)
+        let fallback = Category(name: "기타", emoji: "📦", isDeletable: false)
+        let category = categories.first { $0.id == model.categoryID } ?? fallback
         return Expense(
             id: model.id,
             date: model.date,
@@ -71,7 +72,7 @@ private extension SwiftDataExpenseRepository {
         ExpenseModel(
             id: expense.id,
             date: expense.date,
-            categoryName: expense.category.name,
+            categoryID: expense.category.id,
             memo: expense.memo,
             amount: expense.amount
         )
