@@ -54,6 +54,22 @@ private extension CategoryManageViewController {
                 self?.categoryTableView.reloadData()
             }
             .store(in: &cancellables)
+
+        viewModel.$fetchError
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                self?.showFetchErrorAlert()
+            }
+            .store(in: &cancellables)
+
+        viewModel.$saveError
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                self?.showSaveErrorAlert()
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -334,5 +350,28 @@ private extension CategoryManageViewController {
             sheet.preferredCornerRadius = 24
         }
         present(editVC, animated: true)
+    }
+
+    func showFetchErrorAlert() {
+        let alert = UIAlertController(
+            title: "불러오기 실패",
+            message: "카테고리를 불러오지 못했습니다.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "다시 시도", style: .default) { [weak self] _ in
+            Task { await self?.viewModel.loadCategories() }
+        })
+        present(alert, animated: true)
+    }
+
+    func showSaveErrorAlert() {
+        let alert = UIAlertController(
+            title: "저장 실패",
+            message: "변경사항을 저장하지 못했습니다.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
 }

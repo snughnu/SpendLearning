@@ -8,10 +8,10 @@
 import Foundation
 
 protocol CategoryRepositoryProtocol {
-    func fetchCategories() async -> [Category]
-    func addCategory(name: String, emoji: String) async
-    func updateCategory(_ category: Category, name: String, emoji: String) async
-    func deleteCategory(_ category: Category) async
-    func resetToDefault() async
-    func reorderCategories(_ categories: [Category]) async
+    func fetchCategories() async throws -> [Category]
+    func addCategory(name: String, emoji: String) async throws
+    func updateCategory(_ category: Category, name: String, emoji: String) async throws
+    func deleteCategory(_ category: Category) async throws
+    func resetToDefault() async throws
+    func reorderCategories(_ categories: [Category]) async throws
 }

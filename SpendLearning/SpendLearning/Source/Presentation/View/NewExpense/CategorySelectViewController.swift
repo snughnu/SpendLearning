@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 final class CategorySelectViewController: UIViewController {
 
@@ -15,6 +16,7 @@ final class CategorySelectViewController: UIViewController {
 
     // MARK: - Properties
     private let viewModel: NewExpenseViewModel
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(viewModel: NewExpenseViewModel) {
@@ -72,6 +74,7 @@ private extension CategorySelectViewController {
         setupSubviews()
         setupConstraints()
         setupCategoryTableView()
+        bindError()
     }
 
     func setupNavigationBar() {
@@ -119,5 +122,28 @@ private extension CategorySelectViewController {
             await viewModel.loadCategories()
             categoryTableView.reloadData()
         }
+    }
+
+    func bindError() {
+        viewModel.$fetchError
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                self?.showFetchErrorAlert()
+            }
+            .store(in: &cancellables)
+    }
+
+    func showFetchErrorAlert() {
+        let alert = UIAlertController(
+            title: "불러오기 실패",
+            message: "카테고리를 불러오지 못했습니다.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "다시 시도", style: .default) { [weak self] _ in
+            self?.loadCategories()
+        })
+        present(alert, animated: true)
     }
 }

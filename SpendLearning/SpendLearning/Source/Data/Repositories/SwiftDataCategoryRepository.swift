@@ -16,84 +16,80 @@ final class SwiftDataCategoryRepository: CategoryRepositoryProtocol {
         self.modelContext = modelContext
     }
 
-    func fetchCategories() async -> [Category] {
+    func fetchCategories() async throws -> [Category] {
         let descriptor = FetchDescriptor<CategoryModel>(
             sortBy: [SortDescriptor(\.order)]
         )
-        let models = (try? modelContext.fetch(descriptor)) ?? []
+        let models = try modelContext.fetch(descriptor)
         if models.isEmpty {
             let defaults = defaultCategories()
             defaults.forEach { modelContext.insert($0) }
-            try? modelContext.save()
+            try modelContext.save()
             return defaults.map { toCategory($0) }
         }
         let categories = models.map { toCategory($0) }
         return categories.filter { $0.isDeletable } + categories.filter { !$0.isDeletable }
     }
 
-    func addCategory(name: String, emoji: String) async {
-        let order = ((try? modelContext.fetch(FetchDescriptor<CategoryModel>()))?.count ?? 0)
-        let model = CategoryModel(name: name, emoji: emoji, order: order, isDefault: false, isDeletable: true)
+    func addCategory(name: String, emoji: String) async throws {
+        let count = try modelContext.fetch(FetchDescriptor<CategoryModel>()).count
+        let model = CategoryModel(name: name, emoji: emoji, order: count, isDefault: false, isDeletable: true)
         modelContext.insert(model)
-        try? modelContext.save()
+        try modelContext.save()
     }
 
-    func updateCategory(_ category: Category, name: String, emoji: String) async {
+    func updateCategory(_ category: Category, name: String, emoji: String) async throws {
         let targetID = category.id
         let predicate = #Predicate<CategoryModel> { $0.id == targetID }
         let descriptor = FetchDescriptor<CategoryModel>(predicate: predicate)
-        guard let model = try? modelContext.fetch(descriptor).first else { return }
+        guard let model = try modelContext.fetch(descriptor).first else { return }
         model.name = name
         model.emoji = emoji
-        try? modelContext.save()
+        try modelContext.save()
     }
 
-    func deleteCategory(_ category: Category) async {
+    func deleteCategory(_ category: Category) async throws {
         let targetID = category.id
 
         let expensePredicate = #Predicate<ExpenseModel> { $0.categoryID == targetID }
-        let expenseDescriptor = FetchDescriptor<ExpenseModel>(predicate: expensePredicate)
-        let expenses = (try? modelContext.fetch(expenseDescriptor)) ?? []
-
-        let fallbackID = fetchFallbackCategoryID()
+        let expenses = try modelContext.fetch(FetchDescriptor<ExpenseModel>(predicate: expensePredicate))
+        let fallbackID = try fetchFallbackCategoryID()
         expenses.forEach { $0.categoryID = fallbackID }
 
         let categoryPredicate = #Predicate<CategoryModel> { $0.id == targetID }
-        let categoryDescriptor = FetchDescriptor<CategoryModel>(predicate: categoryPredicate)
-        guard let model = try? modelContext.fetch(categoryDescriptor).first else { return }
+        guard let model = try modelContext.fetch(FetchDescriptor<CategoryModel>(predicate: categoryPredicate)).first else { return }
         modelContext.delete(model)
 
-        try? modelContext.save()
+        try modelContext.save()
     }
 
-    func resetToDefault() async {
+    func resetToDefault() async throws {
         let defaults = defaultCategories()
         let defaultIDs = Set(defaults.map { $0.id })
 
-        let allExpenses = (try? modelContext.fetch(FetchDescriptor<ExpenseModel>())) ?? []
-        let fallbackID = fetchFallbackCategoryID()
+        let allExpenses = try modelContext.fetch(FetchDescriptor<ExpenseModel>())
+        let fallbackID = try fetchFallbackCategoryID()
         allExpenses.forEach {
             if !defaultIDs.contains($0.categoryID) {
                 $0.categoryID = fallbackID
             }
         }
 
-        let allCategories = (try? modelContext.fetch(FetchDescriptor<CategoryModel>())) ?? []
+        let allCategories = try modelContext.fetch(FetchDescriptor<CategoryModel>())
         allCategories.forEach { modelContext.delete($0) }
         defaults.forEach { modelContext.insert($0) }
 
-        try? modelContext.save()
+        try modelContext.save()
     }
 
-    func reorderCategories(_ categories: [Category]) async {
+    func reorderCategories(_ categories: [Category]) async throws {
         for (index, category) in categories.enumerated() {
             let targetID = category.id
             let predicate = #Predicate<CategoryModel> { $0.id == targetID }
-            let descriptor = FetchDescriptor<CategoryModel>(predicate: predicate)
-            guard let model = try? modelContext.fetch(descriptor).first else { continue }
+            guard let model = try modelContext.fetch(FetchDescriptor<CategoryModel>(predicate: predicate)).first else { continue }
             model.order = index
         }
-        try? modelContext.save()
+        try modelContext.save()
     }
 }
 
@@ -109,10 +105,13 @@ private extension SwiftDataCategoryRepository {
         )
     }
 
-    func fetchFallbackCategoryID() -> UUID {
+    func fetchFallbackCategoryID() throws -> UUID {
         let predicate = #Predicate<CategoryModel> { !$0.isDeletable }
         let descriptor = FetchDescriptor<CategoryModel>(predicate: predicate)
-        return (try? modelContext.fetch(descriptor).first?.id) ?? UUID()
+        guard let id = try modelContext.fetch(descriptor).first?.id else {
+            throw CategoryRepositoryError.fallbackCategoryNotFound
+        }
+        return id
     }
 
     func defaultCategories() -> [CategoryModel] {
@@ -129,4 +128,8 @@ private extension SwiftDataCategoryRepository {
             CategoryModel(name: "기타", emoji: "📦", order: 9, isDefault: true, isDeletable: false),
         ]
     }
+}
+
+enum CategoryRepositoryError: Error {
+    case fallbackCategoryNotFound
 }

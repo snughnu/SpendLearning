@@ -21,13 +21,18 @@ final class SpyExpenseUseCase: ExpenseUseCaseProtocol {
 
 final class StubCategoryUseCaseForNewExpense: CategoryUseCaseProtocol {
     var stubbedCategories: [Category] = []
+    var shouldThrow = false
 
-    func fetchCategories() async -> [Category] { stubbedCategories }
-    func addCategory(name: String, emoji: String) async {}
-    func updateCategory(_ category: Category, name: String, emoji: String) async {}
-    func deleteCategory(_ category: Category) async {}
-    func resetToDefault() async {}
-    func reorderCategories(_ categories: [Category]) async {}
+    func fetchCategories() async throws -> [Category] {
+        if shouldThrow { throw StubError.generic }
+        return stubbedCategories
+    }
+
+    func addCategory(name: String, emoji: String) async throws {}
+    func updateCategory(_ category: Category, name: String, emoji: String) async throws {}
+    func deleteCategory(_ category: Category) async throws {}
+    func resetToDefault() async throws {}
+    func reorderCategories(_ categories: [Category]) async throws {}
 }
 
 @Suite("NewExpenseViewModel")
@@ -83,5 +88,20 @@ struct NewExpenseViewModelTests {
 
         #expect(sut.initialAmount == 12000)
         #expect(sut.initialMemo == "점심")
+    }
+
+    @Test("fetchCategories 실패 시 fetchError가 설정된다")
+    func loadCategoriesSetsErrorOnFailure() async {
+        let stub = StubCategoryUseCaseForNewExpense()
+        stub.shouldThrow = true
+        let sut = NewExpenseViewModel(
+            expenseUseCase: SpyExpenseUseCase(),
+            categoryUseCase: stub,
+            date: Date()
+        )
+
+        await sut.loadCategories()
+
+        #expect(sut.fetchError != nil)
     }
 }

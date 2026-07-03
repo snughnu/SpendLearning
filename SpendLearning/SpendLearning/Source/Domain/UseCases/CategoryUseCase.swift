@@ -15,27 +15,27 @@ final class CategoryUseCase: CategoryUseCaseProtocol {
         self.repository = repository
     }
 
-    func fetchCategories() async -> [Category] {
-        await repository.fetchCategories()
+    func fetchCategories() async throws -> [Category] {
+        try await repository.fetchCategories()
     }
 
-    func addCategory(name: String, emoji: String) async {
-        await repository.addCategory(name: name, emoji: emoji)
+    func addCategory(name: String, emoji: String) async throws {
+        try await repository.addCategory(name: name, emoji: emoji)
     }
 
-    func updateCategory(_ category: Category, name: String, emoji: String) async {
-        await repository.updateCategory(category, name: name, emoji: emoji)
+    func updateCategory(_ category: Category, name: String, emoji: String) async throws {
+        try await repository.updateCategory(category, name: name, emoji: emoji)
     }
 
-    func deleteCategory(_ category: Category) async {
-        await repository.deleteCategory(category)
+    func deleteCategory(_ category: Category) async throws {
+        try await repository.deleteCategory(category)
     }
 
-    func resetToDefault() async {
-        await repository.resetToDefault()
+    func resetToDefault() async throws {
+        try await repository.resetToDefault()
     }
 
-    func reorderCategories(_ categories: [Category]) async {
-        await repository.reorderCategories(categories)
+    func reorderCategories(_ categories: [Category]) async throws {
+        try await repository.reorderCategories(categories)
     }
 }

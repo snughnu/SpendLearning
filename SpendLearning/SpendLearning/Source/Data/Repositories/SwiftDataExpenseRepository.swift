@@ -33,7 +33,7 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
         }
         let descriptor = FetchDescriptor<ExpenseModel>(predicate: predicate)
         let models = (try? modelContext.fetch(descriptor)) ?? []
-        let categories = await categoryRepository.fetchCategories()
+        let categories = (try? await categoryRepository.fetchCategories()) ?? []
         return models.map { toExpense($0, categories: categories) }
     }
 

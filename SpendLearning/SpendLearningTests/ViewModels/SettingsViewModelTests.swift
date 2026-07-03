@@ -89,17 +89,67 @@ struct SettingsViewModelTests {
         #expect(sut.categories.first?.id == first.id)
         #expect(sut.categories.last?.id == second.id)
     }
+
+    @Test("fetchCategories 실패 시 fetchError가 설정된다")
+    func loadCategoriesSetsErrorOnFailure() async {
+        let stub = StubCategoryUseCase()
+        stub.shouldThrow = true
+        let sut = SettingsViewModel(categoryUseCase: stub)
+
+        await sut.loadCategories()
+
+        #expect(sut.fetchError != nil)
+    }
+
+    @Test("save 실패 시 saveError가 설정되고 categories가 원복된다")
+    func addCategorySetsErrorAndRestoresOnFailure() async {
+        let stub = StubCategoryUseCase()
+        let existing = Category(name: "식비", emoji: "🍚")
+        stub.stubbedCategories = [existing]
+        let sut = SettingsViewModel(categoryUseCase: stub)
+        await sut.loadCategories()
+
+        stub.shouldThrow = true
+        await sut.addCategory(name: "카페", emoji: "☕️")
+
+        #expect(sut.saveError != nil)
+        #expect(sut.categories.count == 1)
+        #expect(sut.categories.first?.id == existing.id)
+    }
 }
 
 // MARK: - Stub
 
 final class StubCategoryUseCase: CategoryUseCaseProtocol {
     var stubbedCategories: [Category] = []
+    var shouldThrow = false
 
-    func fetchCategories() async -> [Category] { stubbedCategories }
-    func addCategory(name: String, emoji: String) async {}
-    func updateCategory(_ category: Category, name: String, emoji: String) async {}
-    func deleteCategory(_ category: Category) async {}
-    func resetToDefault() async {}
-    func reorderCategories(_ categories: [Category]) async {}
+    func fetchCategories() async throws -> [Category] {
+        if shouldThrow { throw StubError.generic }
+        return stubbedCategories
+    }
+
+    func addCategory(name: String, emoji: String) async throws {
+        if shouldThrow { throw StubError.generic }
+    }
+
+    func updateCategory(_ category: Category, name: String, emoji: String) async throws {
+        if shouldThrow { throw StubError.generic }
+    }
+
+    func deleteCategory(_ category: Category) async throws {
+        if shouldThrow { throw StubError.generic }
+    }
+
+    func resetToDefault() async throws {
+        if shouldThrow { throw StubError.generic }
+    }
+
+    func reorderCategories(_ categories: [Category]) async throws {
+        if shouldThrow { throw StubError.generic }
+    }
+}
+
+enum StubError: Error {
+    case generic
 }

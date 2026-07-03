@@ -14,6 +14,8 @@ final class NewExpenseViewModel {
     // MARK: - Output
     @Published private(set) var selectedCategory: Category?
     @Published private(set) var categories: [Category] = []
+    @Published private(set) var fetchError: Error? = nil
+
     var initialAmount: Int { editingExpense?.amount ?? 0 }
     var initialMemo: String { editingExpense?.memo ?? "" }
 
@@ -46,7 +48,12 @@ final class NewExpenseViewModel {
 
     // MARK: - Input
     func loadCategories() async {
-        categories = await categoryUseCase.fetchCategories()
+        do {
+            categories = try await categoryUseCase.fetchCategories()
+            fetchError = nil
+        } catch {
+            fetchError = error
+        }
     }
 
     func didSelectCategory(_ category: Category) {

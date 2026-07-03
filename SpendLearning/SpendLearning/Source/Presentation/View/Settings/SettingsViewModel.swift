@@ -13,6 +13,8 @@ final class SettingsViewModel {
 
     // MARK: - Output
     @Published private(set) var categories: [Category] = []
+    @Published private(set) var fetchError: Error? = nil
+    @Published private(set) var saveError: Error? = nil
 
     // MARK: - Private
     private let categoryUseCase: CategoryUseCaseProtocol
@@ -24,32 +26,62 @@ final class SettingsViewModel {
 
     // MARK: - Input
     func loadCategories() async {
-        categories = await categoryUseCase.fetchCategories()
+        do {
+            categories = try await categoryUseCase.fetchCategories()
+            fetchError = nil
+        } catch {
+            fetchError = error
+        }
     }
 
     func addCategory(name: String, emoji: String) async {
-        await categoryUseCase.addCategory(name: name, emoji: emoji)
-        categories = await categoryUseCase.fetchCategories()
+        do {
+            try await categoryUseCase.addCategory(name: name, emoji: emoji)
+            categories = (try? await categoryUseCase.fetchCategories()) ?? categories
+        } catch {
+            saveError = error
+            await loadCategories()
+        }
     }
 
     func updateCategory(_ category: Category, name: String, emoji: String) async {
-        await categoryUseCase.updateCategory(category, name: name, emoji: emoji)
-        categories = await categoryUseCase.fetchCategories()
+        do {
+            try await categoryUseCase.updateCategory(category, name: name, emoji: emoji)
+            categories = (try? await categoryUseCase.fetchCategories()) ?? categories
+        } catch {
+            saveError = error
+            await loadCategories()
+        }
     }
 
     func deleteCategory(at index: Int) async {
         let category = categories[index]
-        await categoryUseCase.deleteCategory(category)
-        categories = await categoryUseCase.fetchCategories()
+        do {
+            try await categoryUseCase.deleteCategory(category)
+            categories = (try? await categoryUseCase.fetchCategories()) ?? categories
+        } catch {
+            saveError = error
+            await loadCategories()
+        }
     }
 
     func resetCategories() async {
-        await categoryUseCase.resetToDefault()
-        categories = await categoryUseCase.fetchCategories()
+        do {
+            try await categoryUseCase.resetToDefault()
+            categories = (try? await categoryUseCase.fetchCategories()) ?? categories
+        } catch {
+            saveError = error
+            await loadCategories()
+        }
     }
 
     func reorderCategories(_ categories: [Category]) async {
-        await categoryUseCase.reorderCategories(categories)
-        self.categories = await categoryUseCase.fetchCategories()
+        do {
+            try await categoryUseCase.reorderCategories(categories)
+            self.categories = (try? await categoryUseCase.fetchCategories()) ?? self.categories
+        } catch {
+            saveError = error
+            await loadCategories()
+        }
     }
 }
