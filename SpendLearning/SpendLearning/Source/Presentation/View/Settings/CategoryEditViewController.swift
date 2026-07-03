@@ -151,10 +151,10 @@ private extension CategoryEditViewController {
             nameGuideLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nameGuideLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
 
-            saveButton.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 90),
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             saveButton.heightAnchor.constraint(equalToConstant: 52),
+            saveButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -20),
         ])
     }
 
