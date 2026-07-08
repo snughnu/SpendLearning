@@ -14,6 +14,7 @@ final class AIViewController: UIViewController {
     private let contentView = UIView()
     private let titleLabel = UILabel()
     private let statusView = AIStatusView()
+    private let categoryPredictionView = AICategoryPredictionView()
     private let aIInsightView = AIInsightView()
 
     // MARK: - Lifecycle
@@ -48,7 +49,7 @@ private extension AIViewController {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
 
-        [titleLabel, statusView, aIInsightView].forEach {
+        [titleLabel, statusView, categoryPredictionView, aIInsightView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -74,10 +75,13 @@ private extension AIViewController {
             statusView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             statusView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
 
-            aIInsightView.topAnchor.constraint(equalTo: statusView.bottomAnchor, constant: 16),
+            categoryPredictionView.topAnchor.constraint(equalTo: statusView.bottomAnchor, constant: 16),
+            categoryPredictionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            categoryPredictionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+
+            aIInsightView.topAnchor.constraint(equalTo: categoryPredictionView.bottomAnchor, constant: 16),
             aIInsightView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             aIInsightView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            aIInsightView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
             aIInsightView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60),
         ])
     }
