@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftData
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -46,7 +47,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let aiViewController = AIViewController()
+        let aiViewController = UIHostingController(rootView: AIView())
         aiViewController.tabBarItem = UITabBarItem(
             title: "예측",
             image: UIImage(systemName: "brain"),
