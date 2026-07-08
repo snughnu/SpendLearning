@@ -37,7 +37,7 @@ private extension AIViewController {
 
     func setupTitleLabel() {
         titleLabel.text = "소비 예측"
-        titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 24, weight: .heavy)
         titleLabel.textColor = .DesignSystem.primary
     }
 

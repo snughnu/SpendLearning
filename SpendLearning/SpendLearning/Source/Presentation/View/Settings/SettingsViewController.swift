@@ -74,7 +74,7 @@ private extension SettingsViewController {
 
     func setupLabels() {
         titleLabel.text = "설정"
-        titleLabel.font = .systemFont(ofSize: 28, weight: .heavy)
+        titleLabel.font = .systemFont(ofSize: 24, weight: .heavy)
         titleLabel.textColor = .DesignSystem.primary
 
         categorySectionLabel.text = "카테고리"
