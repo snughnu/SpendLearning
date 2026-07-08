@@ -14,6 +14,7 @@ final class AIViewController: UIViewController {
     private let contentView = UIView()
     private let titleLabel = UILabel()
     private let statusView = AIStatusView()
+    private let aIInsightView = AIInsightView()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -47,7 +48,7 @@ private extension AIViewController {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
 
-        [titleLabel, statusView].forEach {
+        [titleLabel, statusView, aIInsightView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -72,7 +73,12 @@ private extension AIViewController {
             statusView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
             statusView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             statusView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            statusView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+
+            aIInsightView.topAnchor.constraint(equalTo: statusView.bottomAnchor, constant: 16),
+            aIInsightView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            aIInsightView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            aIInsightView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            aIInsightView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60),
         ])
     }
 
@@ -80,5 +86,11 @@ private extension AIViewController {
         statusView.configure(modelId: "CAT13A", dataCount: 1204, accuracy: 82)
         statusView.onExtract = { print("모델 생성하기 탭") }
         statusView.onSwitch = { print("모델 교체하기 탭") }
+
+        aIInsightView.configure(items: [
+            AIInsightItem(type: .abnormal, description: "이번 주 카페 지출이 평소보다 2.1배 많아요"),
+            AIInsightItem(type: .forecast, description: "매주 월요일 교통비가 나가는 패턴이에요"),
+            AIInsightItem(type: .unrecorded, description: "지난주 이맘때 교통비가 있었는데 이번 주엔 없네요"),
+        ])
     }
 }
