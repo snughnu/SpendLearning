@@ -87,7 +87,7 @@ struct AIView: View {
                     CategoryPredictionDataPoint(categoryName: "음악",     actual: 9000,   predicted: 9000),
                     CategoryPredictionDataPoint(categoryName: "편의점",   actual: 43000,  predicted: 35000),
                     CategoryPredictionDataPoint(categoryName: "기타",     actual: 27000,  predicted: 30000),
-                ])
+                ].sorted { $0.predicted > $1.predicted })
                 .padding(.horizontal, 20)
 
                 AIInsightCardView(items: [

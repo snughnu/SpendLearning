@@ -78,20 +78,55 @@ struct AICategoryPredictionCardView: View {
                 BarMark(
                     x: .value("금액", item.actual),
                     y: .value("카테고리", item.categoryName),
-                    height: .fixed(12)
+                    height: .fixed(11)
                 )
                 .foregroundStyle(Color(UIColor.DesignSystem.accent))
                 .position(by: .value("타입", "실제"))
+                .annotation(position: .trailing, alignment: .leading, spacing: 6) {
+                    Text(formatted(item.actual))
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(Color(UIColor.DesignSystem.accent))
+                }
             }
 
             ForEach(data, id: \.categoryName) { item in
                 BarMark(
                     x: .value("금액", item.predicted),
                     y: .value("카테고리", item.categoryName),
-                    height: .fixed(12)
+                    height: .fixed(11)
                 )
                 .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
                 .position(by: .value("타입", "예측"))
+                .annotation(position: .trailing, alignment: .leading, spacing: 6) {
+                    Text(formatted(item.predicted))
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                }
+            }
+        }
+        .chartXScale(domain: 0...Int(Double(data.map { max($0.actual, $0.predicted) }.max() ?? 0) * 1.5))
+        .chartXAxis {
+            AxisMarks(position: .top) { value in
+                AxisValueLabel {
+                    if let amount = value.as(Int.self) {
+                        Text(yAxisLabel(amount))
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+                    }
+                }
+                AxisGridLine()
+            }
+        }
+        .chartYAxis {
+            AxisMarks { value in
+                AxisValueLabel {
+                    if let category = value.as(String.self) {
+                        Text(category)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Color(UIColor.DesignSystem.primary))
+                            .lineLimit(1)
+                    }
+                }
             }
         }
         .frame(height: CGFloat(data.count) * 50)
@@ -103,5 +138,13 @@ struct AICategoryPredictionCardView: View {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         return (formatter.string(from: NSNumber(value: amount)) ?? "\(amount)") + "원"
+    }
+
+    private func yAxisLabel(_ amount: Int) -> String {
+        if amount >= 10000 {
+            return "\(amount / 10000)만"
+        } else {
+            return formatted(amount)
+        }
     }
 }
