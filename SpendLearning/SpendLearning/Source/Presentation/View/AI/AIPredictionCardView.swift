@@ -27,7 +27,7 @@ struct AIPredictionCardView: View {
 
     private var header: some View {
         HStack {
-            Text("이번 달 실제 vs 예측")
+            Text("이번 달 실제 vs 예측 (누적)")
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(.white)
 
@@ -89,11 +89,11 @@ struct AIPredictionCardView: View {
             PredictionDataPoint(day: 27, actual: nil,    predicted: 405000),
             PredictionDataPoint(day: 28, actual: nil,    predicted: 420000),
             PredictionDataPoint(day: 29, actual: nil,    predicted: 435000),
-            PredictionDataPoint(day: 30, actual: nil,    predicted: 450000),
-            PredictionDataPoint(day: 31, actual: nil,    predicted: 465000),
+            PredictionDataPoint(day: 30, actual: nil,    predicted: 4500000),
+            PredictionDataPoint(day: 31, actual: nil,    predicted: 46500000),
         ]
 
-        let today = 1
+        let today = 31
         let lastDay = 31
         let maxValue = data.flatMap { [$0.actual ?? 0, $0.predicted] }.max() ?? 0
 
@@ -124,14 +124,33 @@ struct AIPredictionCardView: View {
                 .foregroundStyle(Color(UIColor.DesignSystem.subtitle).opacity(0.5))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
                 .annotation(position: .top) {
-                    Text("오늘(\(today)일)")
-                        .font(.system(size: 10))
-                        .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+                    let actualTotal = data.filter { $0.day <= today }.compactMap { $0.actual }.reduce(0, +)
+                    let predictedTotal = data.filter { $0.day <= today }.map { $0.predicted }.reduce(0, +)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("실제: \(formatted(actualTotal))")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(UIColor.DesignSystem.accent))
+                        Text("예측: \(formatted(predictedTotal))")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                    }
+                    .padding(6)
+                    .background(Color(UIColor.DesignSystem.background))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
         }
-        .chartXScale(domain: 1...35)
+        .chartXScale(domain: 1...40)
         .chartXAxis {
-            AxisMarks(values: [1, lastDay]) { value in
+            let xAxisValues: [Int] = {
+                var values = [1, lastDay]
+                if today > 3 && today < lastDay - 3 {
+                    values.insert(today, at: 1)
+                }
+                return values
+            }()
+
+            AxisMarks(values: xAxisValues) { value in
                 AxisValueLabel {
                     if let day = value.as(Int.self) {
                         Text("\(day)일")
@@ -156,7 +175,7 @@ struct AIPredictionCardView: View {
             }
         }
         .frame(height: 200)
-        .padding(.top, 20)
+        .padding(.top, 50)
         .padding(.bottom, 8)
         .padding(.horizontal, 8)
     }
