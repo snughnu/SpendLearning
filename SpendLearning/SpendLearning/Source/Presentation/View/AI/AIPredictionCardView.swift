@@ -93,7 +93,7 @@ struct AIPredictionCardView: View {
             PredictionDataPoint(day: 31, actual: nil,    predicted: 465000),
         ]
 
-        let today = 30
+        let today = 14
         let lastDay = 31
 
         // 누적 변환
@@ -169,6 +169,15 @@ struct AIPredictionCardView: View {
                     .background(Color(UIColor.DesignSystem.background))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
+
+            if let todayPoint = cumulativeData.first(where: { $0.day == today }),
+               let actual = todayPoint.actual {
+                PointMark(
+                    x: .value("날짜", todayPoint.day),
+                    y: .value("금액", actual)
+                )
+                .foregroundStyle(Color(UIColor.DesignSystem.accent))
+            }
         }
         .chartXScale(domain: 1...40)
         .chartXAxis {
