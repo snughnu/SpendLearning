@@ -10,7 +10,7 @@ import UIKit
 extension UIColor {
     enum DesignSystem {
         /// Primary - 딥 올리브 다크
-        static let primary = UIColor(red: 0.18, green: 0.21, blue: 0.15, alpha: 1.0) // #2E3526
+        static let primary = UIColor(red: 0.10, green: 0.12, blue: 0.08, alpha: 1.0) // #1A1F14
 
         /// Background - 크림 베이지 (올리브 톤)
         static let background = UIColor(red: 0.95, green: 0.95, blue: 0.92, alpha: 1.0) // #F2F2EB

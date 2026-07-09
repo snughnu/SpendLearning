@@ -18,17 +18,29 @@ struct AICategoryPredictionCardView: View {
 
     let data: [CategoryPredictionDataPoint]
 
+    @State private var isExpanded = false
+
+    private var filteredData: [CategoryPredictionDataPoint] {
+        data.filter { $0.actual > 0 && $0.predicted > 0 }
+    }
+
+    private var displayData: [CategoryPredictionDataPoint] {
+        isExpanded ? data : Array(filteredData.prefix(5))
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             header
-            if data.isEmpty {
+            if filteredData.isEmpty {
                 emptyView
             } else {
                 chart
+                expandButton
             }
         }
         .background(Color(UIColor.DesignSystem.surface))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .animation(.easeInOut, value: isExpanded)
     }
 
     private var header: some View {
@@ -61,6 +73,18 @@ struct AICategoryPredictionCardView: View {
             .padding(.vertical, 16)
     }
 
+    private var expandButton: some View {
+        Button {
+            isExpanded.toggle()
+        } label: {
+            Text(isExpanded ? "접기" : "전체보기 (\(data.count)개)")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color(UIColor.DesignSystem.primary))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+    }
+
     private func legendItem(title: String, color: Color) -> some View {
         HStack(spacing: 4) {
             RoundedRectangle(cornerRadius: 3)
@@ -74,7 +98,7 @@ struct AICategoryPredictionCardView: View {
 
     private var chart: some View {
         return Chart {
-            ForEach(data, id: \.categoryName) { item in
+            ForEach(displayData, id: \.categoryName) { item in
                 BarMark(
                     x: .value("금액", item.actual),
                     y: .value("카테고리", item.categoryName),
@@ -89,7 +113,7 @@ struct AICategoryPredictionCardView: View {
                 }
             }
 
-            ForEach(data, id: \.categoryName) { item in
+            ForEach(displayData, id: \.categoryName) { item in
                 BarMark(
                     x: .value("금액", item.predicted),
                     y: .value("카테고리", item.categoryName),
@@ -104,7 +128,7 @@ struct AICategoryPredictionCardView: View {
                 }
             }
         }
-        .chartXScale(domain: 0...Int(Double(data.map { max($0.actual, $0.predicted) }.max() ?? 0) * 1.5))
+        .chartXScale(domain: 0...Int(Double(filteredData.map { max($0.actual, $0.predicted) }.max() ?? 0) * 1.5))
         .chartXAxis {
             AxisMarks(position: .top) { value in
                 AxisValueLabel {
@@ -129,7 +153,7 @@ struct AICategoryPredictionCardView: View {
                 }
             }
         }
-        .frame(height: CGFloat(data.count) * 50)
+        .frame(height: CGFloat(displayData.count) * 50)
         .padding(.vertical, 12)
         .padding(.horizontal, 8)
     }
