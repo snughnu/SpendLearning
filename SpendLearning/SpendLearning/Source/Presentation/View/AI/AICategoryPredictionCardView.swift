@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 
-struct CategoryChartItem {
+struct CategoryPredictionDataPoint {
     let categoryName: String
     let actual: Int
     let predicted: Int
@@ -16,7 +16,7 @@ struct CategoryChartItem {
 
 struct AICategoryPredictionCardView: View {
 
-    let items: [CategoryChartItem]
+    let data: [CategoryPredictionDataPoint]
 
     var body: some View {
         VStack(spacing: 0) {
