@@ -21,7 +21,11 @@ struct AICategoryPredictionCardView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            chart
+            if data.isEmpty {
+                emptyView
+            } else {
+                chart
+            }
         }
         .background(Color(UIColor.DesignSystem.surface))
         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -47,6 +51,14 @@ struct AICategoryPredictionCardView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .background(Color(UIColor.DesignSystem.accent))
+    }
+
+    private var emptyView: some View {
+        Text("아직 데이터가 없어요")
+            .font(.system(size: 14))
+            .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
     }
 
     private func legendItem(title: String, color: Color) -> some View {
