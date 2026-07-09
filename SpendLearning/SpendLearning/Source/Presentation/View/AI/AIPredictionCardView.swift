@@ -9,17 +9,58 @@ import SwiftUI
 import Charts
 
 struct PredictionDataPoint {
-    let day: Int        // 1~31
-    let actual: Int?    // 아직 지나지 않은 날은 nil
+    let day: Int
+    let actual: Int?
     let predicted: Int
 }
 
 struct AIPredictionCardView: View {
 
+    private let data: [PredictionDataPoint] = [
+        PredictionDataPoint(day: 1,  actual: 12000,  predicted: 15000),
+        PredictionDataPoint(day: 2,  actual: 28000,  predicted: 30000),
+        PredictionDataPoint(day: 3,  actual: 45000,  predicted: 45000),
+        PredictionDataPoint(day: 4,  actual: 67000,  predicted: 60000),
+        PredictionDataPoint(day: 5,  actual: 82000,  predicted: 75000),
+        PredictionDataPoint(day: 6,  actual: 95000,  predicted: 90000),
+        PredictionDataPoint(day: 7,  actual: 110000, predicted: 105000),
+        PredictionDataPoint(day: 8,  actual: 125000, predicted: 120000),
+        PredictionDataPoint(day: 9,  actual: 138000, predicted: 135000),
+        PredictionDataPoint(day: 10, actual: 152000, predicted: 150000),
+        PredictionDataPoint(day: 11, actual: 170000, predicted: 165000),
+        PredictionDataPoint(day: 12, actual: 185000, predicted: 180000),
+        PredictionDataPoint(day: 13, actual: 198000, predicted: 195000),
+        PredictionDataPoint(day: 14, actual: 215000, predicted: 210000),
+        PredictionDataPoint(day: 15, actual: nil,    predicted: 225000),
+        PredictionDataPoint(day: 16, actual: nil,    predicted: 240000),
+        PredictionDataPoint(day: 17, actual: nil,    predicted: 255000),
+        PredictionDataPoint(day: 18, actual: nil,    predicted: 270000),
+        PredictionDataPoint(day: 19, actual: nil,    predicted: 285000),
+        PredictionDataPoint(day: 20, actual: nil,    predicted: 300000),
+        PredictionDataPoint(day: 21, actual: nil,    predicted: 315000),
+        PredictionDataPoint(day: 22, actual: nil,    predicted: 330000),
+        PredictionDataPoint(day: 23, actual: nil,    predicted: 345000),
+        PredictionDataPoint(day: 24, actual: nil,    predicted: 360000),
+        PredictionDataPoint(day: 25, actual: nil,    predicted: 375000),
+        PredictionDataPoint(day: 26, actual: nil,    predicted: 390000),
+        PredictionDataPoint(day: 27, actual: nil,    predicted: 405000),
+        PredictionDataPoint(day: 28, actual: nil,    predicted: 420000),
+        PredictionDataPoint(day: 29, actual: nil,    predicted: 435000),
+        PredictionDataPoint(day: 30, actual: nil,    predicted: 450000),
+        PredictionDataPoint(day: 31, actual: nil,    predicted: 465000),
+    ]
+
+    private let today = 14
+    private let lastDay = 31
+
     var body: some View {
         VStack(spacing: 0) {
             header
-            chart
+            if data.compactMap({ $0.actual }).isEmpty {
+                emptyView
+            } else {
+                chart
+            }
         }
         .background(Color(UIColor.DesignSystem.surface))
         .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -47,6 +88,14 @@ struct AIPredictionCardView: View {
         .background(Color(UIColor.DesignSystem.accent))
     }
 
+    private var emptyView: some View {
+        Text("아직 데이터가 없어요")
+            .font(.system(size: 14))
+            .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+    }
+
     private func legendItem(title: String, color: Color) -> some View {
         HStack(spacing: 4) {
             RoundedRectangle(cornerRadius: 3)
@@ -59,44 +108,6 @@ struct AIPredictionCardView: View {
     }
 
     private var chart: some View {
-        let data: [PredictionDataPoint] = [
-            PredictionDataPoint(day: 1,  actual: 12000,  predicted: 15000),
-            PredictionDataPoint(day: 2,  actual: 28000,  predicted: 30000),
-            PredictionDataPoint(day: 3,  actual: 45000,  predicted: 45000),
-            PredictionDataPoint(day: 4,  actual: 67000,  predicted: 60000),
-            PredictionDataPoint(day: 5,  actual: 82000,  predicted: 75000),
-            PredictionDataPoint(day: 6,  actual: 95000,  predicted: 90000),
-            PredictionDataPoint(day: 7,  actual: 110000, predicted: 105000),
-            PredictionDataPoint(day: 8,  actual: 125000, predicted: 120000),
-            PredictionDataPoint(day: 9,  actual: 138000, predicted: 135000),
-            PredictionDataPoint(day: 10, actual: 152000, predicted: 150000),
-            PredictionDataPoint(day: 11, actual: 170000, predicted: 165000),
-            PredictionDataPoint(day: 12, actual: 185000, predicted: 180000),
-            PredictionDataPoint(day: 13, actual: 198000, predicted: 195000),
-            PredictionDataPoint(day: 14, actual: 215000, predicted: 210000),
-            PredictionDataPoint(day: 15, actual: nil,    predicted: 225000),
-            PredictionDataPoint(day: 16, actual: nil,    predicted: 240000),
-            PredictionDataPoint(day: 17, actual: nil,    predicted: 255000),
-            PredictionDataPoint(day: 18, actual: nil,    predicted: 270000),
-            PredictionDataPoint(day: 19, actual: nil,    predicted: 285000),
-            PredictionDataPoint(day: 20, actual: nil,    predicted: 300000),
-            PredictionDataPoint(day: 21, actual: nil,    predicted: 315000),
-            PredictionDataPoint(day: 22, actual: nil,    predicted: 330000),
-            PredictionDataPoint(day: 23, actual: nil,    predicted: 345000),
-            PredictionDataPoint(day: 24, actual: nil,    predicted: 360000),
-            PredictionDataPoint(day: 25, actual: nil,    predicted: 375000),
-            PredictionDataPoint(day: 26, actual: nil,    predicted: 390000),
-            PredictionDataPoint(day: 27, actual: nil,    predicted: 405000),
-            PredictionDataPoint(day: 28, actual: nil,    predicted: 420000),
-            PredictionDataPoint(day: 29, actual: nil,    predicted: 435000),
-            PredictionDataPoint(day: 30, actual: nil,    predicted: 450000),
-            PredictionDataPoint(day: 31, actual: nil,    predicted: 465000),
-        ]
-
-        let today = 14
-        let lastDay = 31
-
-        // 누적 변환
         var cumulativeActual = 0
         var cumulativePredicted = 0
         let cumulativeData: [(day: Int, actual: Int?, predicted: Int)] = data.map { point in
@@ -218,7 +229,6 @@ struct AIPredictionCardView: View {
         .padding(.bottom, 8)
         .padding(.horizontal, 8)
     }
-
 
     private func formatted(_ amount: Int) -> String {
         let formatter = NumberFormatter()
