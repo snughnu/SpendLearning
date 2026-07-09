@@ -29,15 +29,15 @@ struct AICategoryPredictionCardView: View {
 
     private var header: some View {
         HStack {
-            Text("카테고리별 실제 vs 예측")
+            Text("카테고리별 이번 달 실제 vs 예측")
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(.white)
 
             Spacer()
 
             HStack(spacing: 10) {
-                legendItem(title: "실제", color: Color(UIColor.DesignSystem.primary))
-                legendItem(title: "예측", color: Color(UIColor.DesignSystem.secondary))
+                legendItem(title: "실제", color: Color(UIColor.DesignSystem.accent))
+                legendItem(title: "예측", color: Color(UIColor.DesignSystem.chartPredicted))
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
