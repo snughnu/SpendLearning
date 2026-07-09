@@ -12,8 +12,9 @@ struct AIStatusCardView: View {
     let modelId: String
     let dataCount: Int
     let accuracy: Float
-    var onExtract: () -> Void
     var onSwitch: () -> Void
+
+    @State private var isShowingCreate = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -44,7 +45,9 @@ struct AIStatusCardView: View {
             .padding(.bottom, 20)
 
             HStack(spacing: 12) {
-                Button(action: onExtract) {
+                Button {
+                    isShowingCreate = true
+                } label: {
                     Text("모델 생성하기")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.white)
@@ -69,5 +72,13 @@ struct AIStatusCardView: View {
         }
         .background(Color(UIColor.DesignSystem.surface))
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        .alert("모델 생성", isPresented: $isShowingCreate) {
+            Button("생성하기") {
+                print("전체 데이터로 모델 생성")
+            }
+            Button("취소", role: .cancel) {}
+        } message: {
+            Text("소비 데이터를 학습해 생성할까요?")
+        }
     }
 }

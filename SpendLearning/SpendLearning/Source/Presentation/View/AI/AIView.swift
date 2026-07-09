@@ -26,7 +26,6 @@ struct AIView: View {
                         modelId: "CAT13A",
                         dataCount: 1204,
                         accuracy: 82,
-                        onExtract: { print("모델 생성하기 탭") },
                         onSwitch: { print("모델 교체하기 탭") }
                     )
                 }
