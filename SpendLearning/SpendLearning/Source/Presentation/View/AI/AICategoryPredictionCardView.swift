@@ -11,7 +11,7 @@ import Charts
 struct CategoryPredictionDataPoint {
     let categoryName: String
     let actual: Int
-    let predicted: Int
+    let predicted: Int?
 }
 
 struct AICategoryPredictionCardView: View {
@@ -20,18 +20,21 @@ struct AICategoryPredictionCardView: View {
 
     @State private var isExpanded = false
 
-    private var filteredData: [CategoryPredictionDataPoint] {
-        data.filter { $0.actual > 0 && $0.predicted > 0 }
+    private var hasPrediction: Bool {
+        data.compactMap { $0.predicted }.isEmpty == false
     }
 
     private var displayData: [CategoryPredictionDataPoint] {
-        isExpanded ? data : Array(filteredData.prefix(5))
+        isExpanded ? data : Array(data.prefix(5))
     }
 
     var body: some View {
         VStack(spacing: 0) {
             header
-            if filteredData.isEmpty {
+            if !hasPrediction {
+                noPredictionBanner
+            }
+            if data.isEmpty {
                 emptyView
             } else {
                 chart
@@ -63,6 +66,15 @@ struct AICategoryPredictionCardView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .background(Color(UIColor.DesignSystem.accent))
+    }
+
+    private var noPredictionBanner: some View {
+        Text("아직 예측 모델이 없어요")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .background(Color(UIColor.DesignSystem.secondary).opacity(0.4))
     }
 
     private var emptyView: some View {
@@ -97,10 +109,14 @@ struct AICategoryPredictionCardView: View {
     }
 
     private var chart: some View {
+        let maxActual = displayData.map { $0.actual }.max() ?? 0
+        let maxPredicted = displayData.compactMap { $0.predicted }.max() ?? 0
+        let maxValue = max(maxActual, maxPredicted)
+
         return Chart {
             ForEach(displayData, id: \.categoryName) { item in
                 BarMark(
-                    x: .value("금액", item.actual),
+                    x: .value("금액", max(item.actual, 1000)),
                     y: .value("카테고리", item.categoryName),
                     height: .fixed(11)
                 )
@@ -114,21 +130,23 @@ struct AICategoryPredictionCardView: View {
             }
 
             ForEach(displayData, id: \.categoryName) { item in
-                BarMark(
-                    x: .value("금액", item.predicted),
-                    y: .value("카테고리", item.categoryName),
-                    height: .fixed(11)
-                )
-                .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
-                .position(by: .value("타입", "예측"))
-                .annotation(position: .trailing, alignment: .leading, spacing: 6) {
-                    Text(formatted(item.predicted))
-                        .font(.system(size: 9, weight: .semibold))
-                        .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                if let predicted = item.predicted {
+                    BarMark(
+                        x: .value("금액", max(predicted, 1000)),
+                        y: .value("카테고리", item.categoryName),
+                        height: .fixed(11)
+                    )
+                    .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                    .position(by: .value("타입", "예측"))
+                    .annotation(position: .trailing, alignment: .leading, spacing: 6) {
+                        Text(formatted(predicted))
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                    }
                 }
             }
         }
-        .chartXScale(domain: 0...Int(Double(filteredData.map { max($0.actual, $0.predicted) }.max() ?? 0) * 1.5))
+        .chartXScale(domain: 0...Int(Double(maxValue) * 1.5))
         .chartXAxis {
             AxisMarks(position: .top) { value in
                 AxisValueLabel {

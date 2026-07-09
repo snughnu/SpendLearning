@@ -31,6 +31,67 @@ struct AIView: View {
                     AIInsightItemData(type: .unrecorded, description: "지난주 이맘때 교통비가 있었는데 이번 주엔 없네요"),
                 ])
 
+//                AIPredictionCardView(
+//                    data: [
+//                        PredictionDataPoint(day: 1,  actual: 12000,  predicted: nil),
+//                        PredictionDataPoint(day: 2,  actual: 28000,  predicted: nil),
+//                        PredictionDataPoint(day: 3,  actual: 45000,  predicted: nil),
+//                        PredictionDataPoint(day: 4,  actual: 67000,  predicted: nil),
+//                        PredictionDataPoint(day: 5,  actual: 82000,  predicted: nil),
+//                        PredictionDataPoint(day: 6,  actual: 95000,  predicted: nil),
+//                        PredictionDataPoint(day: 7,  actual: 110000, predicted: nil),
+//                        PredictionDataPoint(day: 8,  actual: 125000, predicted: nil),
+//                        PredictionDataPoint(day: 9,  actual: 138000, predicted: nil),
+//                        PredictionDataPoint(day: 10, actual: 152000, predicted: nil),
+//                        PredictionDataPoint(day: 11, actual: 170000, predicted: nil),
+//                        PredictionDataPoint(day: 12, actual: 185000, predicted: nil),
+//                        PredictionDataPoint(day: 13, actual: 198000, predicted: nil),
+//                        PredictionDataPoint(day: 14, actual: 215000, predicted: nil),
+//                        PredictionDataPoint(day: 15, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 16, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 17, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 18, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 19, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 20, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 21, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 22, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 23, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 24, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 25, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 26, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 27, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 28, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 29, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 30, actual: nil,    predicted: nil),
+//                        PredictionDataPoint(day: 31, actual: nil,    predicted: nil),
+//                    ],
+//                    today: 14,
+//                    lastDay: 31
+//                )
+//
+//                AICategoryPredictionCardView(data: [
+//                    CategoryPredictionDataPoint(categoryName: "식비",     actual: 320000, predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "교통",     actual: 54000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "카페",     actual: 87000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "쇼핑",     actual: 152000, predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "구독",     actual: 29000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "의료",     actual: 45000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "운동",     actual: 62000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "도서",     actual: 18000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "영화",     actual: 24000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "여행",     actual: 0,      predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "숙박",     actual: 0,      predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "미용",     actual: 35000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "반려동물", actual: 55000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "세금",     actual: 120000, predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "보험",     actual: 80000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "통신",     actual: 55000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "게임",     actual: 12000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "음악",     actual: 9000,   predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "편의점",   actual: 43000,  predicted: nil),
+//                    CategoryPredictionDataPoint(categoryName: "기타",     actual: 27000,  predicted: nil),
+//                ].sorted { $0.actual > $1.actual })
+
                 AIPredictionCardView(
                     data: [
                         PredictionDataPoint(day: 1,  actual: 12000,  predicted: 15000),
@@ -89,8 +150,8 @@ struct AIView: View {
                     CategoryPredictionDataPoint(categoryName: "게임",     actual: 12000,  predicted: 15000),
                     CategoryPredictionDataPoint(categoryName: "음악",     actual: 9000,   predicted: 9000),
                     CategoryPredictionDataPoint(categoryName: "편의점",   actual: 43000,  predicted: 35000),
-                    CategoryPredictionDataPoint(categoryName: "기타",     actual: 27000,  predicted: 30000),
-                ].sorted { $0.predicted > $1.predicted })
+                    CategoryPredictionDataPoint(categoryName: "기타",     actual: 27000,  predicted: 0),
+                ].sorted { $0.actual > $1.actual })
                 .padding(.bottom, 20)
             }
             .padding(.horizontal, 20)
