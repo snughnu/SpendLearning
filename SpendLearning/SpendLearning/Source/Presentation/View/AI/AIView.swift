@@ -17,13 +17,19 @@ struct AIView: View {
                     .foregroundStyle(Color(UIColor.DesignSystem.primary))
                     .padding(.top, 16)
 
-                AIStatusCardView(
-                    modelId: "CAT13A",
-                    dataCount: 1204,
-                    accuracy: 82,
-                    onExtract: { print("모델 생성하기 탭") },
-                    onSwitch: { print("모델 교체하기 탭") }
-                )
+                ZStack(alignment: .bottom) {
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color(UIColor.DesignSystem.accent))
+                        .offset(y: -5)
+
+                    AIStatusCardView(
+                        modelId: "CAT13A",
+                        dataCount: 1204,
+                        accuracy: 82,
+                        onExtract: { print("모델 생성하기 탭") },
+                        onSwitch: { print("모델 교체하기 탭") }
+                    )
+                }
 
                 AIInsightCardView(items: [
                     AIInsightItemData(type: .abnormal, description: "이번 주 카페 지출이 평소보다 2.1배 많아요"),
