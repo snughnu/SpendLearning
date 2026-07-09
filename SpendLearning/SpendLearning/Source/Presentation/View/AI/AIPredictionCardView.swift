@@ -89,17 +89,34 @@ struct AIPredictionCardView: View {
             PredictionDataPoint(day: 27, actual: nil,    predicted: 405000),
             PredictionDataPoint(day: 28, actual: nil,    predicted: 420000),
             PredictionDataPoint(day: 29, actual: nil,    predicted: 435000),
-            PredictionDataPoint(day: 30, actual: nil,    predicted: 4500000),
-            PredictionDataPoint(day: 31, actual: nil,    predicted: 46500000),
+            PredictionDataPoint(day: 30, actual: nil,    predicted: 450000),
+            PredictionDataPoint(day: 31, actual: nil,    predicted: 465000),
         ]
 
-        let today = 31
+        let today = 30
         let lastDay = 31
-        let maxValue = data.flatMap { [$0.actual ?? 0, $0.predicted] }.max() ?? 0
+
+        // 누적 변환
+        var cumulativeActual = 0
+        var cumulativePredicted = 0
+        let cumulativeData: [(day: Int, actual: Int?, predicted: Int)] = data.map { point in
+            if let actual = point.actual {
+                cumulativeActual += actual
+            }
+            cumulativePredicted += point.predicted
+            return (
+                day: point.day,
+                actual: point.actual != nil ? cumulativeActual : nil,
+                predicted: cumulativePredicted
+            )
+        }
+
+        let maxValue = cumulativeData.flatMap { [$0.actual ?? 0, $0.predicted] }.max() ?? 0
+        let predictedTotal = cumulativeData.last?.predicted ?? 0
 
         return Chart {
 
-            ForEach(data, id: \.day) { point in
+            ForEach(cumulativeData, id: \.day) { point in
                 LineMark(
                     x: .value("날짜", point.day),
                     y: .value("금액", point.predicted),
@@ -109,7 +126,7 @@ struct AIPredictionCardView: View {
                 .lineStyle(StrokeStyle(lineWidth: 2, dash: [4, 4]))
             }
 
-            ForEach(data, id: \.day) { point in
+            ForEach(cumulativeData, id: \.day) { point in
                 if let actual = point.actual {
                     LineMark(
                         x: .value("날짜", point.day),
@@ -120,19 +137,32 @@ struct AIPredictionCardView: View {
                 }
             }
 
+            if let lastPoint = cumulativeData.last {
+                PointMark(
+                    x: .value("날짜", lastPoint.day),
+                    y: .value("금액", lastPoint.predicted)
+                )
+                .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                .annotation(position: .top) {
+                    Text("예측 총 \(formatted(predictedTotal))")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                }
+            }
+
             RuleMark(x: .value("오늘", today))
                 .foregroundStyle(Color(UIColor.DesignSystem.subtitle).opacity(0.5))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
                 .annotation(position: .top) {
-                    let actualTotal = data.filter { $0.day <= today }.compactMap { $0.actual }.reduce(0, +)
-                    let predictedTotal = data.filter { $0.day <= today }.map { $0.predicted }.reduce(0, +)
+                    let actualTotal = cumulativeData.filter { $0.day <= today }.compactMap { $0.actual }.last ?? 0
+                    let predictedToday = cumulativeData.filter { $0.day <= today }.last?.predicted ?? 0
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("실제: \(formatted(actualTotal))")
-                            .font(.system(size: 10))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.accent))
-                        Text("예측: \(formatted(predictedTotal))")
-                            .font(.system(size: 10))
+                        Text("예측: \(formatted(predictedToday))")
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
                     }
                     .padding(6)
@@ -179,7 +209,7 @@ struct AIPredictionCardView: View {
         .padding(.bottom, 8)
         .padding(.horizontal, 8)
     }
-    
+
 
     private func formatted(_ amount: Int) -> String {
         let formatter = NumberFormatter()
