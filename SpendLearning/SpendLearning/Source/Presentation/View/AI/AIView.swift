@@ -65,7 +65,6 @@ struct AIView: View {
                     lastDay: 31
                 )
                 .padding(.horizontal, 20)
-                .padding(.horizontal, 20)
 
                 AICategoryPredictionCardView(data: [
                     CategoryPredictionDataPoint(categoryName: "식비",     actual: 320000, predicted: 280000),
@@ -89,7 +88,6 @@ struct AIView: View {
                     CategoryPredictionDataPoint(categoryName: "편의점",   actual: 43000,  predicted: 35000),
                     CategoryPredictionDataPoint(categoryName: "기타",     actual: 27000,  predicted: 30000),
                 ])
-                .padding(.horizontal, 20)
                 .padding(.horizontal, 20)
 
                 AIInsightCardView(items: [

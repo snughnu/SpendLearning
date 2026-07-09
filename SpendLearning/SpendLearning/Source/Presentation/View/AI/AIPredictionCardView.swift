@@ -14,6 +14,12 @@ struct PredictionDataPoint {
     let predicted: Int
 }
 
+private struct CumulativeDataPoint {
+    let day: Int
+    let actual: Int?
+    let predicted: Int
+}
+
 struct AIPredictionCardView: View {
 
     let data: [PredictionDataPoint]
@@ -77,12 +83,12 @@ struct AIPredictionCardView: View {
     private var chart: some View {
         var cumulativeActual = 0
         var cumulativePredicted = 0
-        let cumulativeData: [(day: Int, actual: Int?, predicted: Int)] = data.map { point in
+        let cumulativeData: [CumulativeDataPoint] = data.map { point in
             if let actual = point.actual {
                 cumulativeActual += actual
             }
             cumulativePredicted += point.predicted
-            return (
+            return CumulativeDataPoint(
                 day: point.day,
                 actual: point.actual != nil ? cumulativeActual : nil,
                 predicted: cumulativePredicted
