@@ -29,6 +29,9 @@ extension UIColor {
 
         /// Separator - 연한 올리브 구분선
         static let separator = UIColor(red: 0.87, green: 0.88, blue: 0.85, alpha: 1.0) // #DEE1D9
+
+        /// Chart Predicted - 버건디 브라운
+        static let chartPredicted = UIColor(red: 0.478, green: 0.247, blue: 0.247, alpha: 1.0) // #7A3F3F
     }
 }
 
@@ -61,6 +64,7 @@ private struct ColorRow: View {
             ColorRow(name: "accent", color: .DesignSystem.accent)
             ColorRow(name: "subtitle", color: .DesignSystem.subtitle)
             ColorRow(name: "separator", color: .DesignSystem.separator)
+            ColorRow(name: "chartPredicted", color: .DesignSystem.chartPredicted)
         }
         .padding(20)
     }
