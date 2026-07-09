@@ -15,7 +15,6 @@ struct AIView: View {
                 Text("소비 예측")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(Color(UIColor.DesignSystem.primary))
-                    .padding(.horizontal, 20)
                     .padding(.top, 16)
 
                 AIStatusCardView(
@@ -25,7 +24,12 @@ struct AIView: View {
                     onExtract: { print("모델 생성하기 탭") },
                     onSwitch: { print("모델 교체하기 탭") }
                 )
-                .padding(.horizontal, 20)
+
+                AIInsightCardView(items: [
+                    AIInsightItemData(type: .abnormal, description: "이번 주 카페 지출이 평소보다 2.1배 많아요"),
+                    AIInsightItemData(type: .forecast, description: "매주 월요일 교통비가 나가는 패턴이에요"),
+                    AIInsightItemData(type: .unrecorded, description: "지난주 이맘때 교통비가 있었는데 이번 주엔 없네요"),
+                ])
 
                 AIPredictionCardView(
                     data: [
@@ -64,7 +68,6 @@ struct AIView: View {
                     today: 14,
                     lastDay: 31
                 )
-                .padding(.horizontal, 20)
 
                 AICategoryPredictionCardView(data: [
                     CategoryPredictionDataPoint(categoryName: "식비",     actual: 320000, predicted: 280000),
@@ -88,16 +91,9 @@ struct AIView: View {
                     CategoryPredictionDataPoint(categoryName: "편의점",   actual: 43000,  predicted: 35000),
                     CategoryPredictionDataPoint(categoryName: "기타",     actual: 27000,  predicted: 30000),
                 ].sorted { $0.predicted > $1.predicted })
-                .padding(.horizontal, 20)
-
-                AIInsightCardView(items: [
-                    AIInsightItemData(type: .abnormal, description: "이번 주 카페 지출이 평소보다 2.1배 많아요"),
-                    AIInsightItemData(type: .forecast, description: "매주 월요일 교통비가 나가는 패턴이에요"),
-                    AIInsightItemData(type: .unrecorded, description: "지난주 이맘때 교통비가 있었는데 이번 주엔 없네요"),
-                ])
-                .padding(.horizontal, 20)
                 .padding(.bottom, 20)
             }
+            .padding(.horizontal, 20)
         }
         .background(Color(UIColor.DesignSystem.background))
         .scrollIndicators(.hidden)
