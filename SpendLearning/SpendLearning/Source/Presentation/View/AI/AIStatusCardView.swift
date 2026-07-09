@@ -12,9 +12,15 @@ struct AIStatusCardView: View {
     let modelId: String
     let dataCount: Int
     let accuracy: Float
-    var onSwitch: () -> Void
 
     @State private var isShowingCreate = false
+    @State private var isShowingSelect = false
+
+    private let mockModels: [AIModelItem] = [
+        AIModelItem(id: "CAT13A", dataCount: 1204, accuracy: 82, createdAt: Date()),
+        AIModelItem(id: "CAT12B", dataCount: 980,  accuracy: 76, createdAt: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()),
+        AIModelItem(id: "CAT11C", dataCount: 750,  accuracy: 71, createdAt: Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()),
+    ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -57,7 +63,9 @@ struct AIStatusCardView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
 
-                Button(action: onSwitch) {
+                Button {
+                    isShowingSelect = true
+                } label: {
                     Text("모델 교체하기")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.white)
@@ -78,7 +86,15 @@ struct AIStatusCardView: View {
             }
             Button("취소", role: .cancel) {}
         } message: {
-            Text("소비 데이터를 학습해 생성할까요?")
+            Text("데이터를 학습해 예측 모델을 생성할까요?")
+        }
+        .sheet(isPresented: $isShowingSelect) {
+            AIModelSelectView(
+                models: mockModels,
+                currentModelId: modelId
+            ) { selected in
+                print("선택된 모델: \(selected.id)")
+            }
         }
     }
 }
