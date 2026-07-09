@@ -73,7 +73,30 @@ struct AICategoryPredictionCardView: View {
     }
 
     private var chart: some View {
-        Text("차트")
+        return Chart {
+            ForEach(data, id: \.categoryName) { item in
+                BarMark(
+                    x: .value("금액", item.actual),
+                    y: .value("카테고리", item.categoryName),
+                    height: .fixed(12)
+                )
+                .foregroundStyle(Color(UIColor.DesignSystem.accent))
+                .position(by: .value("타입", "실제"))
+            }
+
+            ForEach(data, id: \.categoryName) { item in
+                BarMark(
+                    x: .value("금액", item.predicted),
+                    y: .value("카테고리", item.categoryName),
+                    height: .fixed(12)
+                )
+                .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                .position(by: .value("타입", "예측"))
+            }
+        }
+        .frame(height: CGFloat(data.count) * 50)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 8)
     }
 
     private func formatted(_ amount: Int) -> String {
