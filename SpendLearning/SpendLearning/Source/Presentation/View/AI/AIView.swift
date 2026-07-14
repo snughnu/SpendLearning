@@ -10,6 +10,7 @@ import SwiftUI
 struct AIView: View {
 
     @State var viewModel: AIViewModel
+    @State private var isShowingToast = false
 
     var body: some View {
         ScrollView {
@@ -26,7 +27,8 @@ struct AIView: View {
 
                     AIStatusCardView(
                         currentModel: viewModel.currentModel,
-                        models: viewModel.models
+                        models: viewModel.models,
+                        isShowingToast: $isShowingToast
                     )
                 }
 
@@ -48,5 +50,6 @@ struct AIView: View {
         .onAppear {
             viewModel.onAppear()
         }
+        .toast(isShowing: $isShowingToast, message: "아직 생성된 예측 모델이 없어요")
     }
 }

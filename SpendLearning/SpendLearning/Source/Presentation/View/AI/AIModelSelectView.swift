@@ -28,21 +28,38 @@ struct AIModelSelectView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(models, id: \.id) { model in
-                        modelRow(model)
-                            .onTapGesture {
-                                selectedId = model.id
-                            }
+            if models.isEmpty {
+                emptyView
+            } else {
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(models, id: \.id) { model in
+                            modelRow(model)
+                                .onTapGesture {
+                                    selectedId = model.id
+                                }
+                        }
                     }
+                    .padding(20)
                 }
-                .padding(20)
-            }
 
-            confirmButton
+                confirmButton
+            }
         }
         .background(Color(UIColor.DesignSystem.background))
+    }
+
+    private var emptyView: some View {
+        VStack(spacing: 8) {
+            Text("생성된 모델이 없어요")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(Color(UIColor.DesignSystem.primary))
+
+            Text("소비를 꾸준히 기록하고 모델을 생성해보세요.")
+                .font(.system(size: 13))
+                .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func modelRow(_ model: AIModelMetadata) -> some View {

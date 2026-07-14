@@ -12,6 +12,7 @@ struct AIStatusCardView: View {
     let currentModel: AIModelMetadata?
     let models: [AIModelMetadata]
 
+    @Binding var isShowingToast: Bool
     @State private var isShowingCreate = false
     @State private var isShowingSelect = false
 
@@ -100,14 +101,18 @@ struct AIStatusCardView: View {
             }
 
             Button {
-                isShowingSelect = true
+                if models.isEmpty {
+                    isShowingToast = true
+                } else {
+                    isShowingSelect = true
+                }
             } label: {
                 Text("모델 교체하기")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
-                    .background(Color(UIColor.DesignSystem.accent))
+                    .background(Color(UIColor.DesignSystem.accent).opacity(models.isEmpty ? 0.4 : 1.0))
                     .clipShape(RoundedRectangle(cornerRadius: 14))
             }
         }
