@@ -137,6 +137,8 @@ final class SpyAIRepository: AIRepositoryProtocol {
     private(set) var fetchedYear: Int?
     private(set) var fetchedMonth: Int?
     private(set) var createModelCallCount = 0
+    private(set) var deleteModelCallCount = 0
+    private(set) var deletedId: String?
 
     var stubbedModels: [AIModelMetadata] = []
     var stubbedCurrentModel: AIModelMetadata? = nil
@@ -178,6 +180,11 @@ final class SpyAIRepository: AIRepositoryProtocol {
     }
 
     func selectModel(id: String) async {}
+
+    func deleteModel(id: String) async {
+        deleteModelCallCount += 1
+        deletedId = id
+    }
 }
 
 // MARK: - Stub

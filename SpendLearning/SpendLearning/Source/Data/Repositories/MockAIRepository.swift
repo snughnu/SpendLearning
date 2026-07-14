@@ -59,4 +59,6 @@ final class MockAIRepository: AIRepositoryProtocol {
     }
 
     func selectModel(id: String) async {}
+
+    func deleteModel(id: String) async {}
 }

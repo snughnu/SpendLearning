@@ -20,4 +20,6 @@ protocol AIRepositoryProtocol {
     func createModel(expenses: [Expense]) async -> Result<AIModelMetadata, AIModelCreationError>
     /// 예측 모델 선택
     func selectModel(id: String) async
+    /// 예측 모델 삭제
+    func deleteModel(id: String) async
 }

@@ -97,6 +97,24 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
         try? modelContext.save()
     }
 
+    func deleteModel(id: String) async {
+        let descriptor = FetchDescriptor<AIModelModel>()
+        let models = (try? modelContext.fetch(descriptor)) ?? []
+        guard let target = models.first(where: { $0.id == id }) else { return }
+
+        let wasSelected = target.isSelected
+        modelContext.delete(target)
+
+        if wasSelected {
+            let remaining = models
+                .filter { $0.id != id }
+                .sorted { $0.createdAt > $1.createdAt }
+            remaining.first?.isSelected = true
+        }
+
+        try? modelContext.save()
+    }
+
     // MARK: - Private
 
     private func toMetadata(_ model: AIModelModel) -> AIModelMetadata {

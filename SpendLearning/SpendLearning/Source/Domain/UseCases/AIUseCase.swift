@@ -48,4 +48,8 @@ final class AIUseCase: AIUseCaseProtocol {
     func selectModel(id: String) async {
         await repository.selectModel(id: id)
     }
+
+    func deleteModel(id: String) async {
+        await repository.deleteModel(id: id)
+    }
 }

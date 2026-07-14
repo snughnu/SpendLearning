@@ -173,4 +173,5 @@ final class StubAIUseCase: AIUseCaseProtocol {
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] { stubbedCategoryPredictions }
     func createModel() async -> Result<AIModelMetadata, AIModelCreationError> { stubbedCreateModelResult }
     func selectModel(id: String) async {}
+    func deleteModel(id: String) async {}
 }
