@@ -32,7 +32,7 @@ struct AIView: View {
                     )
                 }
 
-                AIInsightCardView(items: [])
+                AIInsightCardView(items: viewModel.insights)
 
                 AIPredictionCardView(
                     data: viewModel.predictionData,

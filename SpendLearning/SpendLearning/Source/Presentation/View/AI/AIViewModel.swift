@@ -13,6 +13,7 @@ final class AIViewModel {
     // MARK: - Output
     private(set) var currentModel: AIModelMetadata? = nil
     private(set) var models: [AIModelMetadata] = []
+    private(set) var insights: [AIInsightItemData] = []
     private(set) var predictionData: [PredictionDataPoint] = []
     private(set) var categoryData: [CategoryPredictionDataPoint] = []
     private(set) var today: Int = Calendar.current.component(.day, from: Date())
@@ -50,6 +51,7 @@ final class AIViewModel {
         async let expenses = expenseUseCase.fetch(year: year, month: month)
         async let currentModel = aiUseCase.fetchCurrentModel()
         async let models = aiUseCase.fetchModels()
+        async let insights = aiUseCase.fetchInsights()
         async let dailyPredictions = aiUseCase.fetchDailyPredictions(year: year, month: month)
         async let categoryPredictions = aiUseCase.fetchCategoryPredictions(year: year, month: month)
 
@@ -57,18 +59,21 @@ final class AIViewModel {
             fetchedExpenses,
             fetchedModel,
             fetchedModels,
+            fetchedInsights,
             fetchedDaily,
             fetchedCategory
         ) = await (
             expenses,
             currentModel,
             models,
+            insights,
             dailyPredictions,
             categoryPredictions
         )
 
         self.currentModel = fetchedModel
         self.models = fetchedModels
+        self.insights = fetchedInsights
         self.predictionData = makePredictionData(expenses: fetchedExpenses, predictions: fetchedDaily)
         self.categoryData = makeCategoryData(expenses: fetchedExpenses, predictions: fetchedCategory)
     }
