@@ -74,6 +74,11 @@ final class AIViewModel {
         await load()
     }
 
+    func deleteModel(id: String) async {
+        await aiUseCase.deleteModel(id: id)
+        await load()
+    }
+
     // MARK: - Private
     private func load() async {
         let calendar = Calendar.current

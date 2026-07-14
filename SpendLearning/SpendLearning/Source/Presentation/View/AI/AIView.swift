@@ -40,6 +40,9 @@ struct AIView: View {
                         createModelError: viewModel.createModelError,
                         onSelectModel: { selected in
                             await viewModel.selectModel(id: selected.id)
+                        },
+                        onDeleteModel: { target in
+                            await viewModel.deleteModel(id: target.id)
                         }
                     )
                 }

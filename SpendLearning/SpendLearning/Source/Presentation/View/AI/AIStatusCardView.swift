@@ -20,6 +20,7 @@ struct AIStatusCardView: View {
     let onCreateModel: () async -> Void
     let createModelError: AIModelCreationError?
     let onSelectModel: (AIModelMetadata) async -> Void
+    let onDeleteModel: (AIModelMetadata) async -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -50,10 +51,14 @@ struct AIStatusCardView: View {
         .sheet(isPresented: $isShowingSelect) {
             AIModelSelectView(
                 models: models,
-                currentModelId: currentModel?.id ?? ""
-            ) { selected in
-                Task { await onSelectModel(selected) }
-            }
+                currentModelId: currentModel?.id ?? "",
+                onConfirm: { selected in
+                    Task { await onSelectModel(selected) }
+                },
+                onDelete: { target in
+                    Task { await onDeleteModel(target) }
+                }
+            )
         }
     }
 
@@ -82,7 +87,7 @@ struct AIStatusCardView: View {
                                 .scaleEffect(x: 1, y: 2)
                                 .padding(.top, 2)
                         } else {
-                            Text("정확도 측정불가")
+                            Text("정확도 측정불가 (4개월 이상 데이터 필요)")
                                 .font(.system(size: 13))
                                 .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
                         }

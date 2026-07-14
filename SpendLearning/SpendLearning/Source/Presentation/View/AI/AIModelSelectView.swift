@@ -11,17 +11,21 @@ struct AIModelSelectView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var selectedId: String
+    @State private var modelPendingDelete: AIModelMetadata?
 
     let models: [AIModelMetadata]
     var onConfirm: (AIModelMetadata) -> Void
+    var onDelete: (AIModelMetadata) -> Void
 
     init(
         models: [AIModelMetadata],
         currentModelId: String,
-        onConfirm: @escaping (AIModelMetadata) -> Void
+        onConfirm: @escaping (AIModelMetadata) -> Void,
+        onDelete: @escaping (AIModelMetadata) -> Void
     ) {
         self.models = models
         self.onConfirm = onConfirm
+        self.onDelete = onDelete
         self._selectedId = State(initialValue: currentModelId)
     }
 
@@ -37,6 +41,13 @@ struct AIModelSelectView: View {
                                 .onTapGesture {
                                     selectedId = model.id
                                 }
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        modelPendingDelete = model
+                                    } label: {
+                                        Label("삭제", systemImage: "trash")
+                                    }
+                                }
                         }
                     }
                     .padding(20)
@@ -46,6 +57,31 @@ struct AIModelSelectView: View {
             }
         }
         .background(Color(UIColor.DesignSystem.background))
+        .alert(
+            "모델 삭제",
+            isPresented: Binding(
+                get: { modelPendingDelete != nil },
+                set: { if !$0 { modelPendingDelete = nil } }
+            )
+        ) {
+            Button("삭제", role: .destructive) {
+                if let target = modelPendingDelete {
+                    if selectedId == target.id {
+                        let remaining = models
+                            .filter { $0.id != target.id }
+                            .sorted { $0.createdAt > $1.createdAt }
+                        selectedId = remaining.first?.id ?? ""
+                    }
+                    onDelete(target)
+                }
+                modelPendingDelete = nil
+            }
+            Button("취소", role: .cancel) {
+                modelPendingDelete = nil
+            }
+        } message: {
+            Text("\(modelPendingDelete?.id ?? "") 모델을 삭제할까요?\n삭제한 모델은 복구할 수 없어요.")
+        }
     }
 
     private var emptyView: some View {
