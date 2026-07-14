@@ -48,6 +48,7 @@
 				Source/Domain/UseCases/CategoryUseCaseProtocol.swift,
 				Source/Domain/UseCases/ExpenseUseCase.swift,
 				Source/Domain/UseCases/ExpenseUseCaseProtocol.swift,
+				Source/Presentation/View/AI/AIViewModel.swift,
 				Source/Presentation/View/Home/HomeViewModel.swift,
 				Source/Presentation/View/NewExpense/NewExpenseViewModel.swift,
 				Source/Presentation/View/Settings/SettingsViewModel.swift,

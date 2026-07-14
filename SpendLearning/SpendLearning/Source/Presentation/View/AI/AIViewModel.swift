@@ -47,10 +47,8 @@ final class AIViewModel {
     }
 
     // MARK: - Input
-    func onAppear() {
-        Task {
-            await load()
-        }
+    func onAppear() async {
+        await load()
     }
 
     // MARK: - Private
