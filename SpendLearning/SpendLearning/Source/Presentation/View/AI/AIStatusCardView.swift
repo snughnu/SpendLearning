@@ -42,26 +42,42 @@ struct AIStatusCardView: View {
     }
 
     private var modelInfo: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "cpu")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 64, height: 64)
-                .foregroundStyle(Color(UIColor.DesignSystem.primary))
+        Group {
+            if let model = currentModel {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "cpu")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 64, height: 64)
+                        .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text("\(currentModel?.id ?? "-") 예측 모델 (\(Int(currentModel?.accuracy ?? 0))%)")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color(UIColor.DesignSystem.primary))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("\(model.id) 예측 모델 (\(Int(model.accuracy))%)")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
-                Text("학습에 사용된 데이터: \(currentModel?.dataCount ?? 0)개")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+                        Text("학습에 사용된 데이터: \(model.dataCount)개")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
 
-                ProgressView(value: (currentModel?.accuracy ?? 0) / 100)
-                    .tint(Color(UIColor.DesignSystem.accent))
-                    .scaleEffect(x: 1, y: 2)
-                    .padding(.top, 2)
+                        ProgressView(value: model.accuracy / 100)
+                            .tint(Color(UIColor.DesignSystem.accent))
+                            .scaleEffect(x: 1, y: 2)
+                            .padding(.top, 2)
+                    }
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("예측 모델이 없어요")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Color(UIColor.DesignSystem.primary))
+
+                    Text("소비를 꾸준히 기록할수록 모델이 더 정확해져요.\n기록이 쌓이면 아래 '모델 생성하기' 버튼을 눌러\n나만의 예측 모델을 만들어보세요!")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .padding(.horizontal, 20)
