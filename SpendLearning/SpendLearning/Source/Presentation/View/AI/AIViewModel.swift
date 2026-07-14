@@ -80,7 +80,7 @@ final class AIViewModel {
                 .reduce(0) { $0 + $1.amount }
             return PredictionDataPoint(
                 day: day,
-                actual: actual > 0 ? actual : (day <= today ? actual : nil),
+                actual: actual > 0 ? actual : nil,
                 predicted: predictions[day]
             )
         }

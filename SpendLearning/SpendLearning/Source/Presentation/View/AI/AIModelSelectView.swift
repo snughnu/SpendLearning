@@ -7,26 +7,19 @@
 
 import SwiftUI
 
-struct AIModelItem {
-    let id: String
-    let dataCount: Int
-    let accuracy: Float
-    let createdAt: Date
-}
-
 struct AIModelSelectView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    let models: [AIModelItem]
-    var onConfirm: (AIModelItem) -> Void
+    let models: [AIModelMetadata]
+    var onConfirm: (AIModelMetadata) -> Void
 
     @State private var selectedId: String
 
     init(
-        models: [AIModelItem],
+        models: [AIModelMetadata],
         currentModelId: String,
-        onConfirm: @escaping (AIModelItem) -> Void
+        onConfirm: @escaping (AIModelMetadata) -> Void
     ) {
         self.models = models
         self.onConfirm = onConfirm
@@ -52,7 +45,7 @@ struct AIModelSelectView: View {
         .background(Color(UIColor.DesignSystem.background))
     }
 
-    private func modelRow(_ model: AIModelItem) -> some View {
+    private func modelRow(_ model: AIModelMetadata) -> some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(model.id)

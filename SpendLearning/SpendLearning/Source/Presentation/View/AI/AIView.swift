@@ -25,9 +25,8 @@ struct AIView: View {
                         .offset(y: -5)
 
                     AIStatusCardView(
-                        modelId: viewModel.currentModel?.id ?? "-",
-                        dataCount: viewModel.currentModel?.dataCount ?? 0,
-                        accuracy: viewModel.currentModel?.accuracy ?? 0
+                        currentModel: viewModel.currentModel,
+                        models: viewModel.models
                     )
                 }
 
