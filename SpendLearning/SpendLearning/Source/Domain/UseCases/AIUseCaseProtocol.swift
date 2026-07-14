@@ -16,4 +16,6 @@ protocol AIUseCaseProtocol {
     func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int]
     /// 이번 달 카테고리별 예측 금액 [카테고리명: 예측금액]
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int]
+    /// 예측 모델 생성
+    func createModel() async -> Result<AIModelMetadata, AIModelCreationError>
 }

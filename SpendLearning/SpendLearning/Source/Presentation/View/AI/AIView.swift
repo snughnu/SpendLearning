@@ -11,6 +11,7 @@ struct AIView: View {
 
     @State var viewModel: AIViewModel
     @State private var isShowingToast = false
+    @State private var isShowingSuccessToast = false
 
     var body: some View {
         ScrollView {
@@ -29,10 +30,18 @@ struct AIView: View {
                         isShowingToast: $isShowingToast,
                         currentModel: viewModel.currentModel,
                         models: viewModel.models,
+                        isCreatingModel: viewModel.isCreatingModel,
+                        onCreateModel: {
+                            await viewModel.createModel()
+                            if viewModel.createModelError == nil {
+                                isShowingSuccessToast = true
+                            }
+                        },
+                        createModelError: viewModel.createModelError
                     )
                 }
 
-                AIInsightCardView(items: viewModel.sortedInsights)
+                AIInsightCardView(items: viewModel.sortedInsights, hasPrediction: viewModel.hasPrediction)
 
                 AIPredictionCardView(
                     data: viewModel.predictionData,
@@ -57,5 +66,6 @@ struct AIView: View {
             }
         }
         .toast(isShowing: $isShowingToast, message: "아직 생성된 예측 모델이 없어요")
+        .toast(isShowing: $isShowingSuccessToast, message: "예측 모델이 생성되었어요")
     }
 }

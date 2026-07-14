@@ -10,9 +10,14 @@ import Foundation
 final class AIUseCase: AIUseCaseProtocol {
 
     private let repository: AIRepositoryProtocol
+    private let expenseRepository: ExpenseRepositoryProtocol
 
-    init(repository: AIRepositoryProtocol) {
+    init(
+        repository: AIRepositoryProtocol,
+        expenseRepository: ExpenseRepositoryProtocol
+    ) {
         self.repository = repository
+        self.expenseRepository = expenseRepository
     }
 
     func fetchModels() async -> [AIModelMetadata] {
@@ -33,5 +38,10 @@ final class AIUseCase: AIUseCaseProtocol {
 
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] {
         await repository.fetchCategoryPredictions(year: year, month: month)
+    }
+
+    func createModel() async -> Result<AIModelMetadata, AIModelCreationError> {
+        let expenses = await expenseRepository.fetchAllExpenses()
+        return await repository.createModel(expenses: expenses)
     }
 }

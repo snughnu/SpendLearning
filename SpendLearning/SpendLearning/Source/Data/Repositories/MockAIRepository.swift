@@ -10,9 +10,9 @@ import Foundation
 final class MockAIRepository: AIRepositoryProtocol {
 
     private let models: [AIModelMetadata] = [
-        AIModelMetadata(id: "SP260714", dataCount: 1204, accuracy: 82, createdAt: Date()),
-        AIModelMetadata(id: "SP260614", dataCount: 980,  accuracy: 76, createdAt: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()),
-        AIModelMetadata(id: "SP260514", dataCount: 750,  accuracy: 71, createdAt: Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()),
+        AIModelMetadata(id: "SPa1b2c3", dataCount: 1204, accuracy: nil, createdAt: Date()),
+        AIModelMetadata(id: "SPd4e5f6", dataCount: 980,  accuracy: nil, createdAt: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()),
+        AIModelMetadata(id: "SPg7h8i9", dataCount: 750,  accuracy: nil, createdAt: Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()),
     ]
 
     func fetchModels() async -> [AIModelMetadata] {
@@ -51,5 +51,10 @@ final class MockAIRepository: AIRepositoryProtocol {
             "쇼핑": 200000,
             "의료/건강": 30000,
         ]
+    }
+
+    func createModel(expenses: [Expense]) async -> Result<AIModelMetadata, AIModelCreationError> {
+        let model = AIModelMetadata(id: "SPa1b2c3", dataCount: expenses.count, accuracy: nil, createdAt: Date())
+        return .success(model)
     }
 }

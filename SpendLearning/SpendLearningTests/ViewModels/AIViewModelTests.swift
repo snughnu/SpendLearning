@@ -164,10 +164,12 @@ final class StubAIUseCase: AIUseCaseProtocol {
     var stubbedInsights: [AIInsightItem] = []
     var stubbedDailyPredictions: [Int: Int] = [:]
     var stubbedCategoryPredictions: [String: Int] = [:]
+    var stubbedCreateModelResult: Result<AIModelMetadata, AIModelCreationError> = .failure(.insufficientData)
 
     func fetchModels() async -> [AIModelMetadata] { stubbedModels }
     func fetchCurrentModel() async -> AIModelMetadata? { stubbedCurrentModel }
     func fetchInsights() async -> [AIInsightItem] { stubbedInsights }
     func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] { stubbedDailyPredictions }
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] { stubbedCategoryPredictions }
+    func createModel() async -> Result<AIModelMetadata, AIModelCreationError> { stubbedCreateModelResult }
 }

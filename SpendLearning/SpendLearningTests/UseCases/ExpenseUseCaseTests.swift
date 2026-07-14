@@ -67,6 +67,10 @@ final class SpyExpenseRepository: ExpenseRepositoryProtocol {
         return stubbedExpenses
     }
 
+    func fetchAllExpenses() async -> [Expense] {
+        return stubbedExpenses
+    }
+
     func addExpense(_ expense: Expense) async {}
 
     func deleteExpense(_ expense: Expense) async {

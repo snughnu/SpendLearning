@@ -22,18 +22,20 @@ final class AIViewModel {
         let range = calendar.range(of: .day, in: .month, for: Date())
         return range?.count ?? 30
     }()
+    private(set) var isCreatingModel: Bool = false
+    private(set) var createModelError: AIModelCreationError? = nil
 
     private let expenseUseCase: ExpenseUseCaseProtocol
     private let aiUseCase: AIUseCaseProtocol
 
     var hasPrediction: Bool {
-        predictionData.compactMap { $0.predicted }.isEmpty == false
+        currentModel != nil
     }
 
     var sortedInsights: [AIInsightItem] {
         let order: [AIInsightItemType] = [.abnormal, .forecast, .unrecorded]
-        return order.compactMap { type in
-            insights.first { $0.type == type }
+        return order.map { type in
+            insights.first { $0.type == type } ?? AIInsightItem(type: type, description: type.emptyDescription)
         }
     }
 
@@ -49,6 +51,22 @@ final class AIViewModel {
     // MARK: - Input
     func onAppear() async {
         await load()
+    }
+
+    func createModel() async {
+        isCreatingModel = true
+        createModelError = nil
+
+        let result = await aiUseCase.createModel()
+
+        switch result {
+        case .success:
+            await load()
+        case .failure(let error):
+            createModelError = error
+        }
+
+        isCreatingModel = false
     }
 
     // MARK: - Private
