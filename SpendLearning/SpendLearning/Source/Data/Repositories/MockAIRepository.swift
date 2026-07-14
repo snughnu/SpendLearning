@@ -23,11 +23,11 @@ final class MockAIRepository: AIRepositoryProtocol {
         models.first
     }
 
-    func fetchInsights() async -> [AIInsightItemData] {
+    func fetchInsights() async -> [AIInsightItem] {
         [
-            AIInsightItemData(type: .abnormal, description: "이번 주 카페 지출이 평소보다 2.1배 많아요"),
-            AIInsightItemData(type: .forecast, description: "매주 월요일 교통비가 나가는 패턴이에요"),
-            AIInsightItemData(type: .unrecorded, description: "지난주 이맘때 교통비가 있었는데 이번 주엔 없네요"),
+            AIInsightItem(type: .abnormal, description: "이번 주 카페 지출이 평소보다 2.1배 많아요"),
+            AIInsightItem(type: .forecast, description: "매주 월요일 교통비가 나가는 패턴이에요"),
+            AIInsightItem(type: .unrecorded, description: "지난주 이맘때 교통비가 있었는데 이번 주엔 없네요"),
         ]
     }
 

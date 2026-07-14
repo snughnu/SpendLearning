@@ -7,30 +7,13 @@
 
 import SwiftUI
 
-enum AIInsightItemType {
-    case abnormal, forecast, unrecorded
-
-    var title: String {
-        switch self {
-        case .abnormal: return "이상 지출 감지"
-        case .forecast: return "지출 예고"
-        case .unrecorded: return "미기록 감지"
-        }
-    }
-}
-
-struct AIInsightItemData {
-    let type: AIInsightItemType
-    let description: String
-}
-
 struct AIInsightCardView: View {
 
-    let items: [AIInsightItemData]
+    let items: [AIInsightItem]
 
     private let orderedTypes: [AIInsightItemType] = [.abnormal, .forecast, .unrecorded]
 
-    private var visibleItems: [AIInsightItemData] {
+    private var visibleItems: [AIInsightItem] {
         orderedTypes.compactMap { type in
             items.first { $0.type == type }
         }
@@ -84,7 +67,7 @@ struct AIInsightCardView: View {
         }
     }
 
-    private func rowView(item: AIInsightItemData) -> some View {
+    private func rowView(item: AIInsightItem) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(item.type.title)
                 .font(.system(size: 14, weight: .semibold))

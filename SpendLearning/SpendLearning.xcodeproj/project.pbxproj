@@ -32,10 +32,13 @@
 		BCB415242FF52E7D00C9CABD /* Exceptions for "SpendLearning" folder in "SpendLearningTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Source/Domain/Entities/AIModelMetadata.swift,
-				Source/Domain/Entities/CalendarDay.swift,
-				Source/Domain/Entities/Category.swift,
-				Source/Domain/Entities/Expense.swift,
+				Source/Domain/Entities/AI/AIInsightItem.swift,
+				Source/Domain/Entities/AI/AIModelMetadata.swift,
+				Source/Domain/Entities/AI/CategoryPredictionDataPoint.swift,
+				Source/Domain/Entities/AI/PredictionDataPoint.swift,
+				Source/Domain/Entities/Expense/CalendarDay.swift,
+				Source/Domain/Entities/Expense/Category.swift,
+				Source/Domain/Entities/Expense/Expense.swift,
 				Source/Domain/Repositories/AIRepositoryProtocol.swift,
 				Source/Domain/Repositories/CategoryRepositoryProtocol.swift,
 				Source/Domain/Repositories/ExpenseRepositoryProtocol.swift,

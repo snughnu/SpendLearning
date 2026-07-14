@@ -23,7 +23,7 @@ final class AIUseCase: AIUseCaseProtocol {
         await repository.fetchCurrentModel()
     }
 
-    func fetchInsights() async -> [AIInsightItemData] {
+    func fetchInsights() async -> [AIInsightItem] {
         await repository.fetchInsights()
     }
 

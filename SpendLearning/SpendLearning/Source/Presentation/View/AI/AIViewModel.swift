@@ -13,7 +13,7 @@ final class AIViewModel {
     // MARK: - Output
     private(set) var currentModel: AIModelMetadata? = nil
     private(set) var models: [AIModelMetadata] = []
-    private(set) var insights: [AIInsightItemData] = []
+    private(set) var insights: [AIInsightItem] = []
     private(set) var predictionData: [PredictionDataPoint] = []
     private(set) var categoryData: [CategoryPredictionDataPoint] = []
     private(set) var today: Int = Calendar.current.component(.day, from: Date())
@@ -85,7 +85,7 @@ final class AIViewModel {
                 .reduce(0) { $0 + $1.amount }
             return PredictionDataPoint(
                 day: day,
-                actual: actual > 0 ? actual : nil,
+                actual: (actual > 0 || day == today) ? actual : nil,
                 predicted: predictions[day]
             )
         }

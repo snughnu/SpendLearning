@@ -8,12 +8,6 @@
 import SwiftUI
 import Charts
 
-struct PredictionDataPoint {
-    let day: Int
-    let actual: Int?
-    let predicted: Int?
-}
-
 private struct CumulativeDataPoint {
     let day: Int
     let actual: Int?
@@ -180,11 +174,11 @@ struct AIPredictionCardView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
 
-            if let todayPoint = cumulativeData.first(where: { $0.day == today }),
-               let actual = todayPoint.actual {
+            if let todayPoint = cumulativeData.first(where: { $0.day == today }) {
+                let actualTotal = cumulativeData.filter { $0.day <= today }.compactMap { $0.actual }.last ?? 0
                 PointMark(
                     x: .value("날짜", todayPoint.day),
-                    y: .value("금액", actual)
+                    y: .value("금액", actualTotal)
                 )
                 .foregroundStyle(Color(UIColor.DesignSystem.accent))
             }

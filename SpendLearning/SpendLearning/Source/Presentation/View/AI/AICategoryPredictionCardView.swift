@@ -8,12 +8,6 @@
 import SwiftUI
 import Charts
 
-struct CategoryPredictionDataPoint {
-    let categoryName: String
-    let actual: Int
-    let predicted: Int?
-}
-
 struct AICategoryPredictionCardView: View {
 
     let data: [CategoryPredictionDataPoint]
