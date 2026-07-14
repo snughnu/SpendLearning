@@ -33,6 +33,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Source/Domain/Entities/AI/AIInsightItem.swift,
+				Source/Domain/Entities/AI/AIModelCreationError.swift,
 				Source/Domain/Entities/AI/AIModelMetadata.swift,
 				Source/Domain/Entities/AI/CategoryPredictionDataPoint.swift,
 				Source/Domain/Entities/AI/CumulativePrediction.swift,

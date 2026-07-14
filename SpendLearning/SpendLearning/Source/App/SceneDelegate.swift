@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let categoryRepository = SwiftDataCategoryRepository(modelContext: modelContext)
         let categoryUseCase = CategoryUseCase(repository: categoryRepository)
 
-         let expenseRepository = MockExpenseRepository()
+        let expenseRepository = MockExpenseRepository()
 //        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
         let expenseUseCase = ExpenseUseCase(repository: expenseRepository)
 
@@ -48,7 +48,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let aiUseCase = AIUseCase(repository: MockAIRepository())
+        let aiUseCase = AIUseCase(repository: StatisticsAIRepository(expenseRepository: expenseRepository))
         let aiViewModel = AIViewModel(expenseUseCase: expenseUseCase, aiUseCase: aiUseCase)
         let aiViewController = UIHostingController(rootView: AIView(viewModel: aiViewModel))
         aiViewController.tabBarItem = UITabBarItem(
