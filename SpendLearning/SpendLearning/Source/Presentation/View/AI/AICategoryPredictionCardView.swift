@@ -38,7 +38,9 @@ struct AICategoryPredictionCardView: View {
                 emptyView
             } else {
                 chart
-                expandButton
+                if data.count > 5 {
+                    expandButton
+                }
             }
         }
         .background(Color(UIColor.DesignSystem.surface))
