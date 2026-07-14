@@ -10,15 +10,15 @@ import SwiftUI
 struct AIInsightCardView: View {
 
     let items: [AIInsightItem]
+    let hasPrediction: Bool
 
     var body: some View {
         VStack(spacing: 0) {
             header
-
-            if items.isEmpty {
-                emptyView
-            } else {
+            if hasPrediction {
                 bodyView
+            } else {
+                emptyView
             }
         }
         .background(Color(UIColor.DesignSystem.surface))

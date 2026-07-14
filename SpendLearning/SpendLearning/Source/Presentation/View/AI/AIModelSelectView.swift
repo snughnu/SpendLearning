@@ -68,7 +68,7 @@ struct AIModelSelectView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
-                Text("정확도 \(Int(model.accuracy))% · 데이터 \(model.dataCount)개")
+                Text((model.accuracy.map { "정확도 \(Int($0))% · " } ?? "정확도 측정불가 · ") + "데이터 \(model.dataCount)개")
                     .font(.system(size: 14))
                     .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
 
@@ -116,7 +116,7 @@ struct AIModelSelectView: View {
 
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy.MM.dd 생성"
+        formatter.dateFormat = "yyyy.MM.dd HH:mm 생성"
         return formatter.string(from: date)
     }
 }

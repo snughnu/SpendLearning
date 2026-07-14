@@ -24,10 +24,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeTabBarController() -> UITabBarController {
         let container: ModelContainer
         do {
-            container = try ModelContainer(for: ExpenseModel.self, CategoryModel.self)
+            container = try ModelContainer(for: ExpenseModel.self, CategoryModel.self, AIModelModel.self)
         } catch {
             container = try! ModelContainer(
-                for: ExpenseModel.self, CategoryModel.self,
+                for: ExpenseModel.self, CategoryModel.self, AIModelModel.self,
                 configurations: ModelConfiguration(isStoredInMemoryOnly: true)
             )
         }
@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let categoryRepository = SwiftDataCategoryRepository(modelContext: modelContext)
         let categoryUseCase = CategoryUseCase(repository: categoryRepository)
 
-         let expenseRepository = MockExpenseRepository()
+        let expenseRepository = MockExpenseRepository()
 //        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
         let expenseUseCase = ExpenseUseCase(repository: expenseRepository)
 
@@ -48,7 +48,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let aiUseCase = AIUseCase(repository: MockAIRepository())
+        let aiUseCase = AIUseCase(repository: SwiftDataAIRepository(modelContext: modelContext, expenseRepository: expenseRepository), expenseRepository: expenseRepository)
         let aiViewModel = AIViewModel(expenseUseCase: expenseUseCase, aiUseCase: aiUseCase)
         let aiViewController = UIHostingController(rootView: AIView(viewModel: aiViewModel))
         aiViewController.tabBarItem = UITabBarItem(

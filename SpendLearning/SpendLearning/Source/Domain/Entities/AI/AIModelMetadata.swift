@@ -10,6 +10,6 @@ import Foundation
 struct AIModelMetadata {
     let id: String
     let dataCount: Int
-    let accuracy: Float
+    let accuracy: Float?
     let createdAt: Date
 }

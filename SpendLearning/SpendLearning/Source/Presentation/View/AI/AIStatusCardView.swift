@@ -12,9 +12,14 @@ struct AIStatusCardView: View {
     @Binding var isShowingToast: Bool
     @State private var isShowingCreate = false
     @State private var isShowingSelect = false
+    @State private var isShowingInsufficientDataAlert = false
 
     let currentModel: AIModelMetadata?
     let models: [AIModelMetadata]
+    let isCreatingModel: Bool
+    let onCreateModel: () async -> Void
+    let createModelError: AIModelCreationError?
+    let onSelectModel: (AIModelMetadata) async -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -25,11 +30,21 @@ struct AIStatusCardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .alert("모델 생성", isPresented: $isShowingCreate) {
             Button("생성하기") {
-                print("전체 데이터로 모델 생성")
+                Task { await onCreateModel() }
             }
             Button("취소", role: .cancel) {}
         } message: {
             Text("데이터를 학습해 예측 모델을 생성할까요?")
+        }
+        .alert("데이터 부족", isPresented: $isShowingInsufficientDataAlert) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text("저번 달 소비 기록이 없어 생성할 수 없어요.\n저번 달 소비를 기록하고 다시 시도해보세요.")
+        }
+        .onChange(of: createModelError) { _, error in
+            if error == .insufficientData {
+                isShowingInsufficientDataAlert = true
+            }
         }
         .tint(Color(UIColor.DesignSystem.accent))
         .sheet(isPresented: $isShowingSelect) {
@@ -37,7 +52,7 @@ struct AIStatusCardView: View {
                 models: models,
                 currentModelId: currentModel?.id ?? ""
             ) { selected in
-                print("선택된 모델: \(selected.id)")
+                Task { await onSelectModel(selected) }
             }
         }
     }
@@ -53,7 +68,7 @@ struct AIStatusCardView: View {
                         .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(model.id) 예측 모델 (\(Int(model.accuracy))%)")
+                        Text("\(model.id) 예측 모델")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
@@ -61,10 +76,16 @@ struct AIStatusCardView: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
 
-                        ProgressView(value: model.accuracy / 100)
-                            .tint(Color(UIColor.DesignSystem.accent))
-                            .scaleEffect(x: 1, y: 2)
-                            .padding(.top, 2)
+                        if let accuracy = model.accuracy {
+                            ProgressView(value: accuracy / 100)
+                                .tint(Color(UIColor.DesignSystem.accent))
+                                .scaleEffect(x: 1, y: 2)
+                                .padding(.top, 2)
+                        } else {
+                            Text("정확도 측정불가")
+                                .font(.system(size: 13))
+                                .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+                        }
                     }
                 }
             } else {
@@ -91,14 +112,22 @@ struct AIStatusCardView: View {
             Button {
                 isShowingCreate = true
             } label: {
-                Text("모델 생성하기")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .background(Color(UIColor.DesignSystem.primary))
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                Group {
+                    if isCreatingModel {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Text("모델 생성하기")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+                .background(Color(UIColor.DesignSystem.primary))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
             }
+            .disabled(isCreatingModel)
 
             Button {
                 if models.isEmpty {
