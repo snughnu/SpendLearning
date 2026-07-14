@@ -176,6 +176,8 @@ final class SpyAIRepository: AIRepositoryProtocol {
         createModelCallCount += 1
         return stubbedCreateModelResult
     }
+
+    func selectModel(id: String) async {}
 }
 
 // MARK: - Stub

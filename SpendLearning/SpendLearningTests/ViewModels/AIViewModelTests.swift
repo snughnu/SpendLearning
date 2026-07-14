@@ -56,7 +56,7 @@ struct AIViewModelTests {
     @Test("예측 데이터가 있으면 hasPrediction이 true다")
     func hasPredictionIsTrueWhenPredictionsExist() async {
         let aiStub = StubAIUseCase()
-        aiStub.stubbedDailyPredictions = [1: 10000]
+        aiStub.stubbedCurrentModel = AIModelMetadata(id: "SPa1b2c3", dataCount: 10, accuracy: nil, createdAt: Date())
         let sut = AIViewModel(expenseUseCase: StubExpenseUseCaseForAI(), aiUseCase: aiStub)
 
         await sut.onAppear()
@@ -172,4 +172,5 @@ final class StubAIUseCase: AIUseCaseProtocol {
     func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] { stubbedDailyPredictions }
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] { stubbedCategoryPredictions }
     func createModel() async -> Result<AIModelMetadata, AIModelCreationError> { stubbedCreateModelResult }
+    func selectModel(id: String) async {}
 }
