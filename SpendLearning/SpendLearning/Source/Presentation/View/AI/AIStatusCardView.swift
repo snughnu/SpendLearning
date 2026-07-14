@@ -9,12 +9,12 @@ import SwiftUI
 
 struct AIStatusCardView: View {
 
-    let currentModel: AIModelMetadata?
-    let models: [AIModelMetadata]
-
     @Binding var isShowingToast: Bool
     @State private var isShowingCreate = false
     @State private var isShowingSelect = false
+
+    let currentModel: AIModelMetadata?
+    let models: [AIModelMetadata]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {

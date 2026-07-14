@@ -13,10 +13,7 @@ struct AIPredictionCardView: View {
     let data: [CumulativePrediction]
     let today: Int
     let lastDay: Int
-
-    private var hasPrediction: Bool {
-        data.compactMap { $0.predicted }.isEmpty == false
-    }
+    let hasPrediction: Bool
 
     var body: some View {
         VStack(spacing: 0) {

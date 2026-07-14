@@ -26,6 +26,17 @@ final class AIViewModel {
     private let expenseUseCase: ExpenseUseCaseProtocol
     private let aiUseCase: AIUseCaseProtocol
 
+    var hasPrediction: Bool {
+        predictionData.compactMap { $0.predicted }.isEmpty == false
+    }
+
+    var sortedInsights: [AIInsightItem] {
+        let order: [AIInsightItemType] = [.abnormal, .forecast, .unrecorded]
+        return order.compactMap { type in
+            insights.first { $0.type == type }
+        }
+    }
+
     // MARK: - Init
     init(
         expenseUseCase: ExpenseUseCaseProtocol,

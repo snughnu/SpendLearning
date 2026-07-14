@@ -11,19 +11,11 @@ struct AIInsightCardView: View {
 
     let items: [AIInsightItem]
 
-    private let orderedTypes: [AIInsightItemType] = [.abnormal, .forecast, .unrecorded]
-
-    private var visibleItems: [AIInsightItem] {
-        orderedTypes.compactMap { type in
-            items.first { $0.type == type }
-        }
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             header
 
-            if visibleItems.isEmpty {
+            if items.isEmpty {
                 emptyView
             } else {
                 bodyView
@@ -55,10 +47,10 @@ struct AIInsightCardView: View {
 
     private var bodyView: some View {
         VStack(spacing: 0) {
-            ForEach(Array(visibleItems.enumerated()), id: \.offset) { index, item in
+            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                 rowView(item: item)
 
-                if index < visibleItems.count - 1 {
+                if index < items.count - 1 {
                     Divider()
                         .background(Color(UIColor.DesignSystem.separator))
                         .padding(.horizontal, 12)

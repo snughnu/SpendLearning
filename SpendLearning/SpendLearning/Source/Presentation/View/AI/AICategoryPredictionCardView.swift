@@ -10,13 +10,10 @@ import Charts
 
 struct AICategoryPredictionCardView: View {
 
-    let data: [CategoryPredictionDataPoint]
-
     @State private var isExpanded = false
 
-    private var hasPrediction: Bool {
-        data.compactMap { $0.predicted }.isEmpty == false
-    }
+    let data: [CategoryPredictionDataPoint]
+    let hasPrediction: Bool
 
     private var displayData: [CategoryPredictionDataPoint] {
         isExpanded ? data : Array(data.prefix(5))

@@ -10,11 +10,10 @@ import SwiftUI
 struct AIModelSelectView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedId: String
 
     let models: [AIModelMetadata]
     var onConfirm: (AIModelMetadata) -> Void
-
-    @State private var selectedId: String
 
     init(
         models: [AIModelMetadata],

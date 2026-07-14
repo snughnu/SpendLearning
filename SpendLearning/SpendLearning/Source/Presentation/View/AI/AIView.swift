@@ -26,23 +26,27 @@ struct AIView: View {
                         .offset(y: -5)
 
                     AIStatusCardView(
+                        isShowingToast: $isShowingToast,
                         currentModel: viewModel.currentModel,
                         models: viewModel.models,
-                        isShowingToast: $isShowingToast
                     )
                 }
 
-                AIInsightCardView(items: viewModel.insights)
+                AIInsightCardView(items: viewModel.sortedInsights)
 
                 AIPredictionCardView(
                     data: viewModel.predictionData,
                     today: viewModel.today,
-                    lastDay: viewModel.lastDay
+                    lastDay: viewModel.lastDay,
+                    hasPrediction: viewModel.hasPrediction
                 )
 
-                AICategoryPredictionCardView(data: viewModel.categoryData)
-                    .padding(.bottom, 20)
+                AICategoryPredictionCardView(
+                    data: viewModel.categoryData,
+                    hasPrediction: viewModel.hasPrediction
+                )
             }
+            .padding(.bottom, 20)
             .padding(.horizontal, 20)
         }
         .background(Color(UIColor.DesignSystem.background))
