@@ -35,7 +35,7 @@
 				Source/Domain/Entities/AI/AIInsightItem.swift,
 				Source/Domain/Entities/AI/AIModelMetadata.swift,
 				Source/Domain/Entities/AI/CategoryPredictionDataPoint.swift,
-				Source/Domain/Entities/AI/PredictionDataPoint.swift,
+				Source/Domain/Entities/AI/CumulativePrediction.swift,
 				Source/Domain/Entities/Expense/CalendarDay.swift,
 				Source/Domain/Entities/Expense/Category.swift,
 				Source/Domain/Entities/Expense/Expense.swift,

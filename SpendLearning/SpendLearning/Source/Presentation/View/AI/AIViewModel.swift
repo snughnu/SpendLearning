@@ -14,7 +14,7 @@ final class AIViewModel {
     private(set) var currentModel: AIModelMetadata? = nil
     private(set) var models: [AIModelMetadata] = []
     private(set) var insights: [AIInsightItem] = []
-    private(set) var predictionData: [PredictionDataPoint] = []
+    private(set) var predictionData: [CumulativePrediction] = []
     private(set) var categoryData: [CategoryPredictionDataPoint] = []
     private(set) var today: Int = Calendar.current.component(.day, from: Date())
     private(set) var lastDay: Int = {
@@ -74,19 +74,30 @@ final class AIViewModel {
         self.currentModel = fetchedModel
         self.models = fetchedModels
         self.insights = fetchedInsights
-        self.predictionData = makePredictionData(expenses: fetchedExpenses, predictions: fetchedDaily)
+        self.predictionData = makeCumulativePrediction(expenses: fetchedExpenses, predictions: fetchedDaily)
         self.categoryData = makeCategoryData(expenses: fetchedExpenses, predictions: fetchedCategory)
     }
 
-    private func makePredictionData(expenses: [Expense], predictions: [Int: Int]) -> [PredictionDataPoint] {
-        (1...lastDay).map { day in
-            let actual = expenses
+    private func makeCumulativePrediction(expenses: [Expense], predictions: [Int: Int]) -> [CumulativePrediction] {
+        var cumulativeActual = 0
+        var cumulativePredicted = 0
+
+        return (1...lastDay).map { day in
+            let daily = expenses
                 .filter { Calendar.current.component(.day, from: $0.date) == day }
                 .reduce(0) { $0 + $1.amount }
-            return PredictionDataPoint(
+
+            if daily > 0 || day == today {
+                cumulativeActual += daily
+            }
+            if let predicted = predictions[day] {
+                cumulativePredicted += predicted
+            }
+
+            return CumulativePrediction(
                 day: day,
-                actual: (actual > 0 || day == today) ? actual : nil,
-                predicted: predictions[day]
+                actual: (daily > 0 || day == today) ? cumulativeActual : nil,
+                predicted: predictions[day] != nil ? cumulativePredicted : nil
             )
         }
     }

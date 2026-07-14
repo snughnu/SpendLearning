@@ -8,15 +8,9 @@
 import SwiftUI
 import Charts
 
-private struct CumulativeDataPoint {
-    let day: Int
-    let actual: Int?
-    let predicted: Int?
-}
-
 struct AIPredictionCardView: View {
 
-    let data: [PredictionDataPoint]
+    let data: [CumulativePrediction]
     let today: Int
     let lastDay: Int
 
@@ -91,31 +85,14 @@ struct AIPredictionCardView: View {
     }
 
     private var chart: some View {
-        var cumulativeActual = 0
-        var cumulativePredicted = 0
-        let cumulativeData: [CumulativeDataPoint] = data.map { point in
-            if let actual = point.actual {
-                cumulativeActual += actual
-            }
-            if let predicted = point.predicted {
-                cumulativePredicted += predicted
-            }
-            return CumulativeDataPoint(
-                day: point.day,
-                actual: point.actual != nil ? cumulativeActual : nil,
-                predicted: point.predicted != nil ? cumulativePredicted : nil
-            )
-        }
-
-        let actualValues = cumulativeData.compactMap { $0.actual }
-        let predictedValues = cumulativeData.compactMap { $0.predicted }
+        let actualValues = data.compactMap { $0.actual }
+        let predictedValues = data.compactMap { $0.predicted }
         let maxValue = (actualValues + predictedValues).max() ?? 0
-        let predictedTotal = cumulativeData.compactMap { $0.predicted }.last ?? 0
+        let predictedTotal = data.compactMap { $0.predicted }.last ?? 0
 
         return Chart {
-
             if hasPrediction {
-                ForEach(cumulativeData, id: \.day) { point in
+                ForEach(data, id: \.day) { point in
                     if let predicted = point.predicted {
                         LineMark(
                             x: .value("날짜", point.day),
@@ -127,7 +104,7 @@ struct AIPredictionCardView: View {
                     }
                 }
 
-                if let lastPoint = cumulativeData.last, let predicted = lastPoint.predicted {
+                if let lastPoint = data.last, let predicted = lastPoint.predicted {
                     PointMark(
                         x: .value("날짜", lastPoint.day),
                         y: .value("금액", predicted)
@@ -141,7 +118,7 @@ struct AIPredictionCardView: View {
                 }
             }
 
-            ForEach(cumulativeData, id: \.day) { point in
+            ForEach(data, id: \.day) { point in
                 if let actual = point.actual {
                     LineMark(
                         x: .value("날짜", point.day),
@@ -156,8 +133,8 @@ struct AIPredictionCardView: View {
                 .foregroundStyle(Color(UIColor.DesignSystem.subtitle).opacity(0.5))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
                 .annotation(position: .top) {
-                    let actualTotal = cumulativeData.filter { $0.day <= today }.compactMap { $0.actual }.last ?? 0
-                    let predictedToday = cumulativeData.filter { $0.day <= today }.compactMap { $0.predicted }.last ?? 0
+                    let actualTotal = data.filter { $0.day <= today }.compactMap { $0.actual }.last ?? 0
+                    let predictedToday = data.filter { $0.day <= today }.compactMap { $0.predicted }.last ?? 0
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("실제: \(formatted(actualTotal))")
@@ -174,11 +151,11 @@ struct AIPredictionCardView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
 
-            if let todayPoint = cumulativeData.first(where: { $0.day == today }) {
-                let actualTotal = cumulativeData.filter { $0.day <= today }.compactMap { $0.actual }.last ?? 0
+            if let todayPoint = data.first(where: { $0.day == today }),
+               let actual = todayPoint.actual {
                 PointMark(
                     x: .value("날짜", todayPoint.day),
-                    y: .value("금액", actualTotal)
+                    y: .value("금액", actual)
                 )
                 .foregroundStyle(Color(UIColor.DesignSystem.accent))
             }
