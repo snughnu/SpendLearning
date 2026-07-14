@@ -96,7 +96,7 @@ final class AIViewModel {
                 .filter { Calendar.current.component(.day, from: $0.date) == day }
                 .reduce(0) { $0 + $1.amount }
 
-            if daily > 0 || day == today {
+            if day <= today {
                 cumulativeActual += daily
             }
             if let predicted = predictions[day] {
@@ -105,7 +105,7 @@ final class AIViewModel {
 
             return CumulativePrediction(
                 day: day,
-                actual: (daily > 0 || day == today) ? cumulativeActual : nil,
+                actual: day <= today ? cumulativeActual : nil,
                 predicted: predictions[day] != nil ? cumulativePredicted : nil
             )
         }
@@ -113,7 +113,7 @@ final class AIViewModel {
 
     private func makeCategoryData(expenses: [Expense], predictions: [String: Int]) -> [CategoryPredictionDataPoint] {
         var categoryTotals: [String: Int] = [:]
-        for expense in expenses {
+        for expense in expenses where Calendar.current.component(.day, from: expense.date) <= today {
             categoryTotals[expense.category.name, default: 0] += expense.amount
         }
 
