@@ -36,7 +36,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let categoryRepository = SwiftDataCategoryRepository(modelContext: modelContext)
         let categoryUseCase = CategoryUseCase(repository: categoryRepository)
 
-        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
+         let expenseRepository = MockExpenseRepository()
+//        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
         let expenseUseCase = ExpenseUseCase(repository: expenseRepository)
 
         let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
@@ -47,7 +48,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let aiViewController = UIHostingController(rootView: AIView())
+        let aiUseCase = AIUseCase(repository: MockAIRepository())
+        let aiViewModel = AIViewModel(expenseUseCase: expenseUseCase, aiUseCase: aiUseCase)
+        let aiViewController = UIHostingController(rootView: AIView(viewModel: aiViewModel))
         aiViewController.tabBarItem = UITabBarItem(
             title: "예측",
             image: UIImage(systemName: "brain"),
