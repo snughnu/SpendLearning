@@ -18,4 +18,6 @@ protocol AIUseCaseProtocol {
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int]
     /// 예측 모델 생성
     func createModel() async -> Result<AIModelMetadata, AIModelCreationError>
+    /// 예측 모델 선택
+    func selectModel(id: String) async
 }

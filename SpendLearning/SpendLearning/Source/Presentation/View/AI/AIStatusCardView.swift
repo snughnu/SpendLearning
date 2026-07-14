@@ -19,6 +19,7 @@ struct AIStatusCardView: View {
     let isCreatingModel: Bool
     let onCreateModel: () async -> Void
     let createModelError: AIModelCreationError?
+    let onSelectModel: (AIModelMetadata) async -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -51,7 +52,7 @@ struct AIStatusCardView: View {
                 models: models,
                 currentModelId: currentModel?.id ?? ""
             ) { selected in
-                print("선택된 모델: \(selected.id)")
+                Task { await onSelectModel(selected) }
             }
         }
     }

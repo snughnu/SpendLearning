@@ -23,19 +23,20 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
     }
 
     func fetchModels() async -> [AIModelMetadata] {
-        let descriptor = FetchDescriptor<AIModelModel>(
-            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
-        )
+        let descriptor = FetchDescriptor<AIModelModel>()
         let models = (try? modelContext.fetch(descriptor)) ?? []
-        return models.map { toMetadata($0) }
+        return models
+            .sorted {
+                if $0.isSelected != $1.isSelected { return $0.isSelected }
+                return $0.createdAt > $1.createdAt
+            }
+            .map { toMetadata($0) }
     }
 
     func fetchCurrentModel() async -> AIModelMetadata? {
-        let descriptor = FetchDescriptor<AIModelModel>(
-            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
-        )
-        let model = try? modelContext.fetch(descriptor).first
-        return model.map { toMetadata($0) }
+        let descriptor = FetchDescriptor<AIModelModel>()
+        let models = (try? modelContext.fetch(descriptor)) ?? []
+        return models.first { $0.isSelected }.map { toMetadata($0) }
     }
 
     func fetchInsights() async -> [AIInsightItem] {
@@ -70,24 +71,30 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
         }
         guard !lastMonthExpenses.isEmpty else { return .failure(.insufficientData) }
 
+        // 기존 모델 선택 해제
+        let descriptor = FetchDescriptor<AIModelModel>()
+        let existing = (try? modelContext.fetch(descriptor)) ?? []
+        existing.forEach { $0.isSelected = false }
+
         let id = "SP\(UUID().uuidString.prefix(6).lowercased())"
-        let metadata = AIModelMetadata(
+        let model = AIModelModel(
             id: id,
             dataCount: expenses.count,
             accuracy: nil,
-            createdAt: now
-        )
-
-        let model = AIModelModel(
-            id: metadata.id,
-            dataCount: metadata.dataCount,
-            accuracy: nil,
-            createdAt: metadata.createdAt
+            createdAt: now,
+            isSelected: true
         )
         modelContext.insert(model)
         try? modelContext.save()
 
-        return .success(metadata)
+        return .success(toMetadata(model))
+    }
+
+    func selectModel(id: String) async {
+        let descriptor = FetchDescriptor<AIModelModel>()
+        let models = (try? modelContext.fetch(descriptor)) ?? []
+        models.forEach { $0.isSelected = ($0.id == id) }
+        try? modelContext.save()
     }
 
     // MARK: - Private

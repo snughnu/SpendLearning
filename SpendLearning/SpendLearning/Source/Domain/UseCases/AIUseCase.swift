@@ -44,4 +44,8 @@ final class AIUseCase: AIUseCaseProtocol {
         let expenses = await expenseRepository.fetchAllExpenses()
         return await repository.createModel(expenses: expenses)
     }
+
+    func selectModel(id: String) async {
+        await repository.selectModel(id: id)
+    }
 }

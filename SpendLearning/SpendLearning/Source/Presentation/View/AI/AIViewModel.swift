@@ -69,6 +69,11 @@ final class AIViewModel {
         isCreatingModel = false
     }
 
+    func selectModel(id: String) async {
+        await aiUseCase.selectModel(id: id)
+        await load()
+    }
+
     // MARK: - Private
     private func load() async {
         let calendar = Calendar.current

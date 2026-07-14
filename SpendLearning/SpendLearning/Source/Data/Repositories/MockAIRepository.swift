@@ -57,4 +57,6 @@ final class MockAIRepository: AIRepositoryProtocol {
         let model = AIModelMetadata(id: "SPa1b2c3", dataCount: expenses.count, accuracy: nil, createdAt: Date())
         return .success(model)
     }
+
+    func selectModel(id: String) async {}
 }

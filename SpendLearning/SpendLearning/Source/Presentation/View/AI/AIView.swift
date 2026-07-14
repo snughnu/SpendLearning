@@ -37,7 +37,10 @@ struct AIView: View {
                                 isShowingSuccessToast = true
                             }
                         },
-                        createModelError: viewModel.createModelError
+                        createModelError: viewModel.createModelError,
+                        onSelectModel: { selected in
+                            await viewModel.selectModel(id: selected.id)
+                        }
                     )
                 }
 
