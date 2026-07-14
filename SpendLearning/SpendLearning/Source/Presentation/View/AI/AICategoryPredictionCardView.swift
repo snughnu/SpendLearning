@@ -8,21 +8,12 @@
 import SwiftUI
 import Charts
 
-struct CategoryPredictionDataPoint {
-    let categoryName: String
-    let actual: Int
-    let predicted: Int?
-}
-
 struct AICategoryPredictionCardView: View {
-
-    let data: [CategoryPredictionDataPoint]
 
     @State private var isExpanded = false
 
-    private var hasPrediction: Bool {
-        data.compactMap { $0.predicted }.isEmpty == false
-    }
+    let data: [CategoryPredictionDataPoint]
+    let hasPrediction: Bool
 
     private var displayData: [CategoryPredictionDataPoint] {
         isExpanded ? data : Array(data.prefix(5))
@@ -38,7 +29,9 @@ struct AICategoryPredictionCardView: View {
                 emptyView
             } else {
                 chart
-                expandButton
+                if data.count > 5 {
+                    expandButton
+                }
             }
         }
         .background(Color(UIColor.DesignSystem.surface))

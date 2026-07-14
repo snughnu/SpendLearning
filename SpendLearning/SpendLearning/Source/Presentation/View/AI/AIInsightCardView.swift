@@ -7,40 +7,15 @@
 
 import SwiftUI
 
-enum AIInsightItemType {
-    case abnormal, forecast, unrecorded
-
-    var title: String {
-        switch self {
-        case .abnormal: return "이상 지출 감지"
-        case .forecast: return "지출 예고"
-        case .unrecorded: return "미기록 감지"
-        }
-    }
-}
-
-struct AIInsightItemData {
-    let type: AIInsightItemType
-    let description: String
-}
-
 struct AIInsightCardView: View {
 
-    let items: [AIInsightItemData]
-
-    private let orderedTypes: [AIInsightItemType] = [.abnormal, .forecast, .unrecorded]
-
-    private var visibleItems: [AIInsightItemData] {
-        orderedTypes.compactMap { type in
-            items.first { $0.type == type }
-        }
-    }
+    let items: [AIInsightItem]
 
     var body: some View {
         VStack(spacing: 0) {
             header
 
-            if visibleItems.isEmpty {
+            if items.isEmpty {
                 emptyView
             } else {
                 bodyView
@@ -72,10 +47,10 @@ struct AIInsightCardView: View {
 
     private var bodyView: some View {
         VStack(spacing: 0) {
-            ForEach(Array(visibleItems.enumerated()), id: \.offset) { index, item in
+            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                 rowView(item: item)
 
-                if index < visibleItems.count - 1 {
+                if index < items.count - 1 {
                     Divider()
                         .background(Color(UIColor.DesignSystem.separator))
                         .padding(.horizontal, 12)
@@ -84,7 +59,7 @@ struct AIInsightCardView: View {
         }
     }
 
-    private func rowView(item: AIInsightItemData) -> some View {
+    private func rowView(item: AIInsightItem) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(item.type.title)
                 .font(.system(size: 14, weight: .semibold))

@@ -7,26 +7,18 @@
 
 import SwiftUI
 
-struct AIModelItem {
-    let id: String
-    let dataCount: Int
-    let accuracy: Float
-    let createdAt: Date
-}
-
 struct AIModelSelectView: View {
 
     @Environment(\.dismiss) private var dismiss
-
-    let models: [AIModelItem]
-    var onConfirm: (AIModelItem) -> Void
-
     @State private var selectedId: String
 
+    let models: [AIModelMetadata]
+    var onConfirm: (AIModelMetadata) -> Void
+
     init(
-        models: [AIModelItem],
+        models: [AIModelMetadata],
         currentModelId: String,
-        onConfirm: @escaping (AIModelItem) -> Void
+        onConfirm: @escaping (AIModelMetadata) -> Void
     ) {
         self.models = models
         self.onConfirm = onConfirm
@@ -35,24 +27,41 @@ struct AIModelSelectView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(models, id: \.id) { model in
-                        modelRow(model)
-                            .onTapGesture {
-                                selectedId = model.id
-                            }
+            if models.isEmpty {
+                emptyView
+            } else {
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(models, id: \.id) { model in
+                            modelRow(model)
+                                .onTapGesture {
+                                    selectedId = model.id
+                                }
+                        }
                     }
+                    .padding(20)
                 }
-                .padding(20)
-            }
 
-            confirmButton
+                confirmButton
+            }
         }
         .background(Color(UIColor.DesignSystem.background))
     }
 
-    private func modelRow(_ model: AIModelItem) -> some View {
+    private var emptyView: some View {
+        VStack(spacing: 8) {
+            Text("생성된 모델이 없어요")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(Color(UIColor.DesignSystem.primary))
+
+            Text("소비를 꾸준히 기록하고 모델을 생성해보세요.")
+                .font(.system(size: 13))
+                .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func modelRow(_ model: AIModelMetadata) -> some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(model.id)
