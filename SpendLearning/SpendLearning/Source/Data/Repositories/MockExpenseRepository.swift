@@ -57,6 +57,10 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
         }
     }
 
+    func fetchAllExpenses() async -> [Expense] {
+        expenses
+    }
+
     func deleteExpense(_ expense: Expense) async {
         expenses.removeAll { $0.id == expense.id }
     }

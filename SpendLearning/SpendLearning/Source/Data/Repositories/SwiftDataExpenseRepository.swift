@@ -37,6 +37,13 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
         return models.map { toExpense($0, categories: categories) }
     }
 
+    func fetchAllExpenses() async -> [Expense] {
+        let descriptor = FetchDescriptor<ExpenseModel>()
+        let models = (try? modelContext.fetch(descriptor)) ?? []
+        let categories = (try? await categoryRepository.fetchCategories()) ?? []
+        return models.map { toExpense($0, categories: categories) }
+    }
+
     func addExpense(_ expense: Expense) async {
         let model = toModel(expense)
         modelContext.insert(model)
