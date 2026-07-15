@@ -20,7 +20,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
 
         await sut.loadCategories()
@@ -35,7 +36,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
         stub.stubbedCategories = [Category(name: "카페", emoji: "☕️")]
 
@@ -53,7 +55,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
 
         await sut.updateCategory(original, name: "외식", emoji: "🍖")
@@ -69,7 +72,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
         await sut.loadCategories()
 
@@ -85,7 +89,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
         stub.stubbedCategories = [
             Category(name: "식비", emoji: "🍚"),
@@ -106,7 +111,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
 
         await sut.reorderCategories([first, second])
@@ -122,7 +128,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
 
         await sut.loadCategories()
@@ -138,7 +145,8 @@ struct SettingsViewModelTests {
         let sut = SettingsViewModel(
             categoryUseCase: stub,
             expenseUseCase: StubExpenseUseCaseForSettings(),
-            predictionUseCase: StubPredictionUseCaseForSettings()
+            predictionUseCase: StubPredictionUseCaseForSettings(),
+            categoryPredictor: CategoryPredictor()
         )
         await sut.loadCategories()
 
