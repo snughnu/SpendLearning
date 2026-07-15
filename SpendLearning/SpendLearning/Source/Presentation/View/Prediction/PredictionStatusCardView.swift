@@ -29,7 +29,7 @@ struct PredictionStatusCardView: View {
             }
             Button("취소", role: .cancel) {}
         } message: {
-            Text("최신 데이터로 예측을 계산할까요?")
+            Text("지난달까지의 소비로 예측을 계산할까요?")
         }
         .tint(Color(UIColor.DesignSystem.accent))
     }
