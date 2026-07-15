@@ -117,6 +117,8 @@ final class PredictionViewModel {
                 predicted: predicted
             )
         }
+        // 실제 지출도 없고 예측도 0(또는 없음)인 카테고리는 보여줄 정보가 없으므로 제외한다.
+        .filter { $0.actual > 0 || ($0.predicted ?? 0) > 0 }
         .sorted { $0.actual > $1.actual }
     }
 }

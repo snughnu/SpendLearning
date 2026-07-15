@@ -109,29 +109,31 @@ struct CategoryPredictionCardView: View {
         return Chart {
             ForEach(displayData, id: \.categoryName) { item in
                 BarMark(
-                    x: .value("금액", max(item.actual, 1000)),
+                    x: .value("금액", item.actual),
                     y: .value("카테고리", item.categoryName),
                     height: .fixed(11)
                 )
                 .foregroundStyle(Color(UIColor.DesignSystem.accent))
                 .position(by: .value("타입", "실제"))
                 .annotation(position: .trailing, alignment: .leading, spacing: 6) {
-                    Text(formatted(item.actual))
-                        .font(.system(size: 9, weight: .semibold))
-                        .foregroundStyle(Color(UIColor.DesignSystem.accent))
+                    if item.actual > 0 {
+                        Text(formatted(item.actual))
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(Color(UIColor.DesignSystem.accent))
+                    }
                 }
             }
 
             ForEach(displayData, id: \.categoryName) { item in
-                if let predicted = item.predicted {
-                    BarMark(
-                        x: .value("금액", max(predicted, 1000)),
-                        y: .value("카테고리", item.categoryName),
-                        height: .fixed(11)
-                    )
-                    .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
-                    .position(by: .value("타입", "예측"))
-                    .annotation(position: .trailing, alignment: .leading, spacing: 6) {
+                BarMark(
+                    x: .value("금액", item.predicted ?? 0),
+                    y: .value("카테고리", item.categoryName),
+                    height: .fixed(11)
+                )
+                .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                .position(by: .value("타입", "예측"))
+                .annotation(position: .trailing, alignment: .leading, spacing: 6) {
+                    if let predicted = item.predicted, predicted > 0 {
                         Text(formatted(predicted))
                             .font(.system(size: 9, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
