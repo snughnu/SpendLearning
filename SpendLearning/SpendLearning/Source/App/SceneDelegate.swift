@@ -81,7 +81,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let settingsViewController = SettingsViewController(
             categoryUseCase: categoryUseCase,
             expenseUseCase: expenseUseCase,
-            predictionUseCase: predictionUseCase
+            predictionUseCase: predictionUseCase,
+            categoryPredictor: categoryPredictor
         )
         settingsViewController.tabBarItem = UITabBarItem(
             title: "설정",

@@ -82,6 +82,21 @@ final class CategoryPredictor {
             }
         }
     }
+
+    // MARK: - Reset
+
+    /// 온디바이스 학습 데이터를 모두 지우고 번들에 포함된 원본 모델로 되돌린다.
+    func resetToBundledModel() {
+        guard let modelURL else { return }
+        let fileManager = FileManager.default
+        try? fileManager.removeItem(at: modelURL)
+
+        guard let bundledCompiledURL = Bundle.main.url(forResource: "CategoryClassifier", withExtension: "mlmodelc") else {
+            return
+        }
+        try? fileManager.copyItem(at: bundledCompiledURL, to: modelURL)
+        self.model = try? MLModel(contentsOf: modelURL)
+    }
 }
 
 // MARK: - Setup

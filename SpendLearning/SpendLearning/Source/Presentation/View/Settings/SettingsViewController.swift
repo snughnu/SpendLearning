@@ -25,12 +25,14 @@ final class SettingsViewController: UIViewController {
     init(
         categoryUseCase: CategoryUseCaseProtocol,
         expenseUseCase: ExpenseUseCaseProtocol,
-        predictionUseCase: PredictionUseCaseProtocol
+        predictionUseCase: PredictionUseCaseProtocol,
+        categoryPredictor: CategoryPredictor
     ) {
         self.viewModel = SettingsViewModel(
             categoryUseCase: categoryUseCase,
             expenseUseCase: expenseUseCase,
-            predictionUseCase: predictionUseCase
+            predictionUseCase: predictionUseCase,
+            categoryPredictor: categoryPredictor
         )
         super.init(nibName: nil, bundle: nil)
     }
