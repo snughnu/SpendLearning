@@ -30,6 +30,8 @@ final class PredictionViewModel {
     }
 
     /// 이번 달 1일~오늘까지의 누적 실제/예측 오차를 바탕으로 산출한 정확도(0~100)
+    /// 오차율이 클수록 감소 폭이 완만해지는 지수 감쇠 방식을 사용해, 오차가 100%를 넘어도
+    /// 곧바로 0%가 되지 않고 오차 크기에 따라 점진적으로 낮아지도록 한다.
     var accuracy: Float? {
         guard let todayPoint = predictionData.first(where: { $0.day == today }),
               let actual = todayPoint.actual,
@@ -37,7 +39,7 @@ final class PredictionViewModel {
               actual > 0 else { return nil }
 
         let errorRatio = abs(Double(predicted) - Double(actual)) / Double(actual)
-        return Float(max(0, 100 - errorRatio * 100))
+        return Float(100 * exp(-errorRatio))
     }
 
     // MARK: - Init
