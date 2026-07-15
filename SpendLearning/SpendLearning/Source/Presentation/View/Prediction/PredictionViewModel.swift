@@ -119,10 +119,12 @@ final class PredictionViewModel {
 
         let allCategories = Set(categoryTotals.keys).union(Set(predictions.keys))
         return allCategories.map { name in
-            CategoryPrediction(
+            // 이번 달 실제 지출이 있는 카테고리는 과거 예측 데이터가 없어도 0원으로 표시한다.
+            let predicted = predictions[name] ?? (categoryTotals[name] != nil ? 0 : nil)
+            return CategoryPrediction(
                 categoryName: name,
                 actual: categoryTotals[name] ?? 0,
-                predicted: predictions[name]
+                predicted: predicted
             )
         }
         .sorted { $0.actual > $1.actual }
