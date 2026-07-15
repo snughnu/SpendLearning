@@ -16,6 +16,7 @@ final class VoiceExpenseViewController: UIViewController {
     private let fixedGuideLabel = UILabel()
     private let transcriptSeparator = UIView()
     private let contentLabel = UILabel()
+    private let settingsButton = UIButton(type: .system)
 
     private let micCardView = UIView()
     private let micButton = UIButton()
@@ -97,12 +98,19 @@ private extension VoiceExpenseViewController {
     @objc func didTouchUp() {
         Task { await viewModel.stopRecording() }
     }
+
+    @objc func didTapSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
 }
 
 // MARK: - Render
 private extension VoiceExpenseViewController {
 
     func render() {
+        settingsButton.isHidden = true
+
         switch viewModel.state {
         case .idle:
             contentLabel.text = VoiceExpenseViewModel.detailGuideText
@@ -123,8 +131,15 @@ private extension VoiceExpenseViewController {
         case .error(let message):
             contentLabel.text = message
             contentLabel.font = .systemFont(ofSize: 16, weight: .medium)
+            contentLabel.textColor = .DesignSystem.primary
+            micButton.transform = .identity
+
+        case .permissionDenied(let message):
+            contentLabel.text = message
+            contentLabel.font = .systemFont(ofSize: 16, weight: .medium)
             contentLabel.textColor = .systemRed
             micButton.transform = .identity
+            settingsButton.isHidden = false
         }
     }
 
@@ -185,6 +200,12 @@ private extension VoiceExpenseViewController {
         contentLabel.textAlignment = .center
         contentLabel.numberOfLines = 0
 
+        settingsButton.setTitle("설정으로 이동", for: .normal)
+        settingsButton.setTitleColor(.DesignSystem.accent, for: .normal)
+        settingsButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        settingsButton.addTarget(self, action: #selector(didTapSettings), for: .touchUpInside)
+        settingsButton.isHidden = true
+
         micCardView.backgroundColor = .DesignSystem.surface
         micCardView.layer.cornerRadius = 16
 
@@ -200,7 +221,7 @@ private extension VoiceExpenseViewController {
         hintLabel.textColor = .DesignSystem.subtitle
         hintLabel.textAlignment = .center
 
-        [fixedGuideLabel, transcriptSeparator, contentLabel].forEach {
+        [fixedGuideLabel, transcriptSeparator, contentLabel, settingsButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             transcriptCardView.addSubview($0)
         }
@@ -239,7 +260,10 @@ private extension VoiceExpenseViewController {
             contentLabel.centerYAnchor.constraint(
                 equalTo: transcriptCardView.centerYAnchor, constant: 20
             ).with(priority: .defaultHigh),
-            contentLabel.bottomAnchor.constraint(lessThanOrEqualTo: transcriptCardView.bottomAnchor, constant: -24),
+
+            settingsButton.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 12),
+            settingsButton.centerXAnchor.constraint(equalTo: transcriptCardView.centerXAnchor),
+            settingsButton.bottomAnchor.constraint(lessThanOrEqualTo: transcriptCardView.bottomAnchor, constant: -24),
 
             micCardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             micCardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

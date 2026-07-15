@@ -18,6 +18,7 @@ final class VoiceExpenseViewModel {
         case recording(transcript: String)
         case parsed(memo: String, amount: Int, category: Category)
         case error(String)
+        case permissionDenied(String)
     }
 
     // MARK: - Output
@@ -39,7 +40,7 @@ final class VoiceExpenseViewModel {
     순서를 지키지 않으면 인식이 어려워요
     금액 뒤에는 "원"을 꼭 붙여주세요
     
-    신규 카테고리는 쓸수록 정확해져요
+    신규 카테고리는 기록할수록 정확해져요
     """
 
     // MARK: - Init
@@ -51,6 +52,10 @@ final class VoiceExpenseViewModel {
     // MARK: - Input
 
     func startRecording() async {
+        if isPermissionDenied() {
+            state = .permissionDenied("설정에서 마이크와 음성 인식 권한을 허용해주세요")
+            return
+        }
         guard hasPermissions() else {
             await requestPermissionsOnly()
             return
@@ -86,6 +91,12 @@ final class VoiceExpenseViewModel {
         return micStatus == .granted && speechStatus == .authorized
     }
 
+    private func isPermissionDenied() -> Bool {
+        let micDenied = AVAudioApplication.shared.recordPermission == .denied
+        let speechDenied = SFSpeechRecognizer.authorizationStatus() == .denied
+        return micDenied || speechDenied
+    }
+
     private func requestPermissionsOnly() async {
         let micGranted = await withCheckedContinuation { continuation in
             AVAudioApplication.requestRecordPermission { granted in
@@ -93,7 +104,7 @@ final class VoiceExpenseViewModel {
             }
         }
         guard micGranted else {
-            state = .error("마이크 접근 권한이 필요해요. 설정에서 허용해주세요")
+            state = .permissionDenied("마이크 접근 권한이 필요해요")
             return
         }
 
@@ -103,25 +114,9 @@ final class VoiceExpenseViewModel {
             }
         }
         if speechStatus != .authorized {
-            state = .error("음성 인식 권한이 필요해요. 설정에서 허용해주세요")
+            state = .permissionDenied("음성 인식 권한이 필요해요")
         }
         // 권한을 받았어도 여기서는 녹음을 시작하지 않는다 — 사용자가 다시 눌러야 시작됨
-    }
-
-    private func requestPermissions() async -> Bool {
-        let micGranted = await withCheckedContinuation { continuation in
-            AVAudioApplication.requestRecordPermission { granted in
-                continuation.resume(returning: granted)
-            }
-        }
-        guard micGranted else { return false }
-
-        let speechStatus = await withCheckedContinuation { continuation in
-            SFSpeechRecognizer.requestAuthorization { status in
-                continuation.resume(returning: status)
-            }
-        }
-        return speechStatus == .authorized
     }
 
     private func beginRecognition() throws {
@@ -157,8 +152,14 @@ final class VoiceExpenseViewModel {
                         self.state = .recording(transcript: text)
                     }
                 }
-                if error != nil {
+                if let error {
                     self.recognitionTask = nil
+                    let nsError = error as NSError
+                    if nsError.domain == "kLSRErrorDomain" && nsError.code == 201 {
+                        self.state = .permissionDenied("설정 > 일반 > 키보드 > 받아쓰기 활성화를 켜주세요")
+                    } else if case .recording = self.state {
+                        self.state = .error("음성 인식에 실패했어요")
+                    }
                 }
             }
         }
