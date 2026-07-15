@@ -40,8 +40,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let categoryRepository = SwiftDataCategoryRepository(modelContext: modelContext)
         let categoryUseCase = CategoryUseCase(repository: categoryRepository)
 
-        let expenseRepository = MockExpenseRepository()
-//        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
+//        let expenseRepository = MockExpenseRepository()
+        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
         let expenseUseCase = ExpenseUseCase(repository: expenseRepository)
 
         let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
