@@ -10,4 +10,6 @@ protocol PredictionUseCaseProtocol {
     func fetchCurrentModel() async -> PredictionModelMetadata?
     /// 현재 지출 데이터로 예측을 다시 계산해 저장한다
     func recalculate() async -> PredictionModelMetadata
+    /// 저장된 예측 모델을 삭제한다
+    func deleteModel() async
 }

@@ -17,6 +17,7 @@ final class SpyExpenseUseCase: ExpenseUseCaseProtocol {
     func fetch(year: Int, month: Int) async -> [Expense] { [] }
     func add(_ expense: Expense) async { addCallCount += 1; addedExpense = expense }
     func delete(_ expense: Expense) async { deleteCallCount += 1; deletedExpense = expense }
+    func deleteAll() async {}
 }
 
 final class StubCategoryUseCaseForNewExpense: CategoryUseCaseProtocol {

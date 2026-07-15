@@ -24,6 +24,10 @@ final class PredictionUseCase: PredictionUseCaseProtocol {
         await repository.fetchCurrentModel()
     }
 
+    func deleteModel() async {
+        await repository.deleteModel()
+    }
+
     func recalculate() async -> PredictionModelMetadata {
         let expenses = await expenseRepository.fetchAllExpenses()
         return await repository.recalculate(expenses: expenses)

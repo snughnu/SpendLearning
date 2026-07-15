@@ -65,6 +65,8 @@ final class SpyPredictionRepository: PredictionRepositoryProtocol {
         recalculateCallCount += 1
         return stubbedRecalculateResult
     }
+
+    func deleteModel() async {}
 }
 
 // MARK: - Stub
@@ -74,4 +76,5 @@ final class StubExpenseRepository: ExpenseRepositoryProtocol {
     func fetchAllExpenses() async -> [Expense] { [] }
     func addExpense(_ expense: Expense) async {}
     func deleteExpense(_ expense: Expense) async {}
+    func deleteAll() async {}
 }

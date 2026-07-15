@@ -26,4 +26,8 @@ final class ExpenseUseCase: ExpenseUseCaseProtocol {
     func delete(_ expense: Expense) async {
         await repository.deleteExpense(expense)
     }
+
+    func deleteAll() async {
+        await repository.deleteAll()
+    }
 }

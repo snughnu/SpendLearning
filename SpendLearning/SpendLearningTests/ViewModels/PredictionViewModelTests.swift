@@ -147,6 +147,7 @@ final class StubExpenseUseCaseForPrediction: ExpenseUseCaseProtocol {
     func fetch(year: Int, month: Int) async -> [Expense] { stubbedExpenses }
     func add(_ expense: Expense) async {}
     func delete(_ expense: Expense) async {}
+    func deleteAll() async {}
 }
 
 final class StubPredictionUseCase: PredictionUseCaseProtocol {
@@ -155,4 +156,5 @@ final class StubPredictionUseCase: PredictionUseCaseProtocol {
 
     func fetchCurrentModel() async -> PredictionModelMetadata? { stubbedCurrentModel }
     func recalculate() async -> PredictionModelMetadata { stubbedRecalculateResult }
+    func deleteModel() async {}
 }

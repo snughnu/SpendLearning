@@ -26,6 +26,12 @@ final class SwiftDataPredictionRepository: PredictionRepositoryProtocol {
         fetchStoredModel().map { toMetadata($0) }
     }
 
+    func deleteModel() async {
+        guard let existing = fetchStoredModel() else { return }
+        modelContext.delete(existing)
+        try? modelContext.save()
+    }
+
     func recalculate(expenses: [Expense]) async -> PredictionModelMetadata {
         let calendar = Calendar.current
         let now = Date()

@@ -11,6 +11,7 @@ final class StubExpenseUseCase: ExpenseUseCaseProtocol {
     func add(_ expense: Expense) async {}
     func fetch(year: Int, month: Int) async -> [Expense] { [] }
     func delete(_ expense: Expense) async {}
+    func deleteAll() async {}
 }
 
 @Suite("HomeViewModel")

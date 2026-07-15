@@ -61,7 +61,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "brain.fill")
         )
 
-        let settingsViewController = SettingsViewController(categoryUseCase: categoryUseCase)
+        let settingsViewController = SettingsViewController(
+            categoryUseCase: categoryUseCase,
+            expenseUseCase: expenseUseCase,
+            predictionUseCase: predictionUseCase
+        )
         settingsViewController.tabBarItem = UITabBarItem(
             title: "설정",
             image: UIImage(systemName: "slider.horizontal.3"),
