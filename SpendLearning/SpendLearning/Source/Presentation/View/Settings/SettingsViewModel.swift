@@ -20,16 +20,18 @@ final class SettingsViewModel {
     private let categoryUseCase: CategoryUseCaseProtocol
     private let expenseUseCase: ExpenseUseCaseProtocol
     private let predictionUseCase: PredictionUseCaseProtocol
+    private let categoryPredictor: CategoryPredictor
 
-    // MARK: - Init
     init(
         categoryUseCase: CategoryUseCaseProtocol,
         expenseUseCase: ExpenseUseCaseProtocol,
-        predictionUseCase: PredictionUseCaseProtocol
+        predictionUseCase: PredictionUseCaseProtocol,
+        categoryPredictor: CategoryPredictor
     ) {
         self.categoryUseCase = categoryUseCase
         self.expenseUseCase = expenseUseCase
         self.predictionUseCase = predictionUseCase
+        self.categoryPredictor = categoryPredictor
     }
 
     // MARK: - Input
@@ -96,6 +98,7 @@ final class SettingsViewModel {
     func resetAllData() async {
         await expenseUseCase.deleteAll()
         await predictionUseCase.deleteModel()
+        categoryPredictor.resetToBundledModel()
         do {
             try await categoryUseCase.resetToDefault()
             categories = (try? await categoryUseCase.fetchCategories()) ?? categories

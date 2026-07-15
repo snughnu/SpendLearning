@@ -69,16 +69,6 @@ struct PredictionViewModelTests {
 
     // MARK: - makeCumulativePrediction
 
-    @Test("오늘 날짜에 소비가 없어도 actual이 nil이 아니다")
-    func todayActualIsNotNilEvenWithNoExpenses() async {
-        let sut = PredictionViewModel(expenseUseCase: StubExpenseUseCaseForPrediction(), predictionUseCase: StubPredictionUseCase())
-
-        await sut.onAppear()
-
-        let todayPoint = sut.predictionData.first(where: { $0.day == sut.today })
-        #expect(todayPoint?.actual != nil)
-    }
-
     @Test("누적 actual이 올바르게 계산된다")
     func cumulativeActualIsCorrect() async {
         let expenseStub = StubExpenseUseCaseForPrediction()

@@ -18,6 +18,8 @@ final class CategorySelectViewController: UIViewController {
     private let viewModel: NewExpenseViewModel
     private var cancellables = Set<AnyCancellable>()
 
+    var onCategorySelected: (() -> Void)?
+
     // MARK: - Init
     init(viewModel: NewExpenseViewModel) {
         self.viewModel = viewModel
@@ -60,9 +62,7 @@ extension CategorySelectViewController: UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let category = viewModel.categories[indexPath.row]
         viewModel.didSelectCategory(category)
-        let inputVC = ExpenseInputViewController(viewModel: viewModel)
-        inputVC.modalPresentationStyle = .fullScreen
-        present(inputVC, animated: true)
+        onCategorySelected?()
     }
 }
 
