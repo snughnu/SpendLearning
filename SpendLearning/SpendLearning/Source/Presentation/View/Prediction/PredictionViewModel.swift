@@ -39,7 +39,7 @@ final class PredictionViewModel {
               actual > 0 else { return nil }
 
         let errorRatio = abs(Double(predicted) - Double(actual)) / Double(actual)
-        return Float(100 * exp(-errorRatio))
+        return Float(100 * exp(-2 * errorRatio))
     }
 
     // MARK: - Init

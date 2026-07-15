@@ -53,6 +53,10 @@ struct PredictionStatusCardView: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
 
+                        Text("지난달들의 기록이 쌓일수록 정확해져요")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color(UIColor.DesignSystem.subtitle).opacity(0.8))
+
                         if let accuracy {
                             ProgressView(value: accuracy / 100)
                                 .tint(Color(UIColor.DesignSystem.accent))
