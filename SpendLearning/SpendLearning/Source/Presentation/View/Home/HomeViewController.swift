@@ -455,14 +455,24 @@ private extension HomeViewController {
     }
 
     func presentAddExpense(expense: Expense? = nil) {
-        let newExpenseViewModel = NewExpenseViewModel(
-            expenseUseCase: viewModel.expenseUseCase,
-            categoryUseCase: categoryUseCase,
-            date: viewModel.selectedDate,
-            editingExpense: expense
-        )
-        let categorySelectVC = CategorySelectViewController(viewModel: newExpenseViewModel)
-        categorySelectVC.modalPresentationStyle = .fullScreen
-        present(categorySelectVC, animated: true)
+        Task {
+            var defaultCategory: Category? = nil
+            if expense == nil {
+                defaultCategory = try? await categoryUseCase.fetchCategories().first { !$0.isDeletable }
+            }
+
+            let newExpenseViewModel = NewExpenseViewModel(
+                expenseUseCase: viewModel.expenseUseCase,
+                categoryUseCase: categoryUseCase,
+                date: viewModel.selectedDate,
+                editingExpense: expense,
+                prefillCategory: defaultCategory
+            )
+            await newExpenseViewModel.loadCategories()
+
+            let inputVC = ExpenseInputViewController(viewModel: newExpenseViewModel)
+            inputVC.modalPresentationStyle = .fullScreen
+            present(inputVC, animated: true)
+        }
     }
 }

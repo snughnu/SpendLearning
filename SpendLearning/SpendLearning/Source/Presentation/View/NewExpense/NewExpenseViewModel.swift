@@ -16,8 +16,9 @@ final class NewExpenseViewModel {
     @Published private(set) var categories: [Category] = []
     @Published private(set) var fetchError: Error? = nil
 
-    var initialAmount: Int { editingExpense?.amount ?? 0 }
-    var initialMemo: String { editingExpense?.memo ?? "" }
+    var initialAmount: Int { amount }
+    var initialMemo: String { memo }
+    var finalMemo: String { memo }
 
     // MARK: - Private
     private let expenseUseCase: ExpenseUseCaseProtocol
@@ -32,7 +33,10 @@ final class NewExpenseViewModel {
         expenseUseCase: ExpenseUseCaseProtocol,
         categoryUseCase: CategoryUseCaseProtocol,
         date: Date,
-        editingExpense: Expense? = nil
+        editingExpense: Expense? = nil,
+        prefillAmount: Int? = nil,
+        prefillMemo: String? = nil,
+        prefillCategory: Category? = nil
     ) {
         self.expenseUseCase = expenseUseCase
         self.categoryUseCase = categoryUseCase
@@ -43,6 +47,10 @@ final class NewExpenseViewModel {
             self.amount = expense.amount
             self.memo = expense.memo ?? ""
             self.selectedCategory = expense.category
+        } else {
+            self.amount = prefillAmount ?? 0
+            self.memo = prefillMemo ?? ""
+            self.selectedCategory = prefillCategory
         }
     }
 
