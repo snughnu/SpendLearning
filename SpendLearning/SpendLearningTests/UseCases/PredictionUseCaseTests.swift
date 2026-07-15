@@ -12,33 +12,10 @@ import Foundation
 @MainActor
 struct PredictionUseCaseTests {
 
-    @Test("fetchModels 호출 시 Repository의 fetchModels가 호출된다")
-    func fetchModelsCallsRepository() async {
-        let spy = SpyPredictionRepository()
-        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
-
-        _ = await sut.fetchModels()
-
-        #expect(spy.fetchModelsCallCount == 1)
-    }
-
-    @Test("fetchModels 호출 시 Repository에서 반환한 결과를 그대로 반환한다")
-    func fetchModelsReturnsRepositoryResult() async {
-        let spy = SpyPredictionRepository()
-        let model = PredictionModelMetadata(id: "SP260714", dataCount: 1204, createdAt: Date())
-        spy.stubbedModels = [model]
-        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
-
-        let result = await sut.fetchModels()
-
-        #expect(result.count == 1)
-        #expect(result.first?.id == model.id)
-    }
-
     @Test("fetchCurrentModel 호출 시 Repository에서 반환한 결과를 그대로 반환한다")
     func fetchCurrentModelReturnsRepositoryResult() async {
         let spy = SpyPredictionRepository()
-        let model = PredictionModelMetadata(id: "SP260714", dataCount: 1204, createdAt: Date())
+        let model = PredictionModelMetadata(id: "SP260714", dataCount: 1204, createdAt: Date(), dailyPredictions: [:], categoryPredictions: [:])
         spy.stubbedCurrentModel = model
         let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
@@ -47,48 +24,24 @@ struct PredictionUseCaseTests {
         #expect(result?.id == model.id)
     }
 
-    @Test("fetchDailyPredictions 호출 시 Repository가 올바른 year/month로 호출된다")
-    func fetchDailyPredictionsCallsRepositoryWithCorrectYearMonth() async {
+    @Test("recalculate 호출 시 Repository의 recalculate가 호출된다")
+    func recalculateCallsRepository() async {
         let spy = SpyPredictionRepository()
         let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
-        _ = await sut.fetchDailyPredictions(year: 2026, month: 7)
+        _ = await sut.recalculate()
 
-        #expect(spy.fetchDailyCallCount == 1)
-        #expect(spy.fetchedYear == 2026)
-        #expect(spy.fetchedMonth == 7)
+        #expect(spy.recalculateCallCount == 1)
     }
 
-    @Test("fetchCategoryPredictions 호출 시 Repository가 올바른 year/month로 호출된다")
-    func fetchCategoryPredictionsCallsRepositoryWithCorrectYearMonth() async {
+    @Test("recalculate 성공 시 계산된 모델을 반환한다")
+    func recalculateReturnsModelOnSuccess() async {
         let spy = SpyPredictionRepository()
+        let model = PredictionModelMetadata(id: "SP260714", dataCount: 10, createdAt: Date(), dailyPredictions: [:], categoryPredictions: [:])
+        spy.stubbedRecalculateResult = .success(model)
         let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
-        _ = await sut.fetchCategoryPredictions(year: 2026, month: 7)
-
-        #expect(spy.fetchCategoryCallCount == 1)
-        #expect(spy.fetchedYear == 2026)
-        #expect(spy.fetchedMonth == 7)
-    }
-
-    @Test("createModel 호출 시 Repository의 createModel이 호출된다")
-    func createModelCallsRepository() async {
-        let spy = SpyPredictionRepository()
-        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
-
-        _ = await sut.createModel()
-
-        #expect(spy.createModelCallCount == 1)
-    }
-
-    @Test("createModel 성공 시 생성된 모델을 반환한다")
-    func createModelReturnsModelOnSuccess() async {
-        let spy = SpyPredictionRepository()
-        let model = PredictionModelMetadata(id: "SP260714", dataCount: 10, createdAt: Date())
-        spy.stubbedCreateModelResult = .success(model)
-        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
-
-        let result = await sut.createModel()
+        let result = await sut.recalculate()
 
         if case .success(let created) = result {
             #expect(created.id == "SP260714")
@@ -97,13 +50,13 @@ struct PredictionUseCaseTests {
         }
     }
 
-    @Test("createModel 실패 시 insufficientData 에러를 반환한다")
-    func createModelReturnsErrorOnInsufficientData() async {
+    @Test("recalculate 실패 시 insufficientData 에러를 반환한다")
+    func recalculateReturnsErrorOnInsufficientData() async {
         let spy = SpyPredictionRepository()
-        spy.stubbedCreateModelResult = .failure(.insufficientData)
+        spy.stubbedRecalculateResult = .failure(.insufficientData)
         let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
-        let result = await sut.createModel()
+        let result = await sut.recalculate()
 
         if case .failure(let error) = result {
             #expect(error == .insufficientData)
@@ -116,54 +69,20 @@ struct PredictionUseCaseTests {
 // MARK: - Spy
 
 final class SpyPredictionRepository: PredictionRepositoryProtocol {
-    private(set) var fetchModelsCallCount = 0
     private(set) var fetchCurrentModelCallCount = 0
-    private(set) var fetchDailyCallCount = 0
-    private(set) var fetchCategoryCallCount = 0
-    private(set) var fetchedYear: Int?
-    private(set) var fetchedMonth: Int?
-    private(set) var createModelCallCount = 0
-    private(set) var deleteModelCallCount = 0
-    private(set) var deletedId: String?
+    private(set) var recalculateCallCount = 0
 
-    var stubbedModels: [PredictionModelMetadata] = []
     var stubbedCurrentModel: PredictionModelMetadata? = nil
-    var stubbedCreateModelResult: Result<PredictionModelMetadata, PredictionModelCreationError> = .failure(.insufficientData)
-
-    func fetchModels() async -> [PredictionModelMetadata] {
-        fetchModelsCallCount += 1
-        return stubbedModels
-    }
+    var stubbedRecalculateResult: Result<PredictionModelMetadata, PredictionModelCreationError> = .failure(.insufficientData)
 
     func fetchCurrentModel() async -> PredictionModelMetadata? {
         fetchCurrentModelCallCount += 1
         return stubbedCurrentModel
     }
 
-    func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] {
-        fetchDailyCallCount += 1
-        fetchedYear = year
-        fetchedMonth = month
-        return [:]
-    }
-
-    func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] {
-        fetchCategoryCallCount += 1
-        fetchedYear = year
-        fetchedMonth = month
-        return [:]
-    }
-
-    func createModel(expenses: [Expense]) async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
-        createModelCallCount += 1
-        return stubbedCreateModelResult
-    }
-
-    func selectModel(id: String) async {}
-
-    func deleteModel(id: String) async {
-        deleteModelCallCount += 1
-        deletedId = id
+    func recalculate(expenses: [Expense]) async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
+        recalculateCallCount += 1
+        return stubbedRecalculateResult
     }
 }
 

@@ -18,7 +18,10 @@ struct PredictionViewModelTests {
     func onAppearFillsPredictionData() async {
         let expenseStub = StubExpenseUseCaseForPrediction()
         let predictionStub = StubPredictionUseCase()
-        predictionStub.stubbedDailyPredictions = [1: 10000, 2: 20000]
+        predictionStub.stubbedCurrentModel = PredictionModelMetadata(
+            id: "SPa1b2c3", dataCount: 10, createdAt: Date(),
+            dailyPredictions: [1: 10000, 2: 20000], categoryPredictions: [:]
+        )
         let sut = PredictionViewModel(expenseUseCase: expenseStub, predictionUseCase: predictionStub)
 
         await sut.onAppear()
@@ -56,7 +59,7 @@ struct PredictionViewModelTests {
     @Test("예측 데이터가 있으면 hasPrediction이 true다")
     func hasPredictionIsTrueWhenPredictionsExist() async {
         let predictionStub = StubPredictionUseCase()
-        predictionStub.stubbedCurrentModel = PredictionModelMetadata(id: "SPa1b2c3", dataCount: 10, createdAt: Date())
+        predictionStub.stubbedCurrentModel = PredictionModelMetadata(id: "SPa1b2c3", dataCount: 10, createdAt: Date(), dailyPredictions: [:], categoryPredictions: [:])
         let sut = PredictionViewModel(expenseUseCase: StubExpenseUseCaseForPrediction(), predictionUseCase: predictionStub)
 
         await sut.onAppear()
@@ -115,6 +118,26 @@ struct PredictionViewModelTests {
         #expect(sut.categoryData.last?.categoryName == "교통")
     }
 
+    @Test("실제 지출이 있는 카테고리는 과거 예측 데이터가 없어도 0원으로 예측된다")
+    func categoryWithActualButNoPredictionShowsZeroPredicted() async {
+        let expenseStub = StubExpenseUseCaseForPrediction()
+        let event = Category(name: "경조사", emoji: "🎉")
+        let day1 = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 1))!
+        expenseStub.stubbedExpenses = [
+            Expense(date: day1, category: event, memo: nil, amount: 3)
+        ]
+        let predictionStub = StubPredictionUseCase()
+        predictionStub.stubbedCurrentModel = PredictionModelMetadata(
+            id: "SPa1b2c3", dataCount: 10, createdAt: Date(),
+            dailyPredictions: [:], categoryPredictions: [:]
+        )
+        let sut = PredictionViewModel(expenseUseCase: expenseStub, predictionUseCase: predictionStub)
+
+        await sut.onAppear()
+
+        let eventPoint = sut.categoryData.first(where: { $0.categoryName == "경조사" })
+        #expect(eventPoint?.predicted == 0)
+    }
 }
 
 // MARK: - Stubs
@@ -127,17 +150,9 @@ final class StubExpenseUseCaseForPrediction: ExpenseUseCaseProtocol {
 }
 
 final class StubPredictionUseCase: PredictionUseCaseProtocol {
-    var stubbedModels: [PredictionModelMetadata] = []
     var stubbedCurrentModel: PredictionModelMetadata? = nil
-    var stubbedDailyPredictions: [Int: Int] = [:]
-    var stubbedCategoryPredictions: [String: Int] = [:]
-    var stubbedCreateModelResult: Result<PredictionModelMetadata, PredictionModelCreationError> = .failure(.insufficientData)
+    var stubbedRecalculateResult: Result<PredictionModelMetadata, PredictionModelCreationError> = .failure(.insufficientData)
 
-    func fetchModels() async -> [PredictionModelMetadata] { stubbedModels }
     func fetchCurrentModel() async -> PredictionModelMetadata? { stubbedCurrentModel }
-    func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] { stubbedDailyPredictions }
-    func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] { stubbedCategoryPredictions }
-    func createModel() async -> Result<PredictionModelMetadata, PredictionModelCreationError> { stubbedCreateModelResult }
-    func selectModel(id: String) async {}
-    func deleteModel(id: String) async {}
+    func recalculate() async -> Result<PredictionModelMetadata, PredictionModelCreationError> { stubbedRecalculateResult }
 }
