@@ -9,13 +9,18 @@ import Foundation
 
 final class StatisticsPredictor {
 
+    /// 패턴으로 신뢰하기 위한 최소 표본 수
+    private let minimumSampleCount = 2
+    /// 패턴으로 신뢰하기 위한 변동계수(표준편차/평균) 임계값. 낮을수록 값이 일관됨을 의미
+    private let coefficientOfVariationThreshold = 0.5
+
     // MARK: - predictDaily
 
     /// 이번 달 일별 예측 지출 금액을 반환한다.
-    /// 폴백 순서:
-    /// 1. 과거 같은 주차 + 같은 요일 지출 평균
-    /// 2. 데이터 없으면 → 과거 같은 주차 전체 지출 평균
-    /// 3. 데이터 없으면 → 과거 월 평균 총액 / 이번 달 일수
+    /// 폴백 순서 (각 순위는 표본이 2건 이상이고 변동계수가 임계값 이하일 때만 채택한다):
+    /// 1. 과거 같은 날짜(dayOfMonth) 지출 평균 — 정기결제 등 날짜 기반 패턴
+    /// 2. 데이터가 패턴으로 인정되지 않으면 → 과거 같은 요일(weekday) 지출 평균 — 습관성 소비 패턴
+    /// 3. 그것도 패턴으로 인정되지 않으면 → 과거 월 평균 총액 / 이번 달 일수
     func predictDaily(expenses: [Expense], year: Int, month: Int) async -> [Int: Int] {
         let calendar = Calendar.current
         guard let targetDate = calendar.date(from: DateComponents(year: year, month: month, day: 1)),
@@ -35,14 +40,14 @@ final class StatisticsPredictor {
         var result: [Int: Int] = [:]
         for day in dayRange {
             guard let date = calendar.date(from: DateComponents(year: year, month: month, day: day)) else { continue }
-            let weekOfMonth = calendar.component(.weekOfMonth, from: date)
+            let dayOfMonth = calendar.component(.day, from: date)
             let weekday = calendar.component(.weekday, from: date)
 
-            if let avg = weekOfMonthAndWeekdayAverage(expenses: pastExpenses, weekOfMonth: weekOfMonth, weekday: weekday), avg > 0 {
-                // 1순위: 같은 주차 + 같은 요일 평균
+            if let avg = reliableDayOfMonthAverage(expenses: pastExpenses, dayOfMonth: dayOfMonth) {
+                // 1순위: 같은 날짜의 일관된 평균 (정기결제 등)
                 result[day] = avg
-            } else if let avg = weekOfMonthAverage(expenses: pastExpenses, weekOfMonth: weekOfMonth), avg > 0 {
-                // 2순위: 같은 주차 전체 평균
+            } else if let avg = reliableWeekdayAverage(expenses: pastExpenses, weekday: weekday) {
+                // 2순위: 같은 요일의 일관된 평균 (습관성 소비)
                 result[day] = avg
             } else {
                 // 3순위: 월 평균 총액 / 일수
@@ -85,41 +90,59 @@ final class StatisticsPredictor {
 
     // MARK: - Private helpers (predictDaily)
 
-    /// 같은 주차 + 같은 요일에 해당하는 지출의 월 평균
-    private func weekOfMonthAndWeekdayAverage(expenses: [Expense], weekOfMonth: Int, weekday: Int) -> Int? {
+    /// 같은 날짜(dayOfMonth)의 지출을 월별로 합산해, 표본이 충분하고 변동계수가 임계값 이하일 때만 평균을 반환한다.
+    private func reliableDayOfMonthAverage(expenses: [Expense], dayOfMonth: Int) -> Int? {
         let calendar = Calendar.current
         let matched = expenses.filter {
-            calendar.component(.weekOfMonth, from: $0.date) == weekOfMonth &&
-            calendar.component(.weekday, from: $0.date) == weekday
+            calendar.component(.day, from: $0.date) == dayOfMonth
         }
-        guard !matched.isEmpty else { return nil }
-
-        // 같은 주차+요일이 등장한 월 수로 나눠 평균
-        let months = Set(matched.map {
-            let y = calendar.component(.year, from: $0.date)
-            let m = calendar.component(.month, from: $0.date)
-            return "\(y)-\(m)"
-        })
-        let total = matched.reduce(0) { $0 + $1.amount }
-        return total / max(months.count, 1)
+        let monthlyTotals = monthlyTotals(of: matched, calendar: calendar)
+        return reliableAverage(of: monthlyTotals)
     }
 
-    /// 같은 주차 전체 지출의 주 평균
-    private func weekOfMonthAverage(expenses: [Expense], weekOfMonth: Int) -> Int? {
+    /// 같은 요일(weekday)의 지출을 주별로 합산해, 표본이 충분하고 변동계수가 임계값 이하일 때만 평균을 반환한다.
+    private func reliableWeekdayAverage(expenses: [Expense], weekday: Int) -> Int? {
         let calendar = Calendar.current
         let matched = expenses.filter {
-            calendar.component(.weekOfMonth, from: $0.date) == weekOfMonth
+            calendar.component(.weekday, from: $0.date) == weekday
         }
-        guard !matched.isEmpty else { return nil }
+        let weeklyTotals = weeklyTotals(of: matched, calendar: calendar)
+        return reliableAverage(of: weeklyTotals)
+    }
 
-        // 같은 주차가 등장한 횟수(월별 주차)로 나눠 평균
-        let weeks = Set(matched.map {
-            let y = calendar.component(.year, from: $0.date)
-            let m = calendar.component(.month, from: $0.date)
-            return "\(y)-\(m)-\(calendar.component(.weekOfMonth, from: $0.date))"
-        })
-        let total = matched.reduce(0) { $0 + $1.amount }
-        return total / max(weeks.count, 1)
+    /// 지출을 연-월 단위로 묶어 각 달의 합계 목록을 반환한다.
+    private func monthlyTotals(of expenses: [Expense], calendar: Calendar) -> [Int] {
+        Dictionary(grouping: expenses) {
+            "\(calendar.component(.year, from: $0.date))-\(calendar.component(.month, from: $0.date))"
+        }
+        .values
+        .map { group in group.reduce(0) { $0 + $1.amount } }
+    }
+
+    /// 지출을 연-주 단위로 묶어 각 주의 합계 목록을 반환한다.
+    private func weeklyTotals(of expenses: [Expense], calendar: Calendar) -> [Int] {
+        Dictionary(grouping: expenses) {
+            "\(calendar.component(.year, from: $0.date))-\(calendar.component(.weekOfYear, from: $0.date))"
+        }
+        .values
+        .map { group in group.reduce(0) { $0 + $1.amount } }
+    }
+
+    /// 표본이 최소 개수 이상이고, 변동계수가 임계값 이하로 일관될 때만 평균을 반환한다.
+    /// 표본이 부족하거나(우연 배제) 값이 들쭉날쭉하면(패턴 아님) nil을 반환해 다음 순위로 폴백시킨다.
+    private func reliableAverage(of samples: [Int]) -> Int? {
+        guard samples.count >= minimumSampleCount else { return nil }
+
+        let mean = Double(samples.reduce(0, +)) / Double(samples.count)
+        guard mean > 0 else { return nil }
+
+        let variance = samples.reduce(0.0) { $0 + pow(Double($1) - mean, 2) } / Double(samples.count)
+        let standardDeviation = variance.squareRoot()
+        let coefficientOfVariation = standardDeviation / mean
+
+        guard coefficientOfVariation <= coefficientOfVariationThreshold else { return nil }
+
+        return Int(mean)
     }
 
     /// 과거 데이터의 월 평균 총 지출

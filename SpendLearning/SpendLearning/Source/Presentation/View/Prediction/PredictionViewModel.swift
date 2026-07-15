@@ -14,7 +14,7 @@ final class PredictionViewModel {
     private(set) var currentModel: PredictionModelMetadata? = nil
     private(set) var models: [PredictionModelMetadata] = []
     private(set) var predictionData: [CumulativePrediction] = []
-    private(set) var categoryData: [CategoryPredictionDataPoint] = []
+    private(set) var categoryData: [CategoryPrediction] = []
     private(set) var today: Int = Calendar.current.component(.day, from: Date())
     private(set) var lastDay: Int = {
         let calendar = Calendar.current
@@ -138,7 +138,7 @@ final class PredictionViewModel {
         }
     }
 
-    private func makeCategoryData(expenses: [Expense], predictions: [String: Int]) -> [CategoryPredictionDataPoint] {
+    private func makeCategoryData(expenses: [Expense], predictions: [String: Int]) -> [CategoryPrediction] {
         var categoryTotals: [String: Int] = [:]
         for expense in expenses where Calendar.current.component(.day, from: expense.date) <= today {
             categoryTotals[expense.category.name, default: 0] += expense.amount
@@ -146,7 +146,7 @@ final class PredictionViewModel {
 
         let allCategories = Set(categoryTotals.keys).union(Set(predictions.keys))
         return allCategories.map { name in
-            CategoryPredictionDataPoint(
+            CategoryPrediction(
                 categoryName: name,
                 actual: categoryTotals[name] ?? 0,
                 predicted: predictions[name]

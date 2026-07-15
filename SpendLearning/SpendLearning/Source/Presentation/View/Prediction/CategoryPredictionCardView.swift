@@ -12,10 +12,10 @@ struct CategoryPredictionCardView: View {
 
     @State private var isExpanded = false
 
-    let data: [CategoryPredictionDataPoint]
+    let data: [CategoryPrediction]
     let hasPrediction: Bool
 
-    private var displayData: [CategoryPredictionDataPoint] {
+    private var displayData: [CategoryPrediction] {
         isExpanded ? data : Array(data.prefix(5))
     }
 
