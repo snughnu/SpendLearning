@@ -12,19 +12,54 @@ MODEL_OUTPUT_PATH = os.path.join(SCRIPT_DIR, "CategoryClassifier.mlmodel")
 
 DEFAULT_CATEGORY = "기타"
 
+CHOSUNG = list("ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ")
+JUNGSUNG = list("ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ")
+JONGSUNG = [""] + list("ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ")
+
+HANGUL_BASE = 0xAC00
+HANGUL_LAST = 0xD7A3
+
+
+def decompose_hangul(char):
+    """완성형 한글 한 글자를 (초성, 중성, 종성) 튜플로 분해한다. 한글이 아니면 None."""
+    code = ord(char)
+    if not (HANGUL_BASE <= code <= HANGUL_LAST):
+        return None
+    offset = code - HANGUL_BASE
+    cho = offset // (21 * 28)
+    jung = (offset % (21 * 28)) // 28
+    jong = offset % 28
+    return (CHOSUNG[cho], JUNGSUNG[jung], JONGSUNG[jong])
+
+
+def tokenize(text):
+    """문자열을 자모 단위(한글은 초/중/종성으로 분해, 그 외는 원래 글자 그대로) 토큰 리스트로 변환한다."""
+    tokens = []
+    for char in text:
+        decomposed = decompose_hangul(char)
+        if decomposed:
+            cho, jung, jong = decomposed
+            tokens.append(cho)
+            tokens.append(jung)
+            if jong:
+                tokens.append("_" + jong)  # 종성은 초성과 겹치지 않도록 접두어를 붙인다
+        else:
+            tokens.append(char)
+    return tokens
+
 
 def build_vocabulary(memos):
-    """시드 데이터에 등장하는 모든 글자를 모아 정렬된 vocabulary를 만든다."""
-    chars = set()
+    """시드 데이터에 등장하는 모든 자모/문자를 모아 정렬된 vocabulary를 만든다."""
+    tokens = set()
     for memo in memos:
-        chars.update(memo)
-    return sorted(chars)
+        tokens.update(tokenize(memo))
+    return sorted(tokens)
 
 
 def vectorize(memo, vocabulary):
-    """memo 문자열을 vocabulary 기준 글자 빈도 벡터로 변환한다."""
-    counts = Counter(memo)
-    return [float(counts.get(ch, 0)) for ch in vocabulary]
+    """memo 문자열을 vocabulary 기준 자모 빈도 벡터로 변환한다."""
+    counts = Counter(tokenize(memo))
+    return [float(counts.get(token, 0)) for token in vocabulary]
 
 
 def main():
@@ -35,7 +70,7 @@ def main():
     labels = [item["category"] for item in seed_data]
 
     vocabulary = build_vocabulary(memos)
-    print(f"Vocabulary 크기: {len(vocabulary)}자")
+    print(f"Vocabulary 크기: {len(vocabulary)}개 (자모/문자 단위)")
 
     vectors = [vectorize(memo, vocabulary) for memo in memos]
 
