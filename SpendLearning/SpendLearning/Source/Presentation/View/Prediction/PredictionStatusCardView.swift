@@ -1,5 +1,5 @@
 //
-//  AIStatusCardView.swift
+//  PredictionStatusCardView.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/8/26.
@@ -7,20 +7,21 @@
 
 import SwiftUI
 
-struct AIStatusCardView: View {
+struct PredictionStatusCardView: View {
 
     @Binding var isShowingToast: Bool
     @State private var isShowingCreate = false
     @State private var isShowingSelect = false
     @State private var isShowingInsufficientDataAlert = false
 
-    let currentModel: AIModelMetadata?
-    let models: [AIModelMetadata]
+    let currentModel: PredictionModelMetadata?
+    let accuracy: Float?
+    let models: [PredictionModelMetadata]
     let isCreatingModel: Bool
     let onCreateModel: () async -> Void
-    let createModelError: AIModelCreationError?
-    let onSelectModel: (AIModelMetadata) async -> Void
-    let onDeleteModel: (AIModelMetadata) async -> Void
+    let createModelError: PredictionModelCreationError?
+    let onSelectModel: (PredictionModelMetadata) async -> Void
+    let onDeleteModel: (PredictionModelMetadata) async -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -49,7 +50,7 @@ struct AIStatusCardView: View {
         }
         .tint(Color(UIColor.DesignSystem.accent))
         .sheet(isPresented: $isShowingSelect) {
-            AIModelSelectView(
+            PredictionModelSelectView(
                 models: models,
                 currentModelId: currentModel?.id ?? "",
                 onConfirm: { selected in
@@ -73,7 +74,7 @@ struct AIStatusCardView: View {
                         .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(model.id) 예측 모델")
+                        Text("\(model.id) 예측 모델" + (accuracy.map { " \(Int($0))%" } ?? ""))
                             .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
@@ -81,15 +82,11 @@ struct AIStatusCardView: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
 
-                        if let accuracy = model.accuracy {
+                        if let accuracy {
                             ProgressView(value: accuracy / 100)
                                 .tint(Color(UIColor.DesignSystem.accent))
                                 .scaleEffect(x: 1, y: 2)
                                 .padding(.top, 2)
-                        } else {
-                            Text("정확도 측정불가 (4개월 이상 데이터 필요)")
-                                .font(.system(size: 13))
-                                .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
                         }
                     }
                 }

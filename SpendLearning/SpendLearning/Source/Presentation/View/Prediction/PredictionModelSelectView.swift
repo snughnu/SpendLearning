@@ -1,5 +1,5 @@
 //
-//  AIModelSelectView.swift
+//  PredictionModelSelectView.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/10/26.
@@ -7,21 +7,21 @@
 
 import SwiftUI
 
-struct AIModelSelectView: View {
+struct PredictionModelSelectView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var selectedId: String
-    @State private var modelPendingDelete: AIModelMetadata?
+    @State private var modelPendingDelete: PredictionModelMetadata?
 
-    let models: [AIModelMetadata]
-    var onConfirm: (AIModelMetadata) -> Void
-    var onDelete: (AIModelMetadata) -> Void
+    let models: [PredictionModelMetadata]
+    var onConfirm: (PredictionModelMetadata) -> Void
+    var onDelete: (PredictionModelMetadata) -> Void
 
     init(
-        models: [AIModelMetadata],
+        models: [PredictionModelMetadata],
         currentModelId: String,
-        onConfirm: @escaping (AIModelMetadata) -> Void,
-        onDelete: @escaping (AIModelMetadata) -> Void
+        onConfirm: @escaping (PredictionModelMetadata) -> Void,
+        onDelete: @escaping (PredictionModelMetadata) -> Void
     ) {
         self.models = models
         self.onConfirm = onConfirm
@@ -97,14 +97,14 @@ struct AIModelSelectView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func modelRow(_ model: AIModelMetadata) -> some View {
+    private func modelRow(_ model: PredictionModelMetadata) -> some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(model.id)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
-                Text((model.accuracy.map { "정확도 \(Int($0))% · " } ?? "정확도 측정불가 · ") + "데이터 \(model.dataCount)개")
+                Text("데이터 \(model.dataCount)개")
                     .font(.system(size: 14))
                     .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
 

@@ -1,5 +1,5 @@
 //
-//  AIUseCase.swift
+//  PredictionUseCase.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/14/26.
@@ -7,29 +7,25 @@
 
 import Foundation
 
-final class AIUseCase: AIUseCaseProtocol {
+final class PredictionUseCase: PredictionUseCaseProtocol {
 
-    private let repository: AIRepositoryProtocol
+    private let repository: PredictionRepositoryProtocol
     private let expenseRepository: ExpenseRepositoryProtocol
 
     init(
-        repository: AIRepositoryProtocol,
+        repository: PredictionRepositoryProtocol,
         expenseRepository: ExpenseRepositoryProtocol
     ) {
         self.repository = repository
         self.expenseRepository = expenseRepository
     }
 
-    func fetchModels() async -> [AIModelMetadata] {
+    func fetchModels() async -> [PredictionModelMetadata] {
         await repository.fetchModels()
     }
 
-    func fetchCurrentModel() async -> AIModelMetadata? {
+    func fetchCurrentModel() async -> PredictionModelMetadata? {
         await repository.fetchCurrentModel()
-    }
-
-    func fetchInsights() async -> [AIInsightItem] {
-        await repository.fetchInsights()
     }
 
     func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] {
@@ -40,7 +36,7 @@ final class AIUseCase: AIUseCaseProtocol {
         await repository.fetchCategoryPredictions(year: year, month: month)
     }
 
-    func createModel() async -> Result<AIModelMetadata, AIModelCreationError> {
+    func createModel() async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
         let expenses = await expenseRepository.fetchAllExpenses()
         return await repository.createModel(expenses: expenses)
     }

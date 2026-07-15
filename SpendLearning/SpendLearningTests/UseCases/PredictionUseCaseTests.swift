@@ -1,5 +1,5 @@
 //
-//  AIUseCaseTests.swift
+//  PredictionUseCaseTests.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/14/26.
@@ -8,14 +8,14 @@
 import Testing
 import Foundation
 
-@Suite("AIUseCase")
+@Suite("PredictionUseCase")
 @MainActor
-struct AIUseCaseTests {
+struct PredictionUseCaseTests {
 
     @Test("fetchModels 호출 시 Repository의 fetchModels가 호출된다")
     func fetchModelsCallsRepository() async {
-        let spy = SpyAIRepository()
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let spy = SpyPredictionRepository()
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         _ = await sut.fetchModels()
 
@@ -24,10 +24,10 @@ struct AIUseCaseTests {
 
     @Test("fetchModels 호출 시 Repository에서 반환한 결과를 그대로 반환한다")
     func fetchModelsReturnsRepositoryResult() async {
-        let spy = SpyAIRepository()
-        let model = AIModelMetadata(id: "SP260714", dataCount: 1204, accuracy: 82, createdAt: Date())
+        let spy = SpyPredictionRepository()
+        let model = PredictionModelMetadata(id: "SP260714", dataCount: 1204, createdAt: Date())
         spy.stubbedModels = [model]
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         let result = await sut.fetchModels()
 
@@ -37,10 +37,10 @@ struct AIUseCaseTests {
 
     @Test("fetchCurrentModel 호출 시 Repository에서 반환한 결과를 그대로 반환한다")
     func fetchCurrentModelReturnsRepositoryResult() async {
-        let spy = SpyAIRepository()
-        let model = AIModelMetadata(id: "SP260714", dataCount: 1204, accuracy: 82, createdAt: Date())
+        let spy = SpyPredictionRepository()
+        let model = PredictionModelMetadata(id: "SP260714", dataCount: 1204, createdAt: Date())
         spy.stubbedCurrentModel = model
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         let result = await sut.fetchCurrentModel()
 
@@ -49,8 +49,8 @@ struct AIUseCaseTests {
 
     @Test("fetchDailyPredictions 호출 시 Repository가 올바른 year/month로 호출된다")
     func fetchDailyPredictionsCallsRepositoryWithCorrectYearMonth() async {
-        let spy = SpyAIRepository()
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let spy = SpyPredictionRepository()
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         _ = await sut.fetchDailyPredictions(year: 2026, month: 7)
 
@@ -61,8 +61,8 @@ struct AIUseCaseTests {
 
     @Test("fetchCategoryPredictions 호출 시 Repository가 올바른 year/month로 호출된다")
     func fetchCategoryPredictionsCallsRepositoryWithCorrectYearMonth() async {
-        let spy = SpyAIRepository()
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let spy = SpyPredictionRepository()
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         _ = await sut.fetchCategoryPredictions(year: 2026, month: 7)
 
@@ -71,23 +71,10 @@ struct AIUseCaseTests {
         #expect(spy.fetchedMonth == 7)
     }
 
-    @Test("fetchInsights 호출 시 Repository에서 반환한 결과를 그대로 반환한다")
-    func fetchInsightsReturnsRepositoryResult() async {
-        let spy = SpyAIRepository()
-        let insight = AIInsightItem(type: .abnormal, description: "테스트")
-        spy.stubbedInsights = [insight]
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
-
-        let result = await sut.fetchInsights()
-
-        #expect(result.count == 1)
-        #expect(result.first?.description == insight.description)
-    }
-
     @Test("createModel 호출 시 Repository의 createModel이 호출된다")
     func createModelCallsRepository() async {
-        let spy = SpyAIRepository()
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let spy = SpyPredictionRepository()
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         _ = await sut.createModel()
 
@@ -96,10 +83,10 @@ struct AIUseCaseTests {
 
     @Test("createModel 성공 시 생성된 모델을 반환한다")
     func createModelReturnsModelOnSuccess() async {
-        let spy = SpyAIRepository()
-        let model = AIModelMetadata(id: "SP260714", dataCount: 10, accuracy: 50, createdAt: Date())
+        let spy = SpyPredictionRepository()
+        let model = PredictionModelMetadata(id: "SP260714", dataCount: 10, createdAt: Date())
         spy.stubbedCreateModelResult = .success(model)
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         let result = await sut.createModel()
 
@@ -112,9 +99,9 @@ struct AIUseCaseTests {
 
     @Test("createModel 실패 시 insufficientData 에러를 반환한다")
     func createModelReturnsErrorOnInsufficientData() async {
-        let spy = SpyAIRepository()
+        let spy = SpyPredictionRepository()
         spy.stubbedCreateModelResult = .failure(.insufficientData)
-        let sut = AIUseCase(repository: spy, expenseRepository: StubExpenseRepository())
+        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         let result = await sut.createModel()
 
@@ -128,29 +115,27 @@ struct AIUseCaseTests {
 
 // MARK: - Spy
 
-final class SpyAIRepository: AIRepositoryProtocol {
+final class SpyPredictionRepository: PredictionRepositoryProtocol {
     private(set) var fetchModelsCallCount = 0
     private(set) var fetchCurrentModelCallCount = 0
     private(set) var fetchDailyCallCount = 0
     private(set) var fetchCategoryCallCount = 0
-    private(set) var fetchInsightsCallCount = 0
     private(set) var fetchedYear: Int?
     private(set) var fetchedMonth: Int?
     private(set) var createModelCallCount = 0
     private(set) var deleteModelCallCount = 0
     private(set) var deletedId: String?
 
-    var stubbedModels: [AIModelMetadata] = []
-    var stubbedCurrentModel: AIModelMetadata? = nil
-    var stubbedInsights: [AIInsightItem] = []
-    var stubbedCreateModelResult: Result<AIModelMetadata, AIModelCreationError> = .failure(.insufficientData)
+    var stubbedModels: [PredictionModelMetadata] = []
+    var stubbedCurrentModel: PredictionModelMetadata? = nil
+    var stubbedCreateModelResult: Result<PredictionModelMetadata, PredictionModelCreationError> = .failure(.insufficientData)
 
-    func fetchModels() async -> [AIModelMetadata] {
+    func fetchModels() async -> [PredictionModelMetadata] {
         fetchModelsCallCount += 1
         return stubbedModels
     }
 
-    func fetchCurrentModel() async -> AIModelMetadata? {
+    func fetchCurrentModel() async -> PredictionModelMetadata? {
         fetchCurrentModelCallCount += 1
         return stubbedCurrentModel
     }
@@ -169,12 +154,7 @@ final class SpyAIRepository: AIRepositoryProtocol {
         return [:]
     }
 
-    func fetchInsights() async -> [AIInsightItem] {
-        fetchInsightsCallCount += 1
-        return stubbedInsights
-    }
-
-    func createModel(expenses: [Expense]) async -> Result<AIModelMetadata, AIModelCreationError> {
+    func createModel(expenses: [Expense]) async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
         createModelCallCount += 1
         return stubbedCreateModelResult
     }

@@ -1,5 +1,5 @@
 //
-//  AIViewModel.swift
+//  PredictionViewModel.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/14/26.
@@ -8,12 +8,11 @@
 import Foundation
 
 @Observable
-final class AIViewModel {
+final class PredictionViewModel {
 
     // MARK: - Output
-    private(set) var currentModel: AIModelMetadata? = nil
-    private(set) var models: [AIModelMetadata] = []
-    private(set) var insights: [AIInsightItem] = []
+    private(set) var currentModel: PredictionModelMetadata? = nil
+    private(set) var models: [PredictionModelMetadata] = []
     private(set) var predictionData: [CumulativePrediction] = []
     private(set) var categoryData: [CategoryPredictionDataPoint] = []
     private(set) var today: Int = Calendar.current.component(.day, from: Date())
@@ -23,29 +22,33 @@ final class AIViewModel {
         return range?.count ?? 30
     }()
     private(set) var isCreatingModel: Bool = false
-    private(set) var createModelError: AIModelCreationError? = nil
+    private(set) var createModelError: PredictionModelCreationError? = nil
 
     private let expenseUseCase: ExpenseUseCaseProtocol
-    private let aiUseCase: AIUseCaseProtocol
+    private let predictionUseCase: PredictionUseCaseProtocol
 
     var hasPrediction: Bool {
         currentModel != nil
     }
 
-    var sortedInsights: [AIInsightItem] {
-        let order: [AIInsightItemType] = [.abnormal, .forecast, .unrecorded]
-        return order.map { type in
-            insights.first { $0.type == type } ?? AIInsightItem(type: type, description: type.emptyDescription)
-        }
+    /// 이번 달 1일~오늘까지의 누적 실제/예측 오차를 바탕으로 산출한 정확도(0~100)
+    var accuracy: Float? {
+        guard let todayPoint = predictionData.first(where: { $0.day == today }),
+              let actual = todayPoint.actual,
+              let predicted = todayPoint.predicted,
+              actual > 0 else { return nil }
+
+        let errorRatio = abs(Double(predicted) - Double(actual)) / Double(actual)
+        return Float(max(0, 100 - errorRatio * 100))
     }
 
     // MARK: - Init
     init(
         expenseUseCase: ExpenseUseCaseProtocol,
-        aiUseCase: AIUseCaseProtocol
+        predictionUseCase: PredictionUseCaseProtocol
     ) {
         self.expenseUseCase = expenseUseCase
-        self.aiUseCase = aiUseCase
+        self.predictionUseCase = predictionUseCase
     }
 
     // MARK: - Input
@@ -57,7 +60,7 @@ final class AIViewModel {
         isCreatingModel = true
         createModelError = nil
 
-        let result = await aiUseCase.createModel()
+        let result = await predictionUseCase.createModel()
 
         switch result {
         case .success:
@@ -70,12 +73,12 @@ final class AIViewModel {
     }
 
     func selectModel(id: String) async {
-        await aiUseCase.selectModel(id: id)
+        await predictionUseCase.selectModel(id: id)
         await load()
     }
 
     func deleteModel(id: String) async {
-        await aiUseCase.deleteModel(id: id)
+        await predictionUseCase.deleteModel(id: id)
         await load()
     }
 
@@ -86,31 +89,27 @@ final class AIViewModel {
         let month = calendar.component(.month, from: Date())
 
         async let expenses = expenseUseCase.fetch(year: year, month: month)
-        async let currentModel = aiUseCase.fetchCurrentModel()
-        async let models = aiUseCase.fetchModels()
-        async let insights = aiUseCase.fetchInsights()
-        async let dailyPredictions = aiUseCase.fetchDailyPredictions(year: year, month: month)
-        async let categoryPredictions = aiUseCase.fetchCategoryPredictions(year: year, month: month)
+        async let currentModel = predictionUseCase.fetchCurrentModel()
+        async let models = predictionUseCase.fetchModels()
+        async let dailyPredictions = predictionUseCase.fetchDailyPredictions(year: year, month: month)
+        async let categoryPredictions = predictionUseCase.fetchCategoryPredictions(year: year, month: month)
 
         let (
             fetchedExpenses,
             fetchedModel,
             fetchedModels,
-            fetchedInsights,
             fetchedDaily,
             fetchedCategory
         ) = await (
             expenses,
             currentModel,
             models,
-            insights,
             dailyPredictions,
             categoryPredictions
         )
 
         self.currentModel = fetchedModel
         self.models = fetchedModels
-        self.insights = fetchedInsights
         self.predictionData = makeCumulativePrediction(expenses: fetchedExpenses, predictions: fetchedDaily)
         self.categoryData = makeCategoryData(expenses: fetchedExpenses, predictions: fetchedCategory)
     }

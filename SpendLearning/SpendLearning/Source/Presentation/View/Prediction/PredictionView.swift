@@ -1,5 +1,5 @@
 //
-//  AIView.swift
+//  PredictionView.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/8/26.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct AIView: View {
+struct PredictionView: View {
 
-    @State var viewModel: AIViewModel
+    @State var viewModel: PredictionViewModel
     @State private var isShowingToast = false
     @State private var isShowingSuccessToast = false
 
@@ -26,9 +26,10 @@ struct AIView: View {
                         .fill(Color(UIColor.DesignSystem.accent))
                         .offset(y: -5)
 
-                    AIStatusCardView(
+                    PredictionStatusCardView(
                         isShowingToast: $isShowingToast,
                         currentModel: viewModel.currentModel,
+                        accuracy: viewModel.accuracy,
                         models: viewModel.models,
                         isCreatingModel: viewModel.isCreatingModel,
                         onCreateModel: {
@@ -47,16 +48,14 @@ struct AIView: View {
                     )
                 }
 
-                AIInsightCardView(items: viewModel.sortedInsights, hasPrediction: viewModel.hasPrediction)
-
-                AIPredictionCardView(
+                DailyPredictionCardView(
                     data: viewModel.predictionData,
                     today: viewModel.today,
                     lastDay: viewModel.lastDay,
                     hasPrediction: viewModel.hasPrediction
                 )
 
-                AICategoryPredictionCardView(
+                CategoryPredictionCardView(
                     data: viewModel.categoryData,
                     hasPrediction: viewModel.hasPrediction
                 )

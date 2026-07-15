@@ -1,5 +1,5 @@
 //
-//  AICategoryPredictionCardView.swift
+//  CategoryPredictionCardView.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/8/26.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 
-struct AICategoryPredictionCardView: View {
+struct CategoryPredictionCardView: View {
 
     @State private var isExpanded = false
 

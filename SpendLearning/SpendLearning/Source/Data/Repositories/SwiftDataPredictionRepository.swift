@@ -1,5 +1,5 @@
 //
-//  SwiftDataAIRepository.swift
+//  SwiftDataPredictionRepository.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/14/26.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-final class SwiftDataAIRepository: AIRepositoryProtocol {
+final class SwiftDataPredictionRepository: PredictionRepositoryProtocol {
 
     private let modelContext: ModelContext
     private let expenseRepository: ExpenseRepositoryProtocol
@@ -22,8 +22,8 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
         self.expenseRepository = expenseRepository
     }
 
-    func fetchModels() async -> [AIModelMetadata] {
-        let descriptor = FetchDescriptor<AIModelModel>()
+    func fetchModels() async -> [PredictionModelMetadata] {
+        let descriptor = FetchDescriptor<PredictionModel>()
         let models = (try? modelContext.fetch(descriptor)) ?? []
         return models
             .sorted {
@@ -33,16 +33,10 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
             .map { toMetadata($0) }
     }
 
-    func fetchCurrentModel() async -> AIModelMetadata? {
-        let descriptor = FetchDescriptor<AIModelModel>()
+    func fetchCurrentModel() async -> PredictionModelMetadata? {
+        let descriptor = FetchDescriptor<PredictionModel>()
         let models = (try? modelContext.fetch(descriptor)) ?? []
         return models.first { $0.isSelected }.map { toMetadata($0) }
-    }
-
-    func fetchInsights() async -> [AIInsightItem] {
-        guard hasSavedModel() else { return [] }
-        let expenses = await expenseRepository.fetchAllExpenses()
-        return await strategy.predictInsights(expenses: expenses)
     }
 
     func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] {
@@ -57,7 +51,7 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
         return await strategy.predictCategory(expenses: expenses, year: year, month: month)
     }
 
-    func createModel(expenses: [Expense]) async -> Result<AIModelMetadata, AIModelCreationError> {
+    func createModel(expenses: [Expense]) async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
         let calendar = Calendar.current
         let now = Date()
         let currentYear = calendar.component(.year, from: now)
@@ -72,15 +66,14 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
         guard !lastMonthExpenses.isEmpty else { return .failure(.insufficientData) }
 
         // 기존 모델 선택 해제
-        let descriptor = FetchDescriptor<AIModelModel>()
+        let descriptor = FetchDescriptor<PredictionModel>()
         let existing = (try? modelContext.fetch(descriptor)) ?? []
         existing.forEach { $0.isSelected = false }
 
         let id = "SP\(UUID().uuidString.prefix(6).lowercased())"
-        let model = AIModelModel(
+        let model = PredictionModel(
             id: id,
             dataCount: expenses.count,
-            accuracy: nil,
             createdAt: now,
             isSelected: true
         )
@@ -91,14 +84,14 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
     }
 
     func selectModel(id: String) async {
-        let descriptor = FetchDescriptor<AIModelModel>()
+        let descriptor = FetchDescriptor<PredictionModel>()
         let models = (try? modelContext.fetch(descriptor)) ?? []
         models.forEach { $0.isSelected = ($0.id == id) }
         try? modelContext.save()
     }
 
     func deleteModel(id: String) async {
-        let descriptor = FetchDescriptor<AIModelModel>()
+        let descriptor = FetchDescriptor<PredictionModel>()
         let models = (try? modelContext.fetch(descriptor)) ?? []
         guard let target = models.first(where: { $0.id == id }) else { return }
 
@@ -117,17 +110,16 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
 
     // MARK: - Private
 
-    private func toMetadata(_ model: AIModelModel) -> AIModelMetadata {
-        AIModelMetadata(
+    private func toMetadata(_ model: PredictionModel) -> PredictionModelMetadata {
+        PredictionModelMetadata(
             id: model.id,
             dataCount: model.dataCount,
-            accuracy: model.accuracy,
             createdAt: model.createdAt
         )
     }
 
     private func hasSavedModel() -> Bool {
-        let descriptor = FetchDescriptor<AIModelModel>()
+        let descriptor = FetchDescriptor<PredictionModel>()
         return !((try? modelContext.fetch(descriptor)) ?? []).isEmpty
     }
 }
