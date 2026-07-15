@@ -98,14 +98,13 @@ private extension CategoryPredictor {
         let writableURL = supportDir.appendingPathComponent("CategoryClassifier.mlmodelc")
         self.modelURL = writableURL
 
-        guard let bundledModelURL = Bundle.main.url(forResource: "CategoryClassifier", withExtension: "mlmodel"),
-              let compiledURL = try? MLModel.compileModel(at: bundledModelURL) else {
+        guard let bundledCompiledURL = Bundle.main.url(forResource: "CategoryClassifier", withExtension: "mlmodelc") else {
             self.model = try? MLModel(contentsOf: writableURL)
             return
         }
 
         try? fileManager.removeItem(at: writableURL)
-        try? fileManager.copyItem(at: compiledURL, to: writableURL)
+        try? fileManager.copyItem(at: bundledCompiledURL, to: writableURL)
 
         self.model = try? MLModel(contentsOf: writableURL)
     }

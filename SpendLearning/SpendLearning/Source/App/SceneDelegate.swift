@@ -52,6 +52,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
+        let categoryPredictor = CategoryPredictor()
+        let voiceExpenseViewModel = VoiceExpenseViewModel(
+            categoryUseCase: categoryUseCase,
+            categoryPredictor: categoryPredictor
+        )
+        let voiceExpenseViewController = VoiceExpenseViewController(
+            viewModel: voiceExpenseViewModel,
+            expenseUseCase: expenseUseCase,
+            categoryUseCase: categoryUseCase,
+            categoryPredictor: categoryPredictor
+        )
+        voiceExpenseViewController.tabBarItem = UITabBarItem(
+            title: "음성추가",
+            image: UIImage(systemName: "microphone"),
+            selectedImage: UIImage(systemName: "microphone.fill")
+        )
+
         let predictionUseCase = PredictionUseCase(repository: SwiftDataPredictionRepository(modelContext: modelContext, expenseRepository: expenseRepository), expenseRepository: expenseRepository)
         let predictionViewModel = PredictionViewModel(expenseUseCase: expenseUseCase, predictionUseCase: predictionUseCase)
         let predictionViewController = UIHostingController(rootView: PredictionView(viewModel: predictionViewModel))
@@ -73,7 +90,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
 
         let tabBar = UITabBarController()
-        tabBar.viewControllers = [homeViewController, predictionViewController, settingsViewController]
+        tabBar.viewControllers = [homeViewController, voiceExpenseViewController, predictionViewController, settingsViewController]
         tabBar.tabBar.tintColor = .DesignSystem.accent
 
         return tabBar
