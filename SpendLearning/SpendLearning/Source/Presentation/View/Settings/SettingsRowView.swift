@@ -29,7 +29,8 @@ final class SettingsRowView: UIView {
     }
 
     // MARK: - Configure
-    func configure(title: String, subtitle: String) {
+    func configure(iconName: String, title: String, subtitle: String) {
+        iconView.update(symbolName: iconName)
         titleLabel.text = title
         subtitleLabel.text = subtitle
     }

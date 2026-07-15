@@ -1,5 +1,5 @@
 //
-//  AIView.swift
+//  PredictionView.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/8/26.
@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-struct AIView: View {
+struct PredictionView: View {
 
-    @State var viewModel: AIViewModel
-    @State private var isShowingToast = false
+    @State var viewModel: PredictionViewModel
     @State private var isShowingSuccessToast = false
 
     var body: some View {
@@ -26,34 +25,25 @@ struct AIView: View {
                         .fill(Color(UIColor.DesignSystem.accent))
                         .offset(y: -5)
 
-                    AIStatusCardView(
-                        isShowingToast: $isShowingToast,
+                    PredictionStatusCardView(
                         currentModel: viewModel.currentModel,
-                        models: viewModel.models,
-                        isCreatingModel: viewModel.isCreatingModel,
-                        onCreateModel: {
-                            await viewModel.createModel()
-                            if viewModel.createModelError == nil {
-                                isShowingSuccessToast = true
-                            }
-                        },
-                        createModelError: viewModel.createModelError,
-                        onSelectModel: { selected in
-                            await viewModel.selectModel(id: selected.id)
+                        accuracy: viewModel.accuracy,
+                        isRecalculating: viewModel.isRecalculating,
+                        onRecalculate: {
+                            await viewModel.recalculate()
+                            isShowingSuccessToast = true
                         }
                     )
                 }
 
-                AIInsightCardView(items: viewModel.sortedInsights, hasPrediction: viewModel.hasPrediction)
-
-                AIPredictionCardView(
+                DailyPredictionCardView(
                     data: viewModel.predictionData,
                     today: viewModel.today,
                     lastDay: viewModel.lastDay,
                     hasPrediction: viewModel.hasPrediction
                 )
 
-                AICategoryPredictionCardView(
+                CategoryPredictionCardView(
                     data: viewModel.categoryData,
                     hasPrediction: viewModel.hasPrediction
                 )
@@ -68,7 +58,6 @@ struct AIView: View {
                 await viewModel.onAppear()
             }
         }
-        .toast(isShowing: $isShowingToast, message: "아직 생성된 예측 모델이 없어요")
-        .toast(isShowing: $isShowingSuccessToast, message: "예측 모델이 생성되었어요")
+        .toast(isShowing: $isShowingSuccessToast, message: "예측이 계산되었어요")
     }
 }

@@ -24,10 +24,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeTabBarController() -> UITabBarController {
         let container: ModelContainer
         do {
-            container = try ModelContainer(for: ExpenseModel.self, CategoryModel.self, AIModelModel.self)
+            container = try ModelContainer(for: ExpenseModel.self, CategoryModel.self, PredictionModel.self)
         } catch {
+            // SwiftData 마이그레이션 실패 시 메모리 전용 스토어로 폴백한다.
+            // 이 경로를 타면 기존에 저장된 사용자 데이터(지출/카테고리/예측 모델)가 이번 실행에서 보이지 않는다.
+            // 스키마 변경 후 이 로그가 찍히면 VersionedSchema/SchemaMigrationPlan 도입을 검토할 것.
+            print("⚠️ ModelContainer 생성 실패, 메모리 전용으로 폴백: \(error)")
             container = try! ModelContainer(
-                for: ExpenseModel.self, CategoryModel.self, AIModelModel.self,
+                for: ExpenseModel.self, CategoryModel.self, PredictionModel.self,
                 configurations: ModelConfiguration(isStoredInMemoryOnly: true)
             )
         }
@@ -36,8 +40,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let categoryRepository = SwiftDataCategoryRepository(modelContext: modelContext)
         let categoryUseCase = CategoryUseCase(repository: categoryRepository)
 
-        let expenseRepository = MockExpenseRepository()
-//        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
+//        let expenseRepository = MockExpenseRepository()
+        let expenseRepository = SwiftDataExpenseRepository(modelContext: modelContext, categoryRepository: categoryRepository)
         let expenseUseCase = ExpenseUseCase(repository: expenseRepository)
 
         let homeViewModel = HomeViewModel(expenseUseCase: expenseUseCase)
@@ -48,16 +52,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             selectedImage: UIImage(systemName: "house.fill")
         )
 
-        let aiUseCase = AIUseCase(repository: SwiftDataAIRepository(modelContext: modelContext, expenseRepository: expenseRepository), expenseRepository: expenseRepository)
-        let aiViewModel = AIViewModel(expenseUseCase: expenseUseCase, aiUseCase: aiUseCase)
-        let aiViewController = UIHostingController(rootView: AIView(viewModel: aiViewModel))
-        aiViewController.tabBarItem = UITabBarItem(
+        let predictionUseCase = PredictionUseCase(repository: SwiftDataPredictionRepository(modelContext: modelContext, expenseRepository: expenseRepository), expenseRepository: expenseRepository)
+        let predictionViewModel = PredictionViewModel(expenseUseCase: expenseUseCase, predictionUseCase: predictionUseCase)
+        let predictionViewController = UIHostingController(rootView: PredictionView(viewModel: predictionViewModel))
+        predictionViewController.tabBarItem = UITabBarItem(
             title: "예측",
             image: UIImage(systemName: "brain"),
             selectedImage: UIImage(systemName: "brain.fill")
         )
 
-        let settingsViewController = SettingsViewController(categoryUseCase: categoryUseCase)
+        let settingsViewController = SettingsViewController(
+            categoryUseCase: categoryUseCase,
+            expenseUseCase: expenseUseCase,
+            predictionUseCase: predictionUseCase
+        )
         settingsViewController.tabBarItem = UITabBarItem(
             title: "설정",
             image: UIImage(systemName: "slider.horizontal.3"),
@@ -65,7 +73,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
 
         let tabBar = UITabBarController()
-        tabBar.viewControllers = [homeViewController, aiViewController, settingsViewController]
+        tabBar.viewControllers = [homeViewController, predictionViewController, settingsViewController]
         tabBar.tabBar.tintColor = .DesignSystem.accent
 
         return tabBar

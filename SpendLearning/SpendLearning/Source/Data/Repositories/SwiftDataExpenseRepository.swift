@@ -58,6 +58,13 @@ final class SwiftDataExpenseRepository: ExpenseRepositoryProtocol {
         modelContext.delete(model)
         try? modelContext.save()
     }
+
+    func deleteAll() async {
+        let descriptor = FetchDescriptor<ExpenseModel>()
+        let models = (try? modelContext.fetch(descriptor)) ?? []
+        models.forEach { modelContext.delete($0) }
+        try? modelContext.save()
+    }
 }
 
 // MARK: - Mapping

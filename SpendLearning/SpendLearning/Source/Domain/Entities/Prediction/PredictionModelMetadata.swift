@@ -1,5 +1,5 @@
 //
-//  AIModelMetadata.swift
+//  PredictionModelMetadata.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/14/26.
@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct AIModelMetadata {
+struct PredictionModelMetadata {
     let id: String
     let dataCount: Int
-    let accuracy: Float?
     let createdAt: Date
+    let dailyPredictions: [Int: Int]
+    let categoryPredictions: [String: Int]
 }

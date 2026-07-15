@@ -77,4 +77,6 @@ final class SpyExpenseRepository: ExpenseRepositoryProtocol {
         deleteCallCount += 1
         deletedExpense = expense
     }
+
+    func deleteAll() async {}
 }

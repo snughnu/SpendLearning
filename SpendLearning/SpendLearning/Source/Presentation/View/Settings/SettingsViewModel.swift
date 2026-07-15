@@ -18,10 +18,18 @@ final class SettingsViewModel {
 
     // MARK: - Private
     private let categoryUseCase: CategoryUseCaseProtocol
+    private let expenseUseCase: ExpenseUseCaseProtocol
+    private let predictionUseCase: PredictionUseCaseProtocol
 
     // MARK: - Init
-    init(categoryUseCase: CategoryUseCaseProtocol) {
+    init(
+        categoryUseCase: CategoryUseCaseProtocol,
+        expenseUseCase: ExpenseUseCaseProtocol,
+        predictionUseCase: PredictionUseCaseProtocol
+    ) {
         self.categoryUseCase = categoryUseCase
+        self.expenseUseCase = expenseUseCase
+        self.predictionUseCase = predictionUseCase
     }
 
     // MARK: - Input
@@ -79,6 +87,18 @@ final class SettingsViewModel {
         do {
             try await categoryUseCase.reorderCategories(categories)
             self.categories = (try? await categoryUseCase.fetchCategories()) ?? self.categories
+        } catch {
+            saveError = error
+            await loadCategories()
+        }
+    }
+
+    func resetAllData() async {
+        await expenseUseCase.deleteAll()
+        await predictionUseCase.deleteModel()
+        do {
+            try await categoryUseCase.resetToDefault()
+            categories = (try? await categoryUseCase.fetchCategories()) ?? categories
         } catch {
             saveError = error
             await loadCategories()

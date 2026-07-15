@@ -32,14 +32,6 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
             return calendar.date(from: components)!
         }
 
-        // 오늘 기준 N주 전, 특정 요일 날짜 생성 (weekday: 1=일, 2=월 ... 7=토)
-        func dateByWeekday(weeksAgo: Int, weekday: Int) -> Date {
-            let weekStart = calendar.date(byAdding: .weekOfYear, value: -weeksAgo, to: now)!
-            let currentWeekday = calendar.component(.weekday, from: weekStart)
-            let diff = weekday - currentWeekday
-            return calendar.date(byAdding: .day, value: diff, to: weekStart)!
-        }
-
         // MARK: - 이번 달 일반 지출
         let thisMonth: [Expense] = [
             Expense(date: date(monthOffset: 0, day: 1), category: food, memo: "김밥천국", amount: 8500),
@@ -48,34 +40,6 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
             Expense(date: date(monthOffset: 0, day: 10), category: shopping, memo: "다이소", amount: 15000),
             Expense(date: date(monthOffset: 0, day: 10), category: food, memo: "한식당", amount: 12000),
             Expense(date: date(monthOffset: 0, day: 10), category: medical, memo: "약국", amount: 8500),
-        ]
-
-        // MARK: - 이상 지출 감지용
-        // 최근 4주 카페 주 평균 약 6,000원 → 이번 주 20,000원으로 1.5배 초과
-        let abnormalThisWeek: [Expense] = [
-            Expense(date: dateByWeekday(weeksAgo: 0, weekday: 2), category: cafe, memo: "스타벅스", amount: 20000),
-        ]
-        let abnormalPast: [Expense] = [
-            Expense(date: dateByWeekday(weeksAgo: 1, weekday: 2), category: cafe, memo: "스타벅스", amount: 6000),
-            Expense(date: dateByWeekday(weeksAgo: 2, weekday: 2), category: cafe, memo: "스타벅스", amount: 5500),
-            Expense(date: dateByWeekday(weeksAgo: 3, weekday: 2), category: cafe, memo: "스타벅스", amount: 6500),
-            Expense(date: dateByWeekday(weeksAgo: 4, weekday: 2), category: cafe, memo: "스타벅스", amount: 6000),
-        ]
-
-        // MARK: - 지출 예고용
-        // 최근 3주 연속 목요일(5)에 식비 지출 → 이번 주 목요일 예고
-        let forecastPast: [Expense] = [
-            Expense(date: dateByWeekday(weeksAgo: 1, weekday: 5), category: food, memo: "점심 정기모임", amount: 15000),
-            Expense(date: dateByWeekday(weeksAgo: 2, weekday: 5), category: food, memo: "점심 정기모임", amount: 14000),
-            Expense(date: dateByWeekday(weeksAgo: 3, weekday: 5), category: food, memo: "점심 정기모임", amount: 16000),
-        ]
-
-        // MARK: - 미기록 감지용
-        // 최근 3주 연속 일요일(1)에 교통비 지출 → 이번 주 일요일 기록 없음
-        let unrecordedPast: [Expense] = [
-            Expense(date: dateByWeekday(weeksAgo: 1, weekday: 1), category: transport, memo: "일요일 택시", amount: 12000),
-            Expense(date: dateByWeekday(weeksAgo: 2, weekday: 1), category: transport, memo: "일요일 택시", amount: 11000),
-            Expense(date: dateByWeekday(weeksAgo: 3, weekday: 1), category: transport, memo: "일요일 택시", amount: 13000),
         ]
 
         // MARK: - 과거 일반 지출
@@ -156,15 +120,11 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
         ]
 
         return thisMonth
-            + abnormalThisWeek
-            + abnormalPast
-            + forecastPast
-            + unrecordedPast
-            + oneMonthAgo
-            + twoMonthsAgo
-            + threeMonthsAgo
-            + fourMonthsAgo
-            + fiveMonthsAgo
+//            + oneMonthAgo
+//            + twoMonthsAgo
+//            + threeMonthsAgo
+//            + fourMonthsAgo
+//            + fiveMonthsAgo
     }()
 
     func fetchExpenses(year: Int, month: Int) async -> [Expense] {
@@ -182,6 +142,10 @@ final class MockExpenseRepository: ExpenseRepositoryProtocol {
 
     func deleteExpense(_ expense: Expense) async {
         expenses.removeAll { $0.id == expense.id }
+    }
+
+    func deleteAll() async {
+        expenses.removeAll()
     }
 
     func addExpense(_ expense: Expense) async {

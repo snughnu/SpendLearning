@@ -1,5 +1,5 @@
 //
-//  AIPredictionCardView.swift
+//  DailyPredictionCardView.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/8/26.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 
-struct AIPredictionCardView: View {
+struct DailyPredictionCardView: View {
 
     let data: [CumulativePrediction]
     let today: Int
@@ -54,7 +54,7 @@ struct AIPredictionCardView: View {
     }
 
     private var noPredictionBanner: some View {
-        Text("아직 예측 모델이 없어요")
+        Text("아직 예측이 없어요")
             .font(.system(size: 13, weight: .semibold))
             .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
             .frame(maxWidth: .infinity)

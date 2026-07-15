@@ -12,4 +12,5 @@ protocol ExpenseRepositoryProtocol {
     func fetchAllExpenses() async -> [Expense]
     func addExpense(_ expense: Expense) async
     func deleteExpense(_ expense: Expense) async
+    func deleteAll() async
 }

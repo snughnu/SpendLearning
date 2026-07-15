@@ -1,5 +1,5 @@
 //
-//  AICategoryPredictionCardView.swift
+//  CategoryPredictionCardView.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/8/26.
@@ -8,14 +8,14 @@
 import SwiftUI
 import Charts
 
-struct AICategoryPredictionCardView: View {
+struct CategoryPredictionCardView: View {
 
     @State private var isExpanded = false
 
-    let data: [CategoryPredictionDataPoint]
+    let data: [CategoryPrediction]
     let hasPrediction: Bool
 
-    private var displayData: [CategoryPredictionDataPoint] {
+    private var displayData: [CategoryPrediction] {
         isExpanded ? data : Array(data.prefix(5))
     }
 
@@ -62,7 +62,7 @@ struct AICategoryPredictionCardView: View {
     }
 
     private var noPredictionBanner: some View {
-        Text("아직 예측 모델이 없어요")
+        Text("아직 예측이 없어요")
             .font(.system(size: 13, weight: .semibold))
             .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
             .frame(maxWidth: .infinity)
@@ -109,29 +109,31 @@ struct AICategoryPredictionCardView: View {
         return Chart {
             ForEach(displayData, id: \.categoryName) { item in
                 BarMark(
-                    x: .value("금액", max(item.actual, 1000)),
+                    x: .value("금액", item.actual),
                     y: .value("카테고리", item.categoryName),
                     height: .fixed(11)
                 )
                 .foregroundStyle(Color(UIColor.DesignSystem.accent))
                 .position(by: .value("타입", "실제"))
                 .annotation(position: .trailing, alignment: .leading, spacing: 6) {
-                    Text(formatted(item.actual))
-                        .font(.system(size: 9, weight: .semibold))
-                        .foregroundStyle(Color(UIColor.DesignSystem.accent))
+                    if item.actual > 0 {
+                        Text(formatted(item.actual))
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(Color(UIColor.DesignSystem.accent))
+                    }
                 }
             }
 
             ForEach(displayData, id: \.categoryName) { item in
-                if let predicted = item.predicted {
-                    BarMark(
-                        x: .value("금액", max(predicted, 1000)),
-                        y: .value("카테고리", item.categoryName),
-                        height: .fixed(11)
-                    )
-                    .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
-                    .position(by: .value("타입", "예측"))
-                    .annotation(position: .trailing, alignment: .leading, spacing: 6) {
+                BarMark(
+                    x: .value("금액", item.predicted ?? 0),
+                    y: .value("카테고리", item.categoryName),
+                    height: .fixed(11)
+                )
+                .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
+                .position(by: .value("타입", "예측"))
+                .annotation(position: .trailing, alignment: .leading, spacing: 6) {
+                    if let predicted = item.predicted, predicted > 0 {
                         Text(formatted(predicted))
                             .font(.system(size: 9, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.chartPredicted))
