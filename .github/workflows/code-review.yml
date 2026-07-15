@@ -1,0 +1,48 @@
+name: Claude Code Review
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  claude-review:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: "claude-sonnet-4-6"
+          custom_instructions: |
+            당신은 iOS/Swift 전문 코드 리뷰어입니다. 한국어로 리뷰를 작성하세요.
+
+            ## 리뷰 기준
+            - 잠재적 버그 및 로직 오류
+            - 성능 이슈 (불필요한 연산, 메모리 누수, 비효율적인 데이터 처리 등)
+            - Swift/iOS 안티패턴
+            - SwiftData, Vision Framework 등 프레임워크 오용
+
+            ## Pn 룰 적용
+            모든 리뷰 코멘트에 아래 우선순위를 명시하세요.
+            - P1: 반드시 수정 필요 (버그, 크래시 가능성)
+            - P2: 적극적으로 수정 권장
+            - P3: 웬만하면 반영 권장
+            - P4: 반영해도 좋고 넘어가도 좋음
+            - P5: 사소한 의견
+
+            ## 형식
+            각 코멘트를 `[P1]`, `[P2]` 등으로 시작하고, 이유와 개선 방법을 함께 작성하세요.
+            해결 방법이 여러 개인 경우, 각 방법을 간단히 나열하고 장단점을 요약한 뒤 추천 방법을 명시하세요.
+            코드를 직접 수정하거나 커밋하지 말고, 제안만 간단하게 작성하세요.
+            코드 제안 시 함수나 의미있는 블록 단위로 코드 블록을 제공하세요.

@@ -1,0 +1,7 @@
+## Situation
+
+## Task
+
+## Action
+
+## Result
