@@ -26,19 +26,11 @@ final class SwiftDataPredictionRepository: PredictionRepositoryProtocol {
         fetchStoredModel().map { toMetadata($0) }
     }
 
-    func recalculate(expenses: [Expense]) async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
+    func recalculate(expenses: [Expense]) async -> PredictionModelMetadata {
         let calendar = Calendar.current
         let now = Date()
         let currentYear = calendar.component(.year, from: now)
         let currentMonth = calendar.component(.month, from: now)
-
-        // 저번 달 소비가 1건 이상 있어야 계산 가능
-        let lastMonthExpenses = expenses.filter {
-            let y = calendar.component(.year, from: $0.date)
-            let m = calendar.component(.month, from: $0.date)
-            return !(y == currentYear && m == currentMonth)
-        }
-        guard !lastMonthExpenses.isEmpty else { return .failure(.insufficientData) }
 
         let dailyPredictions = await predictor.predictDaily(expenses: expenses, year: currentYear, month: currentMonth)
         let categoryPredictions = await predictor.predictCategory(expenses: expenses, year: currentYear, month: currentMonth)
@@ -51,7 +43,7 @@ final class SwiftDataPredictionRepository: PredictionRepositoryProtocol {
                 categoryPredictions: categoryPredictions
             )
             try? modelContext.save()
-            return .success(toMetadata(existing))
+            return toMetadata(existing)
         }
 
         let id = "SP\(UUID().uuidString.prefix(6).lowercased())"
@@ -65,7 +57,7 @@ final class SwiftDataPredictionRepository: PredictionRepositoryProtocol {
         modelContext.insert(model)
         try? modelContext.save()
 
-        return .success(toMetadata(model))
+        return toMetadata(model)
     }
 
     // MARK: - Private

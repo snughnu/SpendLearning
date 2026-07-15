@@ -151,8 +151,8 @@ final class StubExpenseUseCaseForPrediction: ExpenseUseCaseProtocol {
 
 final class StubPredictionUseCase: PredictionUseCaseProtocol {
     var stubbedCurrentModel: PredictionModelMetadata? = nil
-    var stubbedRecalculateResult: Result<PredictionModelMetadata, PredictionModelCreationError> = .failure(.insufficientData)
+    var stubbedRecalculateResult = PredictionModelMetadata(id: "SP000000", dataCount: 0, createdAt: Date(), dailyPredictions: [:], categoryPredictions: [:])
 
     func fetchCurrentModel() async -> PredictionModelMetadata? { stubbedCurrentModel }
-    func recalculate() async -> Result<PredictionModelMetadata, PredictionModelCreationError> { stubbedRecalculateResult }
+    func recalculate() async -> PredictionModelMetadata { stubbedRecalculateResult }
 }

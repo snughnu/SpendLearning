@@ -24,7 +24,7 @@ final class PredictionUseCase: PredictionUseCaseProtocol {
         await repository.fetchCurrentModel()
     }
 
-    func recalculate() async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
+    func recalculate() async -> PredictionModelMetadata {
         let expenses = await expenseRepository.fetchAllExpenses()
         return await repository.recalculate(expenses: expenses)
     }

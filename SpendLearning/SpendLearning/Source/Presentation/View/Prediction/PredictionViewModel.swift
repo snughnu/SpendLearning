@@ -21,7 +21,6 @@ final class PredictionViewModel {
         return range?.count ?? 30
     }()
     private(set) var isRecalculating: Bool = false
-    private(set) var recalculateError: PredictionModelCreationError? = nil
 
     private let expenseUseCase: ExpenseUseCaseProtocol
     private let predictionUseCase: PredictionUseCaseProtocol
@@ -57,17 +56,8 @@ final class PredictionViewModel {
 
     func recalculate() async {
         isRecalculating = true
-        recalculateError = nil
-
-        let result = await predictionUseCase.recalculate()
-
-        switch result {
-        case .success:
-            await load()
-        case .failure(let error):
-            recalculateError = error
-        }
-
+        _ = await predictionUseCase.recalculate()
+        await load()
         isRecalculating = false
     }
 

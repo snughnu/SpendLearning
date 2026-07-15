@@ -62,7 +62,7 @@ struct CategoryPredictionCardView: View {
     }
 
     private var noPredictionBanner: some View {
-        Text("아직 예측 모델이 없어요")
+        Text("아직 예측이 없어요")
             .font(.system(size: 13, weight: .semibold))
             .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
             .frame(maxWidth: .infinity)

@@ -34,35 +34,16 @@ struct PredictionUseCaseTests {
         #expect(spy.recalculateCallCount == 1)
     }
 
-    @Test("recalculate 성공 시 계산된 모델을 반환한다")
-    func recalculateReturnsModelOnSuccess() async {
+    @Test("recalculate 호출 시 계산된 모델을 반환한다")
+    func recalculateReturnsModel() async {
         let spy = SpyPredictionRepository()
         let model = PredictionModelMetadata(id: "SP260714", dataCount: 10, createdAt: Date(), dailyPredictions: [:], categoryPredictions: [:])
-        spy.stubbedRecalculateResult = .success(model)
+        spy.stubbedRecalculateResult = model
         let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
 
         let result = await sut.recalculate()
 
-        if case .success(let created) = result {
-            #expect(created.id == "SP260714")
-        } else {
-            Issue.record("성공을 기대했지만 실패 반환")
-        }
-    }
-
-    @Test("recalculate 실패 시 insufficientData 에러를 반환한다")
-    func recalculateReturnsErrorOnInsufficientData() async {
-        let spy = SpyPredictionRepository()
-        spy.stubbedRecalculateResult = .failure(.insufficientData)
-        let sut = PredictionUseCase(repository: spy, expenseRepository: StubExpenseRepository())
-
-        let result = await sut.recalculate()
-
-        if case .failure(let error) = result {
-            #expect(error == .insufficientData)
-        } else {
-            Issue.record("실패를 기대했지만 성공 반환")
-        }
+        #expect(result.id == "SP260714")
     }
 }
 
@@ -73,14 +54,14 @@ final class SpyPredictionRepository: PredictionRepositoryProtocol {
     private(set) var recalculateCallCount = 0
 
     var stubbedCurrentModel: PredictionModelMetadata? = nil
-    var stubbedRecalculateResult: Result<PredictionModelMetadata, PredictionModelCreationError> = .failure(.insufficientData)
+    var stubbedRecalculateResult = PredictionModelMetadata(id: "SP000000", dataCount: 0, createdAt: Date(), dailyPredictions: [:], categoryPredictions: [:])
 
     func fetchCurrentModel() async -> PredictionModelMetadata? {
         fetchCurrentModelCallCount += 1
         return stubbedCurrentModel
     }
 
-    func recalculate(expenses: [Expense]) async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
+    func recalculate(expenses: [Expense]) async -> PredictionModelMetadata {
         recalculateCallCount += 1
         return stubbedRecalculateResult
     }

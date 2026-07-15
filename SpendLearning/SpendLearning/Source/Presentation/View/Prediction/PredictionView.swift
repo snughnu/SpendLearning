@@ -31,11 +31,8 @@ struct PredictionView: View {
                         isRecalculating: viewModel.isRecalculating,
                         onRecalculate: {
                             await viewModel.recalculate()
-                            if viewModel.recalculateError == nil {
-                                isShowingSuccessToast = true
-                            }
-                        },
-                        recalculateError: viewModel.recalculateError
+                            isShowingSuccessToast = true
+                        }
                     )
                 }
 

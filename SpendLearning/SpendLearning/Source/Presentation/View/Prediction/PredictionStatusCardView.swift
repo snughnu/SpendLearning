@@ -10,13 +10,11 @@ import SwiftUI
 struct PredictionStatusCardView: View {
 
     @State private var isShowingConfirm = false
-    @State private var isShowingInsufficientDataAlert = false
 
     let currentModel: PredictionModelMetadata?
     let accuracy: Float?
     let isRecalculating: Bool
     let onRecalculate: () async -> Void
-    let recalculateError: PredictionModelCreationError?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -32,16 +30,6 @@ struct PredictionStatusCardView: View {
             Button("취소", role: .cancel) {}
         } message: {
             Text("최신 데이터로 예측을 계산할까요?")
-        }
-        .alert("데이터 부족", isPresented: $isShowingInsufficientDataAlert) {
-            Button("확인", role: .cancel) {}
-        } message: {
-            Text("저번 달 소비 기록이 없어 계산할 수 없어요.\n저번 달 소비를 기록하고 다시 시도해보세요.")
-        }
-        .onChange(of: recalculateError) { _, error in
-            if error == .insufficientData {
-                isShowingInsufficientDataAlert = true
-            }
         }
         .tint(Color(UIColor.DesignSystem.accent))
     }

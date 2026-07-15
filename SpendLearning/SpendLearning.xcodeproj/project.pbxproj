@@ -37,7 +37,6 @@
 				Source/Domain/Entities/Expense/Expense.swift,
 				Source/Domain/Entities/Prediction/CategoryPrediction.swift,
 				Source/Domain/Entities/Prediction/CumulativePrediction.swift,
-				Source/Domain/Entities/Prediction/PredictionModelCreationError.swift,
 				Source/Domain/Entities/Prediction/PredictionModelMetadata.swift,
 				Source/Domain/Repositories/CategoryRepositoryProtocol.swift,
 				Source/Domain/Repositories/ExpenseRepositoryProtocol.swift,
