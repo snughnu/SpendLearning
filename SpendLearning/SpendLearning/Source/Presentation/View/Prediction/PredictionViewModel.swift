@@ -84,7 +84,7 @@ final class PredictionViewModel {
 
         self.currentModel = fetchedModel
         self.predictionData = makeCumulativePrediction(expenses: fetchedExpenses, predictions: fetchedModel?.dailyPredictions ?? [:])
-        self.categoryData = makeCategoryData(expenses: fetchedExpenses, predictions: fetchedModel?.categoryPredictions ?? [:])
+        self.categoryData = makeCategoryData(expenses: fetchedExpenses, predictions: fetchedModel?.categoryPredictions ?? [:], hasModel: fetchedModel != nil)
     }
 
     private func makeCumulativePrediction(expenses: [Expense], predictions: [Int: Int]) -> [CumulativePrediction] {
@@ -111,7 +111,7 @@ final class PredictionViewModel {
         }
     }
 
-    private func makeCategoryData(expenses: [Expense], predictions: [String: Int]) -> [CategoryPrediction] {
+    private func makeCategoryData(expenses: [Expense], predictions: [String: Int], hasModel: Bool) -> [CategoryPrediction] {
         var categoryTotals: [String: Int] = [:]
         for expense in expenses where Calendar.current.component(.day, from: expense.date) <= today {
             categoryTotals[expense.category.name, default: 0] += expense.amount
@@ -119,8 +119,8 @@ final class PredictionViewModel {
 
         let allCategories = Set(categoryTotals.keys).union(Set(predictions.keys))
         return allCategories.map { name in
-            // 이번 달 실제 지출이 있는 카테고리는 과거 예측 데이터가 없어도 0원으로 표시한다.
-            let predicted = predictions[name] ?? (categoryTotals[name] != nil ? 0 : nil)
+            // 예측 모델이 있을 때만, 실제 지출이 있는 카테고리는 과거 예측 데이터가 없어도 0원으로 표시한다.
+            let predicted = predictions[name] ?? (hasModel && categoryTotals[name] != nil ? 0 : nil)
             return CategoryPrediction(
                 categoryName: name,
                 actual: categoryTotals[name] ?? 0,
