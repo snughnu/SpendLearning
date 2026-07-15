@@ -80,6 +80,7 @@ final class PredictionViewModel {
     }
 
     private func makeCumulativePrediction(expenses: [Expense], predictions: [Int: Int]) -> [CumulativePrediction] {
+        let hasAnyExpense = !expenses.isEmpty
         var cumulativeActual = 0
         var cumulativePredicted = 0
 
@@ -97,7 +98,7 @@ final class PredictionViewModel {
 
             return CumulativePrediction(
                 day: day,
-                actual: day <= today ? cumulativeActual : nil,
+                actual: (day <= today && hasAnyExpense) ? cumulativeActual : nil,
                 predicted: predictions[day] != nil ? cumulativePredicted : nil
             )
         }
