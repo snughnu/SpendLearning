@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 
 @Suite("SettingsViewModel")
 @MainActor
@@ -16,7 +17,11 @@ struct SettingsViewModelTests {
         let stub = StubCategoryUseCase()
         let category = Category(name: "식비", emoji: "🍚")
         stub.stubbedCategories = [category]
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
 
         await sut.loadCategories()
 
@@ -27,7 +32,11 @@ struct SettingsViewModelTests {
     @Test("addCategory 호출 후 categories가 갱신된다")
     func addCategoryRefreshesCategories() async {
         let stub = StubCategoryUseCase()
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
         stub.stubbedCategories = [Category(name: "카페", emoji: "☕️")]
 
         await sut.addCategory(name: "카페", emoji: "☕️")
@@ -41,7 +50,11 @@ struct SettingsViewModelTests {
         let stub = StubCategoryUseCase()
         let original = Category(name: "식비", emoji: "🍚")
         stub.stubbedCategories = [Category(name: "외식", emoji: "🍖")]
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
 
         await sut.updateCategory(original, name: "외식", emoji: "🍖")
 
@@ -53,7 +66,11 @@ struct SettingsViewModelTests {
         let stub = StubCategoryUseCase()
         let category = Category(name: "쇼핑", emoji: "🛍️")
         stub.stubbedCategories = [category]
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
         await sut.loadCategories()
 
         stub.stubbedCategories = []
@@ -65,7 +82,11 @@ struct SettingsViewModelTests {
     @Test("resetCategories 호출 후 categories가 갱신된다")
     func resetCategoriesRefreshesCategories() async {
         let stub = StubCategoryUseCase()
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
         stub.stubbedCategories = [
             Category(name: "식비", emoji: "🍚"),
             Category(name: "교통", emoji: "🚌"),
@@ -82,7 +103,11 @@ struct SettingsViewModelTests {
         let first = Category(name: "교통", emoji: "🚌")
         let second = Category(name: "식비", emoji: "🍚")
         stub.stubbedCategories = [first, second]
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
 
         await sut.reorderCategories([first, second])
 
@@ -94,7 +119,11 @@ struct SettingsViewModelTests {
     func loadCategoriesSetsErrorOnFailure() async {
         let stub = StubCategoryUseCase()
         stub.shouldThrow = true
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
 
         await sut.loadCategories()
 
@@ -106,7 +135,11 @@ struct SettingsViewModelTests {
         let stub = StubCategoryUseCase()
         let existing = Category(name: "식비", emoji: "🍚")
         stub.stubbedCategories = [existing]
-        let sut = SettingsViewModel(categoryUseCase: stub)
+        let sut = SettingsViewModel(
+            categoryUseCase: stub,
+            expenseUseCase: StubExpenseUseCaseForSettings(),
+            predictionUseCase: StubPredictionUseCaseForSettings()
+        )
         await sut.loadCategories()
 
         stub.shouldThrow = true
@@ -152,4 +185,19 @@ final class StubCategoryUseCase: CategoryUseCaseProtocol {
 
 enum StubError: Error {
     case generic
+}
+
+final class StubExpenseUseCaseForSettings: ExpenseUseCaseProtocol {
+    func fetch(year: Int, month: Int) async -> [Expense] { [] }
+    func add(_ expense: Expense) async {}
+    func delete(_ expense: Expense) async {}
+    func deleteAll() async {}
+}
+
+final class StubPredictionUseCaseForSettings: PredictionUseCaseProtocol {
+    func fetchCurrentModel() async -> PredictionModelMetadata? { nil }
+    func recalculate() async -> PredictionModelMetadata {
+        PredictionModelMetadata(id: "SP000000", dataCount: 0, createdAt: Date(), dailyPredictions: [:], categoryPredictions: [:])
+    }
+    func deleteModel() async {}
 }
