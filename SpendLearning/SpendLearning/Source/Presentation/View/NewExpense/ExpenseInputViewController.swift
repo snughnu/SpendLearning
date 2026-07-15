@@ -35,6 +35,10 @@ final class ExpenseInputViewController: UIViewController {
     private let viewModel: NewExpenseViewModel
     private var cancellables = Set<AnyCancellable>()
 
+    /// 저장이 성공적으로 끝난 직후 호출
+    /// 음성추가 흐름에서 CategoryPredictor.update를 트리거하는 용도로 사용
+    var onDidSave: (() -> Void)?
+
     // MARK: - Init
     init(viewModel: NewExpenseViewModel) {
         self.viewModel = viewModel
@@ -65,6 +69,7 @@ private extension ExpenseInputViewController {
     @objc func didTapSave() {
         Task {
             await viewModel.didSaveExpense()
+            onDidSave?()
             dismiss(animated: true)
         }
     }
