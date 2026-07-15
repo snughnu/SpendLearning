@@ -12,7 +12,7 @@ final class SwiftDataPredictionRepository: PredictionRepositoryProtocol {
 
     private let modelContext: ModelContext
     private let expenseRepository: ExpenseRepositoryProtocol
-    private let strategy = StatisticsPredictionStrategy()
+    private let predictor = StatisticsPredictor()
 
     init(
         modelContext: ModelContext,
@@ -42,13 +42,13 @@ final class SwiftDataPredictionRepository: PredictionRepositoryProtocol {
     func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] {
         guard hasSavedModel() else { return [:] }
         let expenses = await expenseRepository.fetchAllExpenses()
-        return await strategy.predictDaily(expenses: expenses, year: year, month: month)
+        return await predictor.predictDaily(expenses: expenses, year: year, month: month)
     }
 
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] {
         guard hasSavedModel() else { return [:] }
         let expenses = await expenseRepository.fetchAllExpenses()
-        return await strategy.predictCategory(expenses: expenses, year: year, month: month)
+        return await predictor.predictCategory(expenses: expenses, year: year, month: month)
     }
 
     func createModel(expenses: [Expense]) async -> Result<PredictionModelMetadata, PredictionModelCreationError> {

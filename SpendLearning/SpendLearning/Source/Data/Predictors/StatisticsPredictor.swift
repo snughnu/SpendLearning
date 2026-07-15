@@ -1,5 +1,5 @@
 //
-//  StatisticsPredictionStrategy.swift
+//  StatisticsPredictor.swift
 //  SpendLearning
 //
 //  Created by 김성훈 on 7/14/26.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class StatisticsPredictionStrategy: PredictionStrategy {
+final class StatisticsPredictor {
 
     // MARK: - predictDaily
 
