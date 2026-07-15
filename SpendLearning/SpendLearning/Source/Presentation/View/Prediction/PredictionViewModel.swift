@@ -12,7 +12,6 @@ final class PredictionViewModel {
 
     // MARK: - Output
     private(set) var currentModel: PredictionModelMetadata? = nil
-    private(set) var models: [PredictionModelMetadata] = []
     private(set) var predictionData: [CumulativePrediction] = []
     private(set) var categoryData: [CategoryPrediction] = []
     private(set) var today: Int = Calendar.current.component(.day, from: Date())
@@ -21,8 +20,8 @@ final class PredictionViewModel {
         let range = calendar.range(of: .day, in: .month, for: Date())
         return range?.count ?? 30
     }()
-    private(set) var isCreatingModel: Bool = false
-    private(set) var createModelError: PredictionModelCreationError? = nil
+    private(set) var isRecalculating: Bool = false
+    private(set) var recalculateError: PredictionModelCreationError? = nil
 
     private let expenseUseCase: ExpenseUseCaseProtocol
     private let predictionUseCase: PredictionUseCaseProtocol
@@ -56,30 +55,20 @@ final class PredictionViewModel {
         await load()
     }
 
-    func createModel() async {
-        isCreatingModel = true
-        createModelError = nil
+    func recalculate() async {
+        isRecalculating = true
+        recalculateError = nil
 
-        let result = await predictionUseCase.createModel()
+        let result = await predictionUseCase.recalculate()
 
         switch result {
         case .success:
             await load()
         case .failure(let error):
-            createModelError = error
+            recalculateError = error
         }
 
-        isCreatingModel = false
-    }
-
-    func selectModel(id: String) async {
-        await predictionUseCase.selectModel(id: id)
-        await load()
-    }
-
-    func deleteModel(id: String) async {
-        await predictionUseCase.deleteModel(id: id)
-        await load()
+        isRecalculating = false
     }
 
     // MARK: - Private
@@ -90,28 +79,12 @@ final class PredictionViewModel {
 
         async let expenses = expenseUseCase.fetch(year: year, month: month)
         async let currentModel = predictionUseCase.fetchCurrentModel()
-        async let models = predictionUseCase.fetchModels()
-        async let dailyPredictions = predictionUseCase.fetchDailyPredictions(year: year, month: month)
-        async let categoryPredictions = predictionUseCase.fetchCategoryPredictions(year: year, month: month)
 
-        let (
-            fetchedExpenses,
-            fetchedModel,
-            fetchedModels,
-            fetchedDaily,
-            fetchedCategory
-        ) = await (
-            expenses,
-            currentModel,
-            models,
-            dailyPredictions,
-            categoryPredictions
-        )
+        let (fetchedExpenses, fetchedModel) = await (expenses, currentModel)
 
         self.currentModel = fetchedModel
-        self.models = fetchedModels
-        self.predictionData = makeCumulativePrediction(expenses: fetchedExpenses, predictions: fetchedDaily)
-        self.categoryData = makeCategoryData(expenses: fetchedExpenses, predictions: fetchedCategory)
+        self.predictionData = makeCumulativePrediction(expenses: fetchedExpenses, predictions: fetchedModel?.dailyPredictions ?? [:])
+        self.categoryData = makeCategoryData(expenses: fetchedExpenses, predictions: fetchedModel?.categoryPredictions ?? [:])
     }
 
     private func makeCumulativePrediction(expenses: [Expense], predictions: [Int: Int]) -> [CumulativePrediction] {

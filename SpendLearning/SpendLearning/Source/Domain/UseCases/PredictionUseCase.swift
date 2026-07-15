@@ -20,32 +20,12 @@ final class PredictionUseCase: PredictionUseCaseProtocol {
         self.expenseRepository = expenseRepository
     }
 
-    func fetchModels() async -> [PredictionModelMetadata] {
-        await repository.fetchModels()
-    }
-
     func fetchCurrentModel() async -> PredictionModelMetadata? {
         await repository.fetchCurrentModel()
     }
 
-    func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] {
-        await repository.fetchDailyPredictions(year: year, month: month)
-    }
-
-    func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] {
-        await repository.fetchCategoryPredictions(year: year, month: month)
-    }
-
-    func createModel() async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
+    func recalculate() async -> Result<PredictionModelMetadata, PredictionModelCreationError> {
         let expenses = await expenseRepository.fetchAllExpenses()
-        return await repository.createModel(expenses: expenses)
-    }
-
-    func selectModel(id: String) async {
-        await repository.selectModel(id: id)
-    }
-
-    func deleteModel(id: String) async {
-        await repository.deleteModel(id: id)
+        return await repository.recalculate(expenses: expenses)
     }
 }

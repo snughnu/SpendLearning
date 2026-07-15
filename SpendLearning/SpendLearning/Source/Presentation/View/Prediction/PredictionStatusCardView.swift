@@ -9,19 +9,14 @@ import SwiftUI
 
 struct PredictionStatusCardView: View {
 
-    @Binding var isShowingToast: Bool
-    @State private var isShowingCreate = false
-    @State private var isShowingSelect = false
+    @State private var isShowingConfirm = false
     @State private var isShowingInsufficientDataAlert = false
 
     let currentModel: PredictionModelMetadata?
     let accuracy: Float?
-    let models: [PredictionModelMetadata]
-    let isCreatingModel: Bool
-    let onCreateModel: () async -> Void
-    let createModelError: PredictionModelCreationError?
-    let onSelectModel: (PredictionModelMetadata) async -> Void
-    let onDeleteModel: (PredictionModelMetadata) async -> Void
+    let isRecalculating: Bool
+    let onRecalculate: () async -> Void
+    let recalculateError: PredictionModelCreationError?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -30,37 +25,25 @@ struct PredictionStatusCardView: View {
         }
         .background(Color(UIColor.DesignSystem.surface))
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .alert("모델 생성", isPresented: $isShowingCreate) {
-            Button("생성하기") {
-                Task { await onCreateModel() }
+        .alert("예측 다시 계산", isPresented: $isShowingConfirm) {
+            Button("계산하기") {
+                Task { await onRecalculate() }
             }
             Button("취소", role: .cancel) {}
         } message: {
-            Text("데이터를 학습해 예측 모델을 생성할까요?")
+            Text("최신 데이터로 예측을 계산할까요?")
         }
         .alert("데이터 부족", isPresented: $isShowingInsufficientDataAlert) {
             Button("확인", role: .cancel) {}
         } message: {
-            Text("저번 달 소비 기록이 없어 생성할 수 없어요.\n저번 달 소비를 기록하고 다시 시도해보세요.")
+            Text("저번 달 소비 기록이 없어 계산할 수 없어요.\n저번 달 소비를 기록하고 다시 시도해보세요.")
         }
-        .onChange(of: createModelError) { _, error in
+        .onChange(of: recalculateError) { _, error in
             if error == .insufficientData {
                 isShowingInsufficientDataAlert = true
             }
         }
         .tint(Color(UIColor.DesignSystem.accent))
-        .sheet(isPresented: $isShowingSelect) {
-            PredictionModelSelectView(
-                models: models,
-                currentModelId: currentModel?.id ?? "",
-                onConfirm: { selected in
-                    Task { await onSelectModel(selected) }
-                },
-                onDelete: { target in
-                    Task { await onDeleteModel(target) }
-                }
-            )
-        }
     }
 
     private var modelInfo: some View {
@@ -74,11 +57,11 @@ struct PredictionStatusCardView: View {
                         .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(model.id) 예측 모델" + (accuracy.map { " \(Int($0))%" } ?? ""))
+                        Text("예측 정확도" + (accuracy.map { " \(Int($0))%" } ?? ""))
                             .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
-                        Text("학습에 사용된 데이터: \(model.dataCount)개")
+                        Text("계산에 사용된 데이터: \(model.dataCount)개")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
 
@@ -92,11 +75,11 @@ struct PredictionStatusCardView: View {
                 }
             } else {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("예측 모델이 없어요")
+                    Text("예측이 없어요")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(Color(UIColor.DesignSystem.primary))
 
-                    Text("소비를 꾸준히 기록할수록 모델이 더 정확해져요.\n기록이 쌓이면 아래 '모델 생성하기' 버튼을 눌러\n나만의 예측 모델을 만들어보세요!")
+                    Text("소비를 꾸준히 기록할수록 예측이 더 정확해져요.\n기록이 쌓이면 아래 '계산하기' 버튼을 눌러\n나만의 예측을 만들어보세요!")
                         .font(.system(size: 13))
                         .foregroundStyle(Color(UIColor.DesignSystem.subtitle))
                         .fixedSize(horizontal: false, vertical: true)
@@ -110,43 +93,25 @@ struct PredictionStatusCardView: View {
     }
 
     private var buttons: some View {
-        HStack(spacing: 12) {
-            Button {
-                isShowingCreate = true
-            } label: {
-                Group {
-                    if isCreatingModel {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Text("모델 생성하기")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 44)
-                .background(Color(UIColor.DesignSystem.primary))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-            }
-            .disabled(isCreatingModel)
-
-            Button {
-                if models.isEmpty {
-                    isShowingToast = true
+        Button {
+            isShowingConfirm = true
+        } label: {
+            Group {
+                if isRecalculating {
+                    ProgressView()
+                        .tint(.white)
                 } else {
-                    isShowingSelect = true
+                    Text("계산하기")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(.white)
                 }
-            } label: {
-                Text("모델 교체하기")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .background(Color(UIColor.DesignSystem.accent).opacity(models.isEmpty ? 0.4 : 1.0))
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
             }
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+            .background(Color(UIColor.DesignSystem.accent))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
+        .disabled(isRecalculating)
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
     }

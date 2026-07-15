@@ -10,7 +10,6 @@ import SwiftUI
 struct PredictionView: View {
 
     @State var viewModel: PredictionViewModel
-    @State private var isShowingToast = false
     @State private var isShowingSuccessToast = false
 
     var body: some View {
@@ -27,24 +26,16 @@ struct PredictionView: View {
                         .offset(y: -5)
 
                     PredictionStatusCardView(
-                        isShowingToast: $isShowingToast,
                         currentModel: viewModel.currentModel,
                         accuracy: viewModel.accuracy,
-                        models: viewModel.models,
-                        isCreatingModel: viewModel.isCreatingModel,
-                        onCreateModel: {
-                            await viewModel.createModel()
-                            if viewModel.createModelError == nil {
+                        isRecalculating: viewModel.isRecalculating,
+                        onRecalculate: {
+                            await viewModel.recalculate()
+                            if viewModel.recalculateError == nil {
                                 isShowingSuccessToast = true
                             }
                         },
-                        createModelError: viewModel.createModelError,
-                        onSelectModel: { selected in
-                            await viewModel.selectModel(id: selected.id)
-                        },
-                        onDeleteModel: { target in
-                            await viewModel.deleteModel(id: target.id)
-                        }
+                        recalculateError: viewModel.recalculateError
                     )
                 }
 
@@ -70,7 +61,6 @@ struct PredictionView: View {
                 await viewModel.onAppear()
             }
         }
-        .toast(isShowing: $isShowingToast, message: "아직 생성된 예측 모델이 없어요")
-        .toast(isShowing: $isShowingSuccessToast, message: "예측 모델이 생성되었어요")
+        .toast(isShowing: $isShowingSuccessToast, message: "예측이 계산되었어요")
     }
 }

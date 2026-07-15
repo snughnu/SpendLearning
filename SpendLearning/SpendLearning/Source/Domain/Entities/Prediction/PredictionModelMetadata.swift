@@ -11,4 +11,6 @@ struct PredictionModelMetadata {
     let id: String
     let dataCount: Int
     let createdAt: Date
+    let dailyPredictions: [Int: Int]
+    let categoryPredictions: [String: Int]
 }
