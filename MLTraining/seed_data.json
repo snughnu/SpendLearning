@@ -1,0 +1,2002 @@
+[
+  {
+    "memo": "스타벅스",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "이디야커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "빽다방",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "메가커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "투썸플레이스",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "컴포즈커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "폴바셋",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "배스킨라빈스",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "설빙",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "공차",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "할리스커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "커피빈",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "탐앤탐스",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "엔제리너스",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "요거프레소",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "더벤티",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "매머드커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "파스쿠찌",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "블루보틀",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "던킨도너츠",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "크리스피크림도넛",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "빙수집",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "붕어빵",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "타로",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "쥬씨",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "스무디킹",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "베스킨라빈스31",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "나뚜루",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "다연",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "빵집",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "파리바게뜨",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "뚜레쥬르",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "성심당",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "매쓰커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "카페베네",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "커피나무",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "이삭토스트",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "코너스톤커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "몽슈슈",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "와플대학",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "아이스크림할인점",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "떡볶이집",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "붕어싸만코",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "커피에반하다",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "카페드파리",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "얼음골빙수",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "미스터도넛",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "빽다방커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "카페공드리",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "달콤커피",
+    "category": "카페/간식"
+  },
+  {
+    "memo": "김밥천국",
+    "category": "식비"
+  },
+  {
+    "memo": "맥도날드",
+    "category": "식비"
+  },
+  {
+    "memo": "배달의민족",
+    "category": "식비"
+  },
+  {
+    "memo": "이마트",
+    "category": "식비"
+  },
+  {
+    "memo": "국밥집",
+    "category": "식비"
+  },
+  {
+    "memo": "burger king",
+    "category": "식비"
+  },
+  {
+    "memo": "본죽",
+    "category": "식비"
+  },
+  {
+    "memo": "교촌치킨",
+    "category": "식비"
+  },
+  {
+    "memo": "홈플러스",
+    "category": "식비"
+  },
+  {
+    "memo": "요기요",
+    "category": "식비"
+  },
+  {
+    "memo": "쿠팡이츠",
+    "category": "식비"
+  },
+  {
+    "memo": "롯데리아",
+    "category": "식비"
+  },
+  {
+    "memo": "버거킹",
+    "category": "식비"
+  },
+  {
+    "memo": "맘스터치",
+    "category": "식비"
+  },
+  {
+    "memo": "bhc치킨",
+    "category": "식비"
+  },
+  {
+    "memo": "굽네치킨",
+    "category": "식비"
+  },
+  {
+    "memo": "네네치킨",
+    "category": "식비"
+  },
+  {
+    "memo": "노브랜드버거",
+    "category": "식비"
+  },
+  {
+    "memo": "김가네",
+    "category": "식비"
+  },
+  {
+    "memo": "본가",
+    "category": "식비"
+  },
+  {
+    "memo": "명륜진사갈비",
+    "category": "식비"
+  },
+  {
+    "memo": "한솥도시락",
+    "category": "식비"
+  },
+  {
+    "memo": "역전할머니맥주",
+    "category": "식비"
+  },
+  {
+    "memo": "농협하나로마트",
+    "category": "식비"
+  },
+  {
+    "memo": "GS25",
+    "category": "식비"
+  },
+  {
+    "memo": "CU편의점",
+    "category": "식비"
+  },
+  {
+    "memo": "세븐일레븐",
+    "category": "식비"
+  },
+  {
+    "memo": "이마트24",
+    "category": "식비"
+  },
+  {
+    "memo": "롯데마트",
+    "category": "식비"
+  },
+  {
+    "memo": "코스트코",
+    "category": "식비"
+  },
+  {
+    "memo": "traders",
+    "category": "식비"
+  },
+  {
+    "memo": "설렁탕집",
+    "category": "식비"
+  },
+  {
+    "memo": "냉면집",
+    "category": "식비"
+  },
+  {
+    "memo": "짜장면집",
+    "category": "식비"
+  },
+  {
+    "memo": "중국집",
+    "category": "식비"
+  },
+  {
+    "memo": "초밥집",
+    "category": "식비"
+  },
+  {
+    "memo": "돈까스집",
+    "category": "식비"
+  },
+  {
+    "memo": "파스타집",
+    "category": "식비"
+  },
+  {
+    "memo": "피자헛",
+    "category": "식비"
+  },
+  {
+    "memo": "도미노피자",
+    "category": "식비"
+  },
+  {
+    "memo": "미스터피자",
+    "category": "식비"
+  },
+  {
+    "memo": "곱창집",
+    "category": "식비"
+  },
+  {
+    "memo": "족발집",
+    "category": "식비"
+  },
+  {
+    "memo": "보쌈집",
+    "category": "식비"
+  },
+  {
+    "memo": "삼겹살집",
+    "category": "식비"
+  },
+  {
+    "memo": "이자카야",
+    "category": "식비"
+  },
+  {
+    "memo": "포장마차",
+    "category": "식비"
+  },
+  {
+    "memo": "분식집",
+    "category": "식비"
+  },
+  {
+    "memo": "샐러디",
+    "category": "식비"
+  },
+  {
+    "memo": "서브웨이",
+    "category": "식비"
+  },
+  {
+    "memo": "지하철",
+    "category": "교통"
+  },
+  {
+    "memo": "택시",
+    "category": "교통"
+  },
+  {
+    "memo": "카카오T",
+    "category": "교통"
+  },
+  {
+    "memo": "버스",
+    "category": "교통"
+  },
+  {
+    "memo": "SRT",
+    "category": "교통"
+  },
+  {
+    "memo": "KTX",
+    "category": "교통"
+  },
+  {
+    "memo": "티머니",
+    "category": "교통"
+  },
+  {
+    "memo": "쏘카",
+    "category": "교통"
+  },
+  {
+    "memo": "고속버스",
+    "category": "교통"
+  },
+  {
+    "memo": "주차장",
+    "category": "교통"
+  },
+  {
+    "memo": "그린카",
+    "category": "교통"
+  },
+  {
+    "memo": "우버택시",
+    "category": "교통"
+  },
+  {
+    "memo": "타다",
+    "category": "교통"
+  },
+  {
+    "memo": "코레일",
+    "category": "교통"
+  },
+  {
+    "memo": "공항버스",
+    "category": "교통"
+  },
+  {
+    "memo": "리무진버스",
+    "category": "교통"
+  },
+  {
+    "memo": "톨게이트",
+    "category": "교통"
+  },
+  {
+    "memo": "주유소",
+    "category": "교통"
+  },
+  {
+    "memo": "GS칼텍스",
+    "category": "교통"
+  },
+  {
+    "memo": "SK주유소",
+    "category": "교통"
+  },
+  {
+    "memo": "S OIL",
+    "category": "교통"
+  },
+  {
+    "memo": "현대오일뱅크",
+    "category": "교통"
+  },
+  {
+    "memo": "고속도로통행료",
+    "category": "교통"
+  },
+  {
+    "memo": "따릉이",
+    "category": "교통"
+  },
+  {
+    "memo": "카카오바이크",
+    "category": "교통"
+  },
+  {
+    "memo": "전기차충전",
+    "category": "교통"
+  },
+  {
+    "memo": "마을버스",
+    "category": "교통"
+  },
+  {
+    "memo": "공항철도",
+    "category": "교통"
+  },
+  {
+    "memo": "신분당선",
+    "category": "교통"
+  },
+  {
+    "memo": "제주항공",
+    "category": "교통"
+  },
+  {
+    "memo": "대한항공",
+    "category": "교통"
+  },
+  {
+    "memo": "아시아나항공",
+    "category": "교통"
+  },
+  {
+    "memo": "진에어",
+    "category": "교통"
+  },
+  {
+    "memo": "티웨이항공",
+    "category": "교통"
+  },
+  {
+    "memo": "렌터카",
+    "category": "교통"
+  },
+  {
+    "memo": "롯데렌터카",
+    "category": "교통"
+  },
+  {
+    "memo": "SK렌터카",
+    "category": "교통"
+  },
+  {
+    "memo": "발렛파킹",
+    "category": "교통"
+  },
+  {
+    "memo": "여객선",
+    "category": "교통"
+  },
+  {
+    "memo": "케이블카",
+    "category": "교통"
+  },
+  {
+    "memo": "자동차보험",
+    "category": "교통"
+  },
+  {
+    "memo": "자동차정비소",
+    "category": "교통"
+  },
+  {
+    "memo": "세차장",
+    "category": "교통"
+  },
+  {
+    "memo": "타이어뱅크",
+    "category": "교통"
+  },
+  {
+    "memo": "김포공항",
+    "category": "교통"
+  },
+  {
+    "memo": "인천공항",
+    "category": "교통"
+  },
+  {
+    "memo": "택시비",
+    "category": "교통"
+  },
+  {
+    "memo": "버스비",
+    "category": "교통"
+  },
+  {
+    "memo": "지하철비",
+    "category": "교통"
+  },
+  {
+    "memo": "하이패스",
+    "category": "교통"
+  },
+  {
+    "memo": "쿠팡",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "무신사",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "올리브영",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "다이소",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "지마켓",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "11번가",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "유니클로",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "나이키",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "에이블리",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "당근마켓",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "옥션",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "인터파크",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "티몬",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "위메프",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "SSG닷컴",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "롯데온",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "아디다스",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "자라",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "H&M",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "지그재그",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "브랜디",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "무인양품",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "이케아",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "노브랜드",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "삼성디지털프라자",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "하이마트",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "애플스토어",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "교보문고",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "영풍문고",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "알라딘중고서점",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "예스24",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "롯데백화점",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "신세계백화점",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "현대백화점",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "코오롱스포츠",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "노스페이스",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "뉴발란스",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "폴로",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "탑텐",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "스파오",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "이랜드",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "다나와",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "번개장터",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "중고나라",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "오늘의집",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "화장품가게",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "아이오페",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "이니스프리",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "미샤",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "네이버쇼핑",
+    "category": "쇼핑"
+  },
+  {
+    "memo": "CGV",
+    "category": "여가"
+  },
+  {
+    "memo": "롯데시네마",
+    "category": "여가"
+  },
+  {
+    "memo": "PC방",
+    "category": "여가"
+  },
+  {
+    "memo": "노래방",
+    "category": "여가"
+  },
+  {
+    "memo": "메가박스",
+    "category": "여가"
+  },
+  {
+    "memo": "볼링장",
+    "category": "여가"
+  },
+  {
+    "memo": "당구장",
+    "category": "여가"
+  },
+  {
+    "memo": "골프연습장",
+    "category": "여가"
+  },
+  {
+    "memo": "놀이공원",
+    "category": "여가"
+  },
+  {
+    "memo": "전시회",
+    "category": "여가"
+  },
+  {
+    "memo": "에버랜드",
+    "category": "여가"
+  },
+  {
+    "memo": "롯데월드",
+    "category": "여가"
+  },
+  {
+    "memo": "워터파크",
+    "category": "여가"
+  },
+  {
+    "memo": "찜질방",
+    "category": "여가"
+  },
+  {
+    "memo": "사우나",
+    "category": "여가"
+  },
+  {
+    "memo": "스크린골프",
+    "category": "여가"
+  },
+  {
+    "memo": "방탈출카페",
+    "category": "여가"
+  },
+  {
+    "memo": "보드게임카페",
+    "category": "여가"
+  },
+  {
+    "memo": "만화카페",
+    "category": "여가"
+  },
+  {
+    "memo": "동물원",
+    "category": "여가"
+  },
+  {
+    "memo": "아쿠아리움",
+    "category": "여가"
+  },
+  {
+    "memo": "박물관",
+    "category": "여가"
+  },
+  {
+    "memo": "미술관",
+    "category": "여가"
+  },
+  {
+    "memo": "콘서트",
+    "category": "여가"
+  },
+  {
+    "memo": "뮤지컬",
+    "category": "여가"
+  },
+  {
+    "memo": "연극",
+    "category": "여가"
+  },
+  {
+    "memo": "야구장",
+    "category": "여가"
+  },
+  {
+    "memo": "축구장",
+    "category": "여가"
+  },
+  {
+    "memo": "낚시터",
+    "category": "여가"
+  },
+  {
+    "memo": "캠핑장",
+    "category": "여가"
+  },
+  {
+    "memo": "펜션",
+    "category": "여가"
+  },
+  {
+    "memo": "호텔",
+    "category": "여가"
+  },
+  {
+    "memo": "리조트",
+    "category": "여가"
+  },
+  {
+    "memo": "에어비앤비",
+    "category": "여가"
+  },
+  {
+    "memo": "야놀자",
+    "category": "여가"
+  },
+  {
+    "memo": "여기어때",
+    "category": "여가"
+  },
+  {
+    "memo": "스키장",
+    "category": "여가"
+  },
+  {
+    "memo": "수영장",
+    "category": "여가"
+  },
+  {
+    "memo": "클라이밍장",
+    "category": "여가"
+  },
+  {
+    "memo": "탁구장",
+    "category": "여가"
+  },
+  {
+    "memo": "테니스장",
+    "category": "여가"
+  },
+  {
+    "memo": "게임방",
+    "category": "여가"
+  },
+  {
+    "memo": "오락실",
+    "category": "여가"
+  },
+  {
+    "memo": "코인노래방",
+    "category": "여가"
+  },
+  {
+    "memo": "VR방",
+    "category": "여가"
+  },
+  {
+    "memo": "다트바",
+    "category": "여가"
+  },
+  {
+    "memo": "포켓볼장",
+    "category": "여가"
+  },
+  {
+    "memo": "실내낚시터",
+    "category": "여가"
+  },
+  {
+    "memo": "루지체험장",
+    "category": "여가"
+  },
+  {
+    "memo": "온천",
+    "category": "여가"
+  },
+  {
+    "memo": "SKT",
+    "category": "통신비"
+  },
+  {
+    "memo": "KT",
+    "category": "통신비"
+  },
+  {
+    "memo": "LG유플러스",
+    "category": "통신비"
+  },
+  {
+    "memo": "알뜰폰",
+    "category": "통신비"
+  },
+  {
+    "memo": "핸드폰요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "인터넷요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "휴대폰보험",
+    "category": "통신비"
+  },
+  {
+    "memo": "통신요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "SK텔레콤",
+    "category": "통신비"
+  },
+  {
+    "memo": "케이티",
+    "category": "통신비"
+  },
+  {
+    "memo": "엘지유플러스",
+    "category": "통신비"
+  },
+  {
+    "memo": "우체국알뜰폰",
+    "category": "통신비"
+  },
+  {
+    "memo": "KT M모바일",
+    "category": "통신비"
+  },
+  {
+    "memo": "헬로모바일",
+    "category": "통신비"
+  },
+  {
+    "memo": "U+유모바일",
+    "category": "통신비"
+  },
+  {
+    "memo": "스카이라이프",
+    "category": "통신비"
+  },
+  {
+    "memo": "IPTV요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "와이파이요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "공유기요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "데이터요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "통신사멤버십",
+    "category": "통신비"
+  },
+  {
+    "memo": "휴대폰수리비",
+    "category": "통신비"
+  },
+  {
+    "memo": "휴대폰액정수리",
+    "category": "통신비"
+  },
+  {
+    "memo": "유심비",
+    "category": "통신비"
+  },
+  {
+    "memo": "기기변경할부금",
+    "category": "통신비"
+  },
+  {
+    "memo": "핸드폰할부금",
+    "category": "통신비"
+  },
+  {
+    "memo": "케이블방송료",
+    "category": "통신비"
+  },
+  {
+    "memo": "KT인터넷",
+    "category": "통신비"
+  },
+  {
+    "memo": "SK브로드밴드",
+    "category": "통신비"
+  },
+  {
+    "memo": "LG헬로비전",
+    "category": "통신비"
+  },
+  {
+    "memo": "국제전화요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "로밍요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "번호이동",
+    "category": "통신비"
+  },
+  {
+    "memo": "선불유심",
+    "category": "통신비"
+  },
+  {
+    "memo": "eSIM",
+    "category": "통신비"
+  },
+  {
+    "memo": "핸드폰케이스구매",
+    "category": "통신비"
+  },
+  {
+    "memo": "충전기구매",
+    "category": "통신비"
+  },
+  {
+    "memo": "핸드폰필름",
+    "category": "통신비"
+  },
+  {
+    "memo": "통신비자동이체",
+    "category": "통신비"
+  },
+  {
+    "memo": "모바일요금제",
+    "category": "통신비"
+  },
+  {
+    "memo": "가족결합할인",
+    "category": "통신비"
+  },
+  {
+    "memo": "인터넷설치비",
+    "category": "통신비"
+  },
+  {
+    "memo": "셋톱박스요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "공기계구매",
+    "category": "통신비"
+  },
+  {
+    "memo": "휴대폰배터리교체",
+    "category": "통신비"
+  },
+  {
+    "memo": "통신사위약금",
+    "category": "통신비"
+  },
+  {
+    "memo": "부가서비스요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "테더링요금",
+    "category": "통신비"
+  },
+  {
+    "memo": "쓰리모바일",
+    "category": "통신비"
+  },
+  {
+    "memo": "프리티",
+    "category": "통신비"
+  },
+  {
+    "memo": "약국",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "병원",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "한의원",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "헬스장",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "치과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "정형외과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "필라테스",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "요가원",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "건강검진",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "안경점",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "피부과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "성형외과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "안과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "이비인후과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "산부인과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "소아과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "내과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "정신건강의학과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "재활의학과",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "물리치료실",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "동물병원",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "건강보조식품",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "영양제구매",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "종합비타민",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "마스크구매",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "체육관",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "크로스핏",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "PT비용",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "발마사지",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "마사지샵",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "한약방",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "침술원",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "정신과상담료",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "심리상담센터",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "임플란트비용",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "스케일링비용",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "MRI검사비",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "엑스레이검사비",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "예방접종비",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "독감주사비",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "약국처방전",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "콘택트렌즈구매",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "보청기구매",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "다이어트한약",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "산후조리원",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "건강기능식품",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "혈압측정기구매",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "체중계구매",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "구급약구매",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "온누리약국",
+    "category": "의료/건강"
+  },
+  {
+    "memo": "넷플릭스",
+    "category": "구독"
+  },
+  {
+    "memo": "유튜브프리미엄",
+    "category": "구독"
+  },
+  {
+    "memo": "멜론",
+    "category": "구독"
+  },
+  {
+    "memo": "왓챠",
+    "category": "구독"
+  },
+  {
+    "memo": "디즈니플러스",
+    "category": "구독"
+  },
+  {
+    "memo": "스포티파이",
+    "category": "구독"
+  },
+  {
+    "memo": "쿠팡플레이",
+    "category": "구독"
+  },
+  {
+    "memo": "웨이브",
+    "category": "구독"
+  },
+  {
+    "memo": "밀리의서재",
+    "category": "구독"
+  },
+  {
+    "memo": "네이버플러스",
+    "category": "구독"
+  },
+  {
+    "memo": "티빙",
+    "category": "구독"
+  },
+  {
+    "memo": "지니뮤직",
+    "category": "구독"
+  },
+  {
+    "memo": "플로",
+    "category": "구독"
+  },
+  {
+    "memo": "애플뮤직",
+    "category": "구독"
+  },
+  {
+    "memo": "애플TV플러스",
+    "category": "구독"
+  },
+  {
+    "memo": "유데미",
+    "category": "구독"
+  },
+  {
+    "memo": "클래스101",
+    "category": "구독"
+  },
+  {
+    "memo": "리디셀렉트",
+    "category": "구독"
+  },
+  {
+    "memo": "윌라오디오북",
+    "category": "구독"
+  },
+  {
+    "memo": "노션플러스",
+    "category": "구독"
+  },
+  {
+    "memo": "챗지피티구독",
+    "category": "구독"
+  },
+  {
+    "memo": "클로드구독",
+    "category": "구독"
+  },
+  {
+    "memo": "아이클라우드용량",
+    "category": "구독"
+  },
+  {
+    "memo": "구글원",
+    "category": "구독"
+  },
+  {
+    "memo": "드롭박스구독",
+    "category": "구독"
+  },
+  {
+    "memo": "어도비구독",
+    "category": "구독"
+  },
+  {
+    "memo": "마이크로소프트365",
+    "category": "구독"
+  },
+  {
+    "memo": "쿠팡와우멤버십",
+    "category": "구독"
+  },
+  {
+    "memo": "네이버웹툰쿠키",
+    "category": "구독"
+  },
+  {
+    "memo": "카카오웹툰이용권",
+    "category": "구독"
+  },
+  {
+    "memo": "리멤버프로",
+    "category": "구독"
+  },
+  {
+    "memo": "토스프라임",
+    "category": "구독"
+  },
+  {
+    "memo": "옥수수구독",
+    "category": "구독"
+  },
+  {
+    "memo": "지식iN구독",
+    "category": "구독"
+  },
+  {
+    "memo": "밴드팬클럽구독",
+    "category": "구독"
+  },
+  {
+    "memo": "온라인클래스구독",
+    "category": "구독"
+  },
+  {
+    "memo": "신문구독료",
+    "category": "구독"
+  },
+  {
+    "memo": "조선일보구독",
+    "category": "구독"
+  },
+  {
+    "memo": "동아일보구독",
+    "category": "구독"
+  },
+  {
+    "memo": "우유구독",
+    "category": "구독"
+  },
+  {
+    "memo": "정기배송서비스",
+    "category": "구독"
+  },
+  {
+    "memo": "꽃구독서비스",
+    "category": "구독"
+  },
+  {
+    "memo": "면도날정기구독",
+    "category": "구독"
+  },
+  {
+    "memo": "생수정기배송",
+    "category": "구독"
+  },
+  {
+    "memo": "쿠팡로켓와우",
+    "category": "구독"
+  },
+  {
+    "memo": "밀키트정기구독",
+    "category": "구독"
+  },
+  {
+    "memo": "반찬정기배송",
+    "category": "구독"
+  },
+  {
+    "memo": "게임패스구독",
+    "category": "구독"
+  },
+  {
+    "memo": "플레이스테이션플러스",
+    "category": "구독"
+  },
+  {
+    "memo": "닌텐도온라인",
+    "category": "구독"
+  },
+  {
+    "memo": "축의금",
+    "category": "경조사"
+  },
+  {
+    "memo": "부의금",
+    "category": "경조사"
+  },
+  {
+    "memo": "화환",
+    "category": "경조사"
+  },
+  {
+    "memo": "돌잔치",
+    "category": "경조사"
+  },
+  {
+    "memo": "생일선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "결혼선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "조의금",
+    "category": "경조사"
+  },
+  {
+    "memo": "명절용돈",
+    "category": "경조사"
+  },
+  {
+    "memo": "개업축하",
+    "category": "경조사"
+  },
+  {
+    "memo": "부조금",
+    "category": "경조사"
+  },
+  {
+    "memo": "결혼식축의금",
+    "category": "경조사"
+  },
+  {
+    "memo": "장례식조의금",
+    "category": "경조사"
+  },
+  {
+    "memo": "돌잔치선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "백일잔치",
+    "category": "경조사"
+  },
+  {
+    "memo": "환갑잔치",
+    "category": "경조사"
+  },
+  {
+    "memo": "칠순잔치",
+    "category": "경조사"
+  },
+  {
+    "memo": "입학선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "졸업선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "취업축하선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "승진축하선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "이사선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "집들이선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "명절선물세트",
+    "category": "경조사"
+  },
+  {
+    "memo": "추석선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "설날세뱃돈",
+    "category": "경조사"
+  },
+  {
+    "memo": "어버이날선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "스승의날선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "화이트데이선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "발렌타인데이선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "크리스마스선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "출산축하선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "돌잔치답례품",
+    "category": "경조사"
+  },
+  {
+    "memo": "결혼식답례품",
+    "category": "경조사"
+  },
+  {
+    "memo": "제사비용",
+    "category": "경조사"
+  },
+  {
+    "memo": "성묘비용",
+    "category": "경조사"
+  },
+  {
+    "memo": "산소벌초비용",
+    "category": "경조사"
+  },
+  {
+    "memo": "화장장비용",
+    "category": "경조사"
+  },
+  {
+    "memo": "상조회비",
+    "category": "경조사"
+  },
+  {
+    "memo": "종교헌금",
+    "category": "경조사"
+  },
+  {
+    "memo": "십일조",
+    "category": "경조사"
+  },
+  {
+    "memo": "동창회비",
+    "category": "경조사"
+  },
+  {
+    "memo": "계모임회비",
+    "category": "경조사"
+  },
+  {
+    "memo": "회사경조사비",
+    "category": "경조사"
+  },
+  {
+    "memo": "부서회식경조비",
+    "category": "경조사"
+  },
+  {
+    "memo": "친구결혼축의금",
+    "category": "경조사"
+  },
+  {
+    "memo": "직장동료축의금",
+    "category": "경조사"
+  },
+  {
+    "memo": "은사님선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "회갑선물",
+    "category": "경조사"
+  },
+  {
+    "memo": "돌잡이용품구매",
+    "category": "경조사"
+  },
+  {
+    "memo": "장례용품구매",
+    "category": "경조사"
+  },
+  {
+    "memo": "기타지출",
+    "category": "기타"
+  },
+  {
+    "memo": "잡비",
+    "category": "기타"
+  },
+  {
+    "memo": "현금인출",
+    "category": "기타"
+  },
+  {
+    "memo": "기부",
+    "category": "기타"
+  },
+  {
+    "memo": "분실물",
+    "category": "기타"
+  },
+  {
+    "memo": "벌금",
+    "category": "기타"
+  },
+  {
+    "memo": "수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "기타결제",
+    "category": "기타"
+  },
+  {
+    "memo": "미분류",
+    "category": "기타"
+  },
+  {
+    "memo": "잡화점",
+    "category": "기타"
+  },
+  {
+    "memo": "은행수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "송금수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "ATM수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "환전수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "주차위반과태료",
+    "category": "기타"
+  },
+  {
+    "memo": "속도위반과태료",
+    "category": "기타"
+  },
+  {
+    "memo": "세금",
+    "category": "기타"
+  },
+  {
+    "memo": "자동차세",
+    "category": "기타"
+  },
+  {
+    "memo": "재산세",
+    "category": "기타"
+  },
+  {
+    "memo": "종합소득세",
+    "category": "기타"
+  },
+  {
+    "memo": "복권구매",
+    "category": "기타"
+  },
+  {
+    "memo": "로또구매",
+    "category": "기타"
+  },
+  {
+    "memo": "동전기부함",
+    "category": "기타"
+  },
+  {
+    "memo": "유니세프후원",
+    "category": "기타"
+  },
+  {
+    "memo": "월드비전후원",
+    "category": "기타"
+  },
+  {
+    "memo": "분실카드재발급비",
+    "category": "기타"
+  },
+  {
+    "memo": "여권발급비",
+    "category": "기타"
+  },
+  {
+    "memo": "증명서발급비",
+    "category": "기타"
+  },
+  {
+    "memo": "인감증명수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "공증수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "변호사상담료",
+    "category": "기타"
+  },
+  {
+    "memo": "세무사수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "택배비",
+    "category": "기타"
+  },
+  {
+    "memo": "우편요금",
+    "category": "기타"
+  },
+  {
+    "memo": "등기우편비",
+    "category": "기타"
+  },
+  {
+    "memo": "복사비",
+    "category": "기타"
+  },
+  {
+    "memo": "인쇄비",
+    "category": "기타"
+  },
+  {
+    "memo": "코인노래방잔돈",
+    "category": "기타"
+  },
+  {
+    "memo": "자판기음료",
+    "category": "기타"
+  },
+  {
+    "memo": "동전세탁방",
+    "category": "기타"
+  },
+  {
+    "memo": "정수기렌탈료",
+    "category": "기타"
+  },
+  {
+    "memo": "비데렌탈료",
+    "category": "기타"
+  },
+  {
+    "memo": "안마의자렌탈료",
+    "category": "기타"
+  },
+  {
+    "memo": "정기적금",
+    "category": "기타"
+  },
+  {
+    "memo": "적립식펀드",
+    "category": "기타"
+  },
+  {
+    "memo": "용돈",
+    "category": "기타"
+  },
+  {
+    "memo": "이체수수료",
+    "category": "기타"
+  },
+  {
+    "memo": "연체료",
+    "category": "기타"
+  },
+  {
+    "memo": "카드연회비",
+    "category": "기타"
+  },
+  {
+    "memo": "보관료",
+    "category": "기타"
+  }
+]
