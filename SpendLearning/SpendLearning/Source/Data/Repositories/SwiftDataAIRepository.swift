@@ -42,19 +42,19 @@ final class SwiftDataAIRepository: AIRepositoryProtocol {
     func fetchInsights() async -> [AIInsightItem] {
         guard hasSavedModel() else { return [] }
         let expenses = await expenseRepository.fetchAllExpenses()
-        return strategy.predictInsights(expenses: expenses)
+        return await strategy.predictInsights(expenses: expenses)
     }
 
     func fetchDailyPredictions(year: Int, month: Int) async -> [Int: Int] {
         guard hasSavedModel() else { return [:] }
         let expenses = await expenseRepository.fetchAllExpenses()
-        return strategy.predictDaily(expenses: expenses, year: year, month: month)
+        return await strategy.predictDaily(expenses: expenses, year: year, month: month)
     }
 
     func fetchCategoryPredictions(year: Int, month: Int) async -> [String: Int] {
         guard hasSavedModel() else { return [:] }
         let expenses = await expenseRepository.fetchAllExpenses()
-        return strategy.predictCategory(expenses: expenses, year: year, month: month)
+        return await strategy.predictCategory(expenses: expenses, year: year, month: month)
     }
 
     func createModel(expenses: [Expense]) async -> Result<AIModelMetadata, AIModelCreationError> {

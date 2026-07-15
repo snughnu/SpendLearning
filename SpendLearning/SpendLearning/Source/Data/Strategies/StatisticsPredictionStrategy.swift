@@ -13,7 +13,7 @@ final class StatisticsPredictionStrategy: PredictionStrategy {
 
     /// 이번 주 소비 패턴을 분석해 인사이트를 반환한다.
     /// 이상 지출 → 지출 예고 → 미기록 감지 순서로 최대 3개까지 반환한다.
-    func predictInsights(expenses: [Expense]) -> [AIInsightItem] {
+    func predictInsights(expenses: [Expense]) async -> [AIInsightItem] {
         var insights: [AIInsightItem] = []
 
         let calendar = Calendar.current
@@ -65,7 +65,7 @@ final class StatisticsPredictionStrategy: PredictionStrategy {
     /// 1. 과거 같은 주차 + 같은 요일 지출 평균
     /// 2. 데이터 없으면 → 과거 같은 주차 전체 지출 평균
     /// 3. 데이터 없으면 → 과거 월 평균 총액 / 이번 달 일수
-    func predictDaily(expenses: [Expense], year: Int, month: Int) -> [Int: Int] {
+    func predictDaily(expenses: [Expense], year: Int, month: Int) async -> [Int: Int] {
         let calendar = Calendar.current
         guard let targetDate = calendar.date(from: DateComponents(year: year, month: month, day: 1)),
               let dayRange = calendar.range(of: .day, in: .month, for: targetDate) else {
@@ -105,7 +105,7 @@ final class StatisticsPredictionStrategy: PredictionStrategy {
 
     /// 이번 달 카테고리별 예측 지출 금액을 반환한다.
     /// 과거 카테고리별 월 평균을 계산해 반환한다.
-    func predictCategory(expenses: [Expense], year: Int, month: Int) -> [String: Int] {
+    func predictCategory(expenses: [Expense], year: Int, month: Int) async -> [String: Int] {
         let calendar = Calendar.current
 
         // 예측 대상 달(이번 달)은 아직 진행 중이므로 평균 계산에서 제외
