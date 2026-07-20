@@ -113,14 +113,18 @@ private extension CategoryPredictor {
         let writableURL = supportDir.appendingPathComponent("CategoryClassifier.mlmodelc")
         self.modelURL = writableURL
 
-        guard let bundledCompiledURL = Bundle.main.url(forResource: "CategoryClassifier", withExtension: "mlmodelc") else {
+        // 이미 온디바이스로 학습된 사본이 있으면 그대로 사용해 학습 결과를 보존한다.
+        // 최초 설치 등으로 사본이 없을 때만 번들 모델을 복사한다.
+        if fileManager.fileExists(atPath: writableURL.path) {
             self.model = try? MLModel(contentsOf: writableURL)
             return
         }
 
-        try? fileManager.removeItem(at: writableURL)
-        try? fileManager.copyItem(at: bundledCompiledURL, to: writableURL)
+        guard let bundledCompiledURL = Bundle.main.url(forResource: "CategoryClassifier", withExtension: "mlmodelc") else {
+            return
+        }
 
+        try? fileManager.copyItem(at: bundledCompiledURL, to: writableURL)
         self.model = try? MLModel(contentsOf: writableURL)
     }
 

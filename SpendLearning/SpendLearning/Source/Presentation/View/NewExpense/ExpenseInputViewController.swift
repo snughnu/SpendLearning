@@ -26,6 +26,7 @@ final class ExpenseInputViewController: UIViewController {
 
     private let amountFieldLabel = UILabel()
     private let amountTextField = UITextField()
+    private let amountUnitLabel = UILabel()
     private let amountSeparator = UIView()
 
     private let memoFieldLabel = UILabel()
@@ -92,7 +93,7 @@ private extension ExpenseInputViewController {
         let digitsOnly = (amountTextField.text ?? "").filter { $0.isNumber }
         let amount = Int(digitsOnly) ?? 0
         viewModel.didInputAmount(amount)
-        amountTextField.text = amount == 0 ? "" : "\(amount.formatted())원"
+        amountTextField.text = amount == 0 ? "" : amount.formatted()
     }
 }
 
@@ -167,16 +168,20 @@ private extension ExpenseInputViewController {
         amountFieldLabel.font = .systemFont(ofSize: 13, weight: .regular)
         amountFieldLabel.textColor = .DesignSystem.subtitle
 
-        amountTextField.text = viewModel.initialAmount == 0 ? "" : "\(viewModel.initialAmount.formatted())원"
+        amountTextField.text = viewModel.initialAmount == 0 ? "" : viewModel.initialAmount.formatted()
         amountTextField.placeholder = "0"
         amountTextField.font = .systemFont(ofSize: 20, weight: .semibold)
         amountTextField.textColor = .DesignSystem.primary
         amountTextField.keyboardType = .numberPad
         amountTextField.addTarget(self, action: #selector(amountDidChange), for: .editingChanged)
 
+        amountUnitLabel.text = "원"
+        amountUnitLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        amountUnitLabel.textColor = .DesignSystem.primary
+
         amountSeparator.backgroundColor = .DesignSystem.separator
 
-        [amountFieldLabel, amountTextField, amountSeparator].forEach {
+        [amountFieldLabel, amountTextField, amountUnitLabel, amountSeparator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             cardView.addSubview($0)
         }
@@ -236,7 +241,10 @@ private extension ExpenseInputViewController {
 
             amountTextField.topAnchor.constraint(equalTo: amountFieldLabel.bottomAnchor, constant: 4),
             amountTextField.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 16),
-            amountTextField.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -16),
+            amountTextField.trailingAnchor.constraint(equalTo: amountUnitLabel.leadingAnchor, constant: -4),
+
+            amountUnitLabel.firstBaselineAnchor.constraint(equalTo: amountTextField.firstBaselineAnchor),
+            amountUnitLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -16),
 
             amountSeparator.topAnchor.constraint(equalTo: amountTextField.bottomAnchor, constant: 16),
             amountSeparator.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 16),
