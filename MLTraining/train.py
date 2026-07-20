@@ -19,6 +19,12 @@ JONGSUNG = [""] + list("ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄ�
 HANGUL_BASE = 0xAC00
 HANGUL_LAST = 0xD7A3
 
+# 한글 외 문자: 숫자, 영문 대소문자, 상호명에 흔히 쓰이는 특수문자
+DIGITS = list("0123456789")
+ALPHA_LOWER = list("abcdefghijklmnopqrstuvwxyz")
+ALPHA_UPPER = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+MISC_CHARS = [" ", "&", "+", "-", ".", ",", "'"]
+
 
 def decompose_hangul(char):
     """완성형 한글 한 글자를 (초성, 중성, 종성) 튜플로 분해한다. 한글이 아니면 None."""
@@ -48,12 +54,11 @@ def tokenize(text):
     return tokens
 
 
-def build_vocabulary(memos):
-    """시드 데이터에 등장하는 모든 자모/문자를 모아 정렬된 vocabulary를 만든다."""
-    tokens = set()
-    for memo in memos:
-        tokens.update(tokenize(memo))
-    return sorted(tokens)
+def build_vocabulary():
+    """이론상 가능한 전체 자모와 비한글 문자를 고정된 vocabulary로 만든다."""
+    jongsung_tokens = ["_" + j for j in JONGSUNG if j]  # 종성 없음("") 제외
+    tokens = CHOSUNG + JUNGSUNG + jongsung_tokens + DIGITS + ALPHA_LOWER + ALPHA_UPPER + MISC_CHARS
+    return sorted(set(tokens))
 
 
 def vectorize(memo, vocabulary):
@@ -69,7 +74,7 @@ def main():
     memos = [item["memo"] for item in seed_data]
     labels = [item["category"] for item in seed_data]
 
-    vocabulary = build_vocabulary(memos)
+    vocabulary = build_vocabulary()
     print(f"Vocabulary 크기: {len(vocabulary)}개 (자모/문자 단위)")
 
     vectors = [vectorize(memo, vocabulary) for memo in memos]
