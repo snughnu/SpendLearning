@@ -129,8 +129,15 @@ final class StatisticsPredictor {
     }
 
     /// 표본이 최소 개수 이상이고, 변동계수가 임계값 이하로 일관될 때만 평균을 반환한다.
-    /// 표본이 부족하거나(우연 배제) 값이 들쭉날쭉하면(패턴 아님) nil을 반환해 다음 순위로 폴백시킨다.
+    /// 표본이 3개 이상인데 변동계수가 기준을 넘으면, 평균에서 가장 먼 값 하나를 이상치로 보고
+    /// 제외한 뒤 재계산한다 — 4번 중 3번은 비슷한데 1번만 튀는 경우까지 패턴으로 인정하기 위함.
+    /// 그래도 넘으면(값 자체가 전반적으로 들쭉날쭉하면) nil을 반환해 다음 순위로 폴백시킨다.
     private func reliableAverage(of samples: [Int]) -> Int? {
+        guard let result = reliableAverage(of: samples, allowOutlierRemoval: true) else { return nil }
+        return result
+    }
+
+    private func reliableAverage(of samples: [Int], allowOutlierRemoval: Bool) -> Int? {
         guard samples.count >= minimumSampleCount else { return nil }
 
         let mean = Double(samples.reduce(0, +)) / Double(samples.count)
@@ -140,9 +147,18 @@ final class StatisticsPredictor {
         let standardDeviation = variance.squareRoot()
         let coefficientOfVariation = standardDeviation / mean
 
-        guard coefficientOfVariation <= coefficientOfVariationThreshold else { return nil }
+        if coefficientOfVariation <= coefficientOfVariationThreshold {
+            return Int(mean)
+        }
 
-        return Int(mean)
+        // 표본이 3개 이상이면, 평균에서 가장 멀리 떨어진 값 하나를 제외하고 한 번만 재시도한다.
+        guard allowOutlierRemoval, samples.count >= 3,
+              let farthestIndex = samples.indices.max(by: { abs(Double(samples[$0]) - mean) < abs(Double(samples[$1]) - mean) }) else {
+            return nil
+        }
+        var reduced = samples
+        reduced.remove(at: farthestIndex)
+        return reliableAverage(of: reduced, allowOutlierRemoval: false)
     }
 
     /// 과거 데이터의 월 평균 총 지출
